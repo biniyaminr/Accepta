@@ -20,8 +20,9 @@ export default function ResumeBuilder() {
     const [tailoredExperience, setTailoredExperience] = useState<any[]>([]);
     const [tailoredSkills, setTailoredSkills] = useState<string[]>([]);
     const [uploadedFileName, setUploadedFileName] = useState("");
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const resumeRef = useRef<HTMLDivElement>(null);
+    const cvRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // Fetch base profile data on load
@@ -65,28 +66,22 @@ export default function ResumeBuilder() {
             return;
         }
 
-        if (!resumeData?.extracurriculars?.length && !parsedCvText) {
-            alert("No extracurricular data found to tailor. Please add experience to your profile or upload a CV.");
+        if (!selectedFile) {
+            alert("Please upload a CV PDF to use the new Model Chaining pipeline.");
             return;
         }
 
         setIsTailoring(true);
 
         try {
+            const formData = new FormData();
+            formData.append("file", selectedFile);
+            formData.append("targetProgram", targetProgram);
+            formData.append("targetUniversity", targetUniversity);
+
             const res = await fetch("/api/tailor-resume", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    targetProgram,
-                    targetUniversity,
-                    extracurriculars: resumeData?.extracurriculars || [],
-                    cvText: parsedCvText, // Pass the optional parsed CV context
-                    baseProfile: {
-                        name: resumeData?.fullName,
-                        email: resumeData?.email,
-                        phone: resumeData?.phone
-                    }
-                })
+                body: formData
             });
 
             if (res.ok) {
@@ -100,11 +95,12 @@ export default function ResumeBuilder() {
                             ...prev,
                             fullName: parsedData.fullName || prev?.fullName,
                             email: parsedData.email || prev?.email,
-                            phone: parsedData.phone || prev?.phone
+                            phone: parsedData.phone || prev?.phone,
+                            address: parsedData.location || prev?.address
                         }));
                     }
 
-                    setTailoredSummary(parsedData.summary || "");
+                    setTailoredSummary(parsedData.professionalSummary || "");
 
                     if (parsedData.education && Array.isArray(parsedData.education) && parsedData.education.length > 0) {
                         setEducationList(parsedData.education);
@@ -132,45 +128,26 @@ export default function ResumeBuilder() {
         }
     };
 
-    const handleExportPDF = useReactToPrint({
-        contentRef: resumeRef,
-        documentTitle: "Biniyam_Dereje_CV",
+    const handleDownloadPdf = useReactToPrint({
+        contentRef: cvRef,
+        documentTitle: `${resumeData?.fullName ? resumeData.fullName.replace(/\\s+/g, '_') : 'Tailored'}_Resume`,
+        pageStyle: `
+          @page { size: letter portrait; margin: 0.5in; }
+          @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          }
+        `,
     }) as unknown as () => void;
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file || file.type !== "application/pdf") {
             alert("Please upload a valid PDF file.");
             return;
         }
         setUploadedFileName(file.name);
-
-        setIsParsingPDF(true);
-        const formData = new FormData();
-        formData.append("file", file);
-
-        try {
-            const res = await fetch('/api/parse-pdf', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!res.ok) {
-                const errData = await res.json().catch(() => null);
-                throw new Error(errData?.details || errData?.error || "Parse failed");
-            }
-
-            const data = await res.json();
-            setParsedCvText(data.text);
-            console.log("PDF parsed successfully. Length:", data.text.length);
-
-        } catch (error: any) {
-            console.error("Error reading PDF:", error);
-            alert(`Failed to read the PDF: ${error.message}`);
-            setParsedCvText("");
-        } finally {
-            setIsParsingPDF(false);
-        }
+        setSelectedFile(file);
+        setParsedCvText(""); // Reset previous parsed text if uploading a new file
     };
 
     if (!resumeData) {
@@ -268,10 +245,12 @@ export default function ResumeBuilder() {
 
                         <Button
                             onClick={handleTailor}
-                            disabled={isTailoring || !targetProgram || !targetUniversity}
+                            disabled={isTailoring || isParsingPDF || !targetProgram || !targetUniversity}
                             className="w-full h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-500/20 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isTailoring ? (
+                            {isParsingPDF ? (
+                                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Reading CV...</>
+                            ) : isTailoring ? (
                                 <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Tailoring with AI...</>
                             ) : (
                                 <><Sparkles className="mr-2 h-5 w-5" /> Tailor with AI</>
@@ -280,7 +259,7 @@ export default function ResumeBuilder() {
 
                         <div className="pt-4 border-t border-neutral-800">
                             <Button
-                                onClick={handleExportPDF}
+                                onClick={() => handleDownloadPdf()}
                                 disabled={isExporting}
                                 variant="outline"
                                 className="w-full h-12 border-neutral-700 hover:bg-neutral-800 text-neutral-100 transition-all"
@@ -297,15 +276,13 @@ export default function ResumeBuilder() {
             </div>
 
             {/* Right Panel: A4 Live Preview */}
-            <div className="hidden lg:flex flex-1 justify-center items-start overflow-y-auto pb-10 custom-scrollbar print:flex print:block print:overflow-visible print:p-0 print:m-0">
-                {/* Fixed physical dimensions for A4 PDF calculation on screen; fluid on print */}
-                <div className="bg-white shadow-2xl origin-top print:shadow-none print:transform-none print:w-full print:h-full print:!scale-100" style={{ width: '794px', minHeight: '1123px', transform: 'scale(0.85)' }}>
-                    {/* The actual resume content */}
-                    <div ref={resumeRef} className="w-full h-full bg-white p-12 text-black font-sans box-border print:p-0" style={{ minHeight: '1123px' }}>
+            <div className="w-full lg:w-2/3 flex justify-center py-6 lg:py-10 overflow-x-auto print:p-0 print:m-0 print:block">
+                {/* The A4 Paper using native CSS Zoom */}
+                <div ref={cvRef} className="w-[800px] min-h-[1130px] bg-white shadow-2xl p-10 lg:p-12 mx-auto max-sm:[zoom:0.43] sm:[zoom:0.8] lg:[zoom:1] print:[zoom:1] text-black font-sans box-border print:p-0">
 
                         {/* Header */}
-                        <div className="border-b-2 border-neutral-800 pb-6 mb-6">
-                            <h1 contentEditable={true} suppressContentEditableWarning={true} className="text-4xl font-bold uppercase tracking-wider text-neutral-900 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">{resumeData.fullName}</h1>
+                        <div className="border-b-2 border-neutral-800 pb-4 lg:pb-6 mb-6">
+                            <h1 contentEditable={true} suppressContentEditableWarning={true} className="text-4xl lg:text-5xl font-bold uppercase tracking-wider text-neutral-900 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">{resumeData.fullName}</h1>
                             <div className="flex gap-4 text-sm text-neutral-600 mt-3 font-medium">
                                 <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">{resumeData.email}</span>
                                 {resumeData.phone && <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">• {resumeData.phone}</span>}
@@ -392,7 +369,6 @@ export default function ResumeBuilder() {
                             </div>
                         )}
 
-                    </div>
                 </div>
             </div>
         </div>

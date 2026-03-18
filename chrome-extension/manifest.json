@@ -11,6 +11,9 @@
         "default_popup": "popup.html",
         "default_title": "AssistedApp"
     },
+    "host_permissions": [
+        "https://university-automation-app.vercel.app/*"
+    ],
     "content_scripts": [
         {
             "matches": [

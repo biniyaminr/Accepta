@@ -1,85 +1,95 @@
 import { NextResponse } from "next/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { targetProgram, targetUniversity, extracurriculars, cvText, baseProfile } = await request.json();
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+    const targetProgram = formData.get("targetProgram") as string;
+    const targetUniversity = formData.get("targetUniversity") as string;
 
-    if (!targetProgram || !targetUniversity || !extracurriculars) {
-      return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
+    if (!file || !targetProgram) throw new Error("Missing file or program details.");
+    if (!process.env.GEMINI_API_KEY || !process.env.GROQ_API_KEY) {
+      throw new Error("Missing API Keys for the Hybrid Pipeline.");
     }
 
+    // 1. Prepare the PDF for Gemini Vision
+    const arrayBuffer = await file.arrayBuffer();
+    const base64Data = Buffer.from(arrayBuffer).toString("base64");
+
+    // ==========================================
+    // STAGE 1: GEMINI FLASH (The "Eyes")
+    // ==========================================
+    console.log("Stage 1: Gemini Flash is visually reading the PDF...");
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const visionModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const extractionPrompt = `
+      Read this resume PDF visually. Extract all of the text accurately. 
+      Preserve the logical flow of information (Contact, Summary, Experience, Education, Skills).
+      Output ONLY the raw extracted text, with no conversational filler.
+    `;
+
+    const visionResult = await visionModel.generateContent([
+      extractionPrompt,
+      { inlineData: { data: base64Data, mimeType: "application/pdf" } }
+    ]);
+
+    const extractedText = visionResult.response.text();
+    if (!extractedText || extractedText.trim() === "") {
+      throw new Error("Gemini failed to extract text from the PDF.");
+    }
+    console.log("Stage 1 Complete! Text extracted successfully.");
+
+    // ==========================================
+    // STAGE 2: GROQ LLAMA 3.3 (The "Brain")
+    // ==========================================
+    console.log("Stage 2: Groq is tailoring the resume and structuring JSON...");
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-    const originalDataString = JSON.stringify(extracurriculars, null, 2);
 
-    const systemPrompt = `You are an expert career advisor and resume writer specialising in university applications.
-The user is applying to study "${targetProgram}" at "${targetUniversity}".
+    const tailoringPrompt = `
+      You are an expert university admissions consultant. Rewrite the provided raw resume text to make the applicant the perfect fit for a ${targetProgram} program at ${targetUniversity}.
+      
+      Guidelines:
+      - Maintain their actual work history and truthfulness.
+      - Highlight skills and metrics relevant to ${targetProgram}.
+      - If any info (like phone/email) is missing, use an empty string.
+      
+      You MUST return the output ONLY as a valid JSON object matching this exact schema:
+      {
+        "fullName": "...",
+        "email": "...",
+        "phone": "...",
+        "location": "...",
+        "professionalSummary": "A highly persuasive 3-sentence summary tailored to the target program...",
+        "education": [ { "degree": "...", "institution": "...", "year": "..." } ],
+        "skills": ["skill1", "skill2"],
+        "experience": [ { "role": "...", "company": "...", "date": "...", "location": "...", "bullets": ["...", "..."] } ]
+      }
+      
+      Raw Resume Text:
+      ${extractedText}
+    `;
 
-Your task is to produce a tailored CV data object. Return ONLY a valid JSON object with EXACTLY this structure:
-{
-  "fullName": "Extracted Name or fallback",
-  "email": "Extracted Email or fallback",
-  "phone": "Extracted Phone or fallback",
-  "summary": "A 2-3 sentence tailored professional summary...",
-  "education": [
-    { "institution": "...", "degree": "...", "date": "...", "location": "..." }
-  ],
-  "experience": [
-    { "role": "...", "organization": "...", "startDate": "...", "endDate": "...", "bullets": ["Bullet 1...", "Bullet 2..."] }
-  ],
-  "skills": ["Skill 1", "Skill 2"]
-}
-
-RULES:
-- Rewrite the 'description' fields from the provided extracurricular data into punchy, impactful 'bullets' using strong action verbs.
-- Highlight transferable skills, leadership, and quantitative impact relevant to the target program.
-- Extract ALL education entries from the provided CV text. Do NOT stop at the first institution. Populate the 'education' array with every school, university, or institution found.
-- If a parsed PDF text is provided, you MUST extract the Name, Email, and Phone Number directly from the PDF text to use in the CV header.
-- ONLY use the provided database profile details (Name: ${baseProfile?.name || 'N/A'}, Email: ${baseProfile?.email || 'N/A'}, Phone: ${baseProfile?.phone || 'N/A'}) as a fallback IF the parsed PDF text is missing contact information, or if no PDF was uploaded.
-- Do not return Markdown. Do not wrap in \`\`\`json. Return raw, pure JSON only.`;
-
-    let userMessage = `Original extracurricular data to tailor:\n${originalDataString}`;
-
-    if (cvText) {
-      userMessage += `\n\nCRITICAL CONTEXT — Uploaded CV Text (extract all education, metrics, name, and contact info from this):\n---\n${cvText.substring(0, 4000)}\n---`;
-    }
-
-    const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+    const chatCompletion = await groq.chat.completions.create({
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userMessage },
+        { role: "system", content: "You are a helpful assistant that outputs strictly in JSON." },
+        { role: "user", content: tailoringPrompt }
       ],
-      response_format: { type: "json_object" },
-      temperature: 0.3,
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.2,
+      response_format: { type: "json_object" }, 
     });
 
-    const rawOutput = response.choices[0]?.message?.content ?? "";
+    const responseText = chatCompletion.choices[0]?.message?.content || "{}";
+    console.log("Stage 2 Complete! Groq generated the JSON.");
 
-    try {
-      const updatedCV = JSON.parse(rawOutput);
+    const resumeData = JSON.parse(responseText);
+    return NextResponse.json(resumeData);
 
-      if (!updatedCV.education || updatedCV.education.length === 0) {
-        console.log("⚠️ AI failed to extract education entries — frontend fallback will handle this.");
-      }
-
-      return NextResponse.json(updatedCV, { status: 200 });
-    } catch (_parseError) {
-      console.error("🔥 Failed to parse Groq JSON response:", rawOutput);
-      return NextResponse.json({ error: "AI returned invalid format" }, { status: 500 });
-    }
-
-  } catch (error) {
-    console.error("🔥 Error tailoring resume:", error);
-
-    const errorMessage = error instanceof Error ? error.message : "";
-    if (errorMessage.includes("429") || errorMessage.includes("rate_limit")) {
-      return NextResponse.json(
-        { error: "AI rate limit reached. Please wait 60 seconds and try again." },
-        { status: 429 }
-      );
-    }
-
-    return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
+  } catch (error: any) {
+    console.error("HYBRID PIPELINE ERROR:", error);
+    return NextResponse.json({ error: error.message || "Failed to process PDF" }, { status: 500 });
   }
 }

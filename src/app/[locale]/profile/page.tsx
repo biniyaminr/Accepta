@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { SaveIcon, UserCircleIcon, GraduationCapIcon } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 
 const profileSchema = z.object({
@@ -45,6 +46,8 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
     const [isLoading, setIsLoading] = useState(false);
+    const { user, isLoaded } = useUser();
+    const fullName = user?.fullName || user?.firstName || '';
 
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileSchema),
@@ -67,6 +70,18 @@ export default function ProfilePage() {
     });
 
     useEffect(() => {
+        if (isLoaded && user) {
+            const clerkFullName = user.fullName || user.firstName || "";
+            const clerkEmail = user.primaryEmailAddress?.emailAddress || "";
+
+            form.setValue("fullName", clerkFullName);
+            form.setValue("email", clerkEmail); 
+        }
+    }, [isLoaded, user, form]);
+
+    useEffect(() => {
+        if (!isLoaded) return;
+
         async function loadProfile() {
             try {
                 const res = await fetch("/api/profile");
@@ -78,8 +93,8 @@ export default function ProfilePage() {
                     const education = data.educations?.[0] || {};
 
                     form.reset({
-                        fullName: data.fullName || "",
-                        email: data.email || "",
+                        fullName: data.fullName || fullName,
+                        email: data.email || user?.primaryEmailAddress?.emailAddress || "",
                         phone: data.phone || "",
                         address: data.address || "",
                         dob: formatDate(data.dob),
@@ -99,7 +114,7 @@ export default function ProfilePage() {
             }
         }
         loadProfile();
-    }, [form]);
+    }, [form, isLoaded, fullName, user]);
 
     async function onSubmit(data: ProfileFormValues) {
         setIsLoading(true);
@@ -155,7 +170,7 @@ export default function ProfilePage() {
                                     <FormItem>
                                         <FormLabel className="text-neutral-300">Full Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="John Doe" className="bg-neutral-950/50 border-neutral-800 text-neutral-200 focus:ring-blue-500/20" {...field} />
+                                            <Input disabled={!isLoaded} placeholder="John Doe" className="bg-neutral-950/50 border-neutral-800 text-neutral-200 focus:ring-blue-500/20 disabled:opacity-50" {...field} />
                                         </FormControl>
                                         <FormMessage className="text-red-400" />
                                     </FormItem>
