@@ -12,8 +12,6 @@ export default function ResumeBuilder() {
     const [targetUniversity, setTargetUniversity] = useState("");
     const [isTailoring, setIsTailoring] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
-    const [isParsingPDF, setIsParsingPDF] = useState(false);
-    const [parsedCvText, setParsedCvText] = useState("");
     const [resumeData, setResumeData] = useState<any>(null);
     const [tailoredSummary, setTailoredSummary] = useState("");
     const [educationList, setEducationList] = useState<any[]>([]);
@@ -147,7 +145,6 @@ export default function ResumeBuilder() {
         }
         setUploadedFileName(file.name);
         setSelectedFile(file);
-        setParsedCvText(""); // Reset previous parsed text if uploading a new file
     };
 
     if (!resumeData) {
@@ -159,11 +156,11 @@ export default function ResumeBuilder() {
     }
 
     return (
-        <div className="flex-1 p-8 overflow-hidden flex flex-col lg:flex-row gap-8 print:p-0 print:m-0 print:overflow-visible print:bg-white print:text-black">
+        <div className="flex-1 p-4 sm:p-8 flex flex-col lg:flex-row gap-8 print:p-0 print:m-0 print:bg-white print:text-black min-h-screen">
             <style dangerouslySetInnerHTML={{ __html: `@media print { @page { margin: 0 !important; } body { -webkit-print-color-adjust: exact; padding: 1cm !important; } }` }} />
 
             {/* Left Panel: Controls */}
-            <div className="w-full lg:w-1/3 flex flex-col gap-6 print:hidden">
+            <div className="w-full lg:w-1/3 xl:w-1/4 flex flex-col gap-6 print:hidden">
                 <Card className="bg-neutral-900/50 backdrop-blur-xl border-neutral-800 shadow-xl">
                     <CardHeader>
                         <CardTitle className="text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-neutral-100 to-neutral-400">
@@ -229,28 +226,16 @@ export default function ResumeBuilder() {
                                         </>
                                     )}
                                 </button>
-                                {isParsingPDF && (
-                                    <p className="text-xs text-blue-400 flex items-center mt-1">
-                                        <Loader2 className="w-3 h-3 animate-spin mr-1" /> Reading PDF...
-                                    </p>
-                                )}
-                                {parsedCvText && !isParsingPDF && (
-                                    <div className="text-xs text-emerald-400 mt-1 flex items-center gap-1">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
-                                        PDF parsed — ready to use as AI context.
-                                    </div>
-                                )}
+                                {selectedFile && <p className="text-sm text-green-500 mt-2">✓ File attached: {selectedFile.name}</p>}
                             </div>
                         </div>
 
                         <Button
                             onClick={handleTailor}
-                            disabled={isTailoring || isParsingPDF || !targetProgram || !targetUniversity}
+                            disabled={isTailoring || !targetProgram || !targetUniversity}
                             className="w-full h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-500/20 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isParsingPDF ? (
-                                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Reading CV...</>
-                            ) : isTailoring ? (
+                            {isTailoring ? (
                                 <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Tailoring with AI...</>
                             ) : (
                                 <><Sparkles className="mr-2 h-5 w-5" /> Tailor with AI</>
@@ -276,7 +261,7 @@ export default function ResumeBuilder() {
             </div>
 
             {/* Right Panel: A4 Live Preview */}
-            <div className="w-full lg:w-2/3 flex justify-center py-6 lg:py-10 overflow-x-auto print:p-0 print:m-0 print:block">
+            <div className="w-full lg:w-2/3 xl:w-3/4 flex justify-center py-6 lg:py-10 overflow-x-auto relative print:p-0 print:m-0 print:block">
                 {/* The A4 Paper using native CSS Zoom */}
                 <div ref={cvRef} className="w-[800px] min-h-[1130px] bg-white shadow-2xl p-10 lg:p-12 mx-auto max-sm:[zoom:0.43] sm:[zoom:0.8] lg:[zoom:1] print:[zoom:1] text-black font-sans box-border print:p-0">
 

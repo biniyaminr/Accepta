@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     const text = await new Promise<string>((resolve, reject) => {
       // The '1' flag tells it to extract pure raw text, stripping out heavy visual data
-      const pdfParser = new PDFParser(null, 1); 
+      const pdfParser = new PDFParser(null, true); 
       
       pdfParser.on("pdfParser_dataError", (errData: any) => {
          console.error("Parser Error:", errData.parserError);
