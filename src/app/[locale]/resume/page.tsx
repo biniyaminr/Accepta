@@ -22,8 +22,53 @@ export default function ResumeBuilder() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cvRef = useRef<HTMLDivElement>(null);
 
+    // PERSISTENCE: Load state from localStorage on mount
     useEffect(() => {
-        // Fetch base profile data on load
+        const saved = localStorage.getItem("accepta_cv_maker_state");
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                if (data.targetProgram) setTargetProgram(data.targetProgram);
+                if (data.targetUniversity) setTargetUniversity(data.targetUniversity);
+                if (data.resumeData) setResumeData(data.resumeData);
+                if (data.tailoredSummary) setTailoredSummary(data.tailoredSummary);
+                if (data.educationList) setEducationList(data.educationList);
+                if (data.tailoredExperience) setTailoredExperience(data.tailoredExperience);
+                if (data.tailoredSkills) setTailoredSkills(data.tailoredSkills);
+                if (data.uploadedFileName) setUploadedFileName(data.uploadedFileName);
+            } catch (e) {
+                console.error("Failed to load CV session", e);
+            }
+        }
+    }, []);
+
+    // PERSISTENCE: Save state to localStorage on change
+    useEffect(() => {
+        const stateToSave = {
+            targetProgram,
+            targetUniversity,
+            resumeData,
+            tailoredSummary,
+            educationList,
+            tailoredExperience,
+            tailoredSkills,
+            uploadedFileName
+        };
+        localStorage.setItem("accepta_cv_maker_state", JSON.stringify(stateToSave));
+    }, [targetProgram, targetUniversity, resumeData, tailoredSummary, educationList, tailoredExperience, tailoredSkills, uploadedFileName]);
+
+    const handleReset = () => {
+        if (confirm("Are you sure you want to clear this CV session? This will reset all tailored content.")) {
+            localStorage.removeItem("accepta_cv_maker_state");
+            window.location.reload(); // Simplest way to reset all states back to initial DB fetch
+        }
+    };
+
+    useEffect(() => {
+        // Fetch base profile data on load ONLY if we don't have a tailored session already
+        const saved = localStorage.getItem("accepta_cv_maker_state");
+        if (saved) return; 
+
         fetch("/api/resume-data")
             .then(res => {
                 if (!res.ok && res.status !== 404) throw new Error("Failed to fetch");
@@ -242,7 +287,7 @@ export default function ResumeBuilder() {
                             )}
                         </Button>
 
-                        <div className="pt-4 border-t border-neutral-800">
+                        <div className="pt-4 border-t border-neutral-800 space-y-3">
                             <Button
                                 onClick={() => handleDownloadPdf()}
                                 disabled={isExporting}
@@ -254,6 +299,15 @@ export default function ResumeBuilder() {
                                 ) : (
                                     <><Download className="mr-2 h-4 w-4" /> Download PDF</>
                                 )}
+                            </Button>
+                            
+                            <Button
+                                onClick={handleReset}
+                                variant="ghost"
+                                size="sm"
+                                className="w-full text-neutral-500 hover:text-red-400 hover:bg-red-400/5 transition-all text-xs"
+                            >
+                                Reset CV Session
                             </Button>
                         </div>
                     </CardContent>
