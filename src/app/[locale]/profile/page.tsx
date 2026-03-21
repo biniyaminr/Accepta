@@ -178,9 +178,11 @@ export default function OnboardingWizard() {
     // Keep global vaultDocuments in sync with local UI state for Step 4
     useEffect(() => {
         const docs = [];
-        if (passportUrl) docs.push({ type: 'PASSPORT', url: passportUrl, name: passportName });
-        if (cvUrl) docs.push({ type: 'RESUME', url: cvUrl, name: cvName });
-        if (transcriptUrl) docs.push({ type: 'TRANSCRIPT', url: transcriptUrl, name: transcriptName });
+        if (passportUrl) docs.push({ type: 'PASSPORT', fileUrl: passportUrl, name: passportName });
+        if (cvUrl) docs.push({ type: 'RESUME', fileUrl: cvUrl, name: cvName });
+        if (transcriptUrl) docs.push({ type: 'TRANSCRIPT', fileUrl: transcriptUrl, name: transcriptName });
+        
+        console.log("🚀 Accepta: Updated Vault Documents in state:", docs);
         setVaultDocuments(docs);
     }, [passportUrl, cvUrl, transcriptUrl, passportName, cvName, transcriptName, setVaultDocuments]);
 

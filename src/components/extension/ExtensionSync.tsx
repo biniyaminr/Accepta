@@ -33,9 +33,9 @@ export function ExtensionSync() {
                 
                 // Use nested files structure as requested
                 files: {
-                    passportUrl: vaultDocuments.find(d => d.type === 'PASSPORT')?.url || null,
-                    cvUrl: vaultDocuments.find(d => d.type === 'RESUME')?.url || null,
-                    transcriptUrl: vaultDocuments.find(d => d.type === 'TRANSCRIPT')?.url || null
+                    passportUrl: vaultDocuments.find(d => d.type === 'PASSPORT')?.fileUrl || null,
+                    cvUrl: vaultDocuments.find(d => d.type === 'RESUME')?.fileUrl || null,
+                    transcriptUrl: vaultDocuments.find(d => d.type === 'TRANSCRIPT')?.fileUrl || null
                 },
                 
                 educations: step2Draft ? [step2Draft] : [],
