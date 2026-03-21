@@ -1,7 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Link from "next/link";
+import Image from "next/image";
+import AcceptaLogo from "@/images/acceptalogo.png";
 import {
     Sidebar,
     SidebarContent,
@@ -18,6 +19,8 @@ import {
 import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard, Sparkles } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { Link } from "@/i18n/routing";
 
 export function AppSidebar() {
     const pathname = usePathname();
@@ -68,8 +71,20 @@ export function AppSidebar() {
 
     return (
         <Sidebar className="border-r border-border/50 bg-background/50 backdrop-blur-xl transition-all duration-300">
-            <SidebarHeader className="h-16 flex items-center px-4 border-b border-border/50 bg-transparent">
-                <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-200 to-neutral-400">AssistedApp</h1>
+            <SidebarHeader className="h-[72px] flex items-center px-4 border-b border-border/50 bg-transparent">
+                <Link href="/" className="flex items-center gap-3 no-underline hover:opacity-80 transition-opacity">
+                    <Image
+                        src={AcceptaLogo}
+                        alt="Accepta logo"
+                        width={64}
+                        height={64}
+                        priority
+                        className="object-contain shrink-0 rounded-xl"
+                    />
+                    <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-neutral-200 tracking-tight">
+                        Accepta
+                    </span>
+                </Link>
             </SidebarHeader>
             <SidebarContent className="bg-transparent pt-4">
                 <SidebarGroup>
@@ -106,6 +121,10 @@ export function AppSidebar() {
 
             {/* Auth Footer */}
             <SidebarFooter className="border-t border-border/50 p-4">
+                {/* Language Switcher */}
+                <div className="px-1 mb-3">
+                    <LanguageSwitcher />
+                </div>
                 <SignedOut>
                     <div className="flex flex-col gap-2">
                         <SignInButton mode="modal">

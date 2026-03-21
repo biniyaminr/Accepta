@@ -1,10 +1,13 @@
 "use client";
 
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import Image from "next/image";
+import AcceptaLogo from "@/images/acceptalogo.png";
 import { Globe, FileText, Zap, CheckCircle, Sparkles } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
+import { EnglishTestPromo } from "@/components/landing/EnglishTestPromo";
 
 export default function LandingPage() {
   const tHero = useTranslations("Hero");
@@ -18,12 +21,19 @@ export default function LandingPage() {
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-violet-500/30">
       {/* Nav */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-neutral-800/50 bg-neutral-950/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="font-bold text-xl tracking-tight flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-            <Zap className="w-4 h-4 text-white" />
-          </div>
-          AssistedApp
-        </div>
+        <Link href="/" className="flex items-center gap-3 no-underline hover:opacity-80 transition-opacity">
+          <Image
+            src={AcceptaLogo}
+            alt="Accepta logo"
+            width={64}
+            height={64}
+            priority
+            className="object-contain shrink-0 rounded-xl"
+          />
+          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-neutral-200 tracking-tight">
+            Accepta
+          </span>
+        </Link>
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
           <nav>
@@ -197,6 +207,9 @@ export default function LandingPage() {
 
           </div>
         </section>
+
+        {/* English Proficiency Resources */}
+        <EnglishTestPromo />
 
         {/* Features Deep Dive */}
         <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 w-full border-t border-neutral-800/50 mt-12">

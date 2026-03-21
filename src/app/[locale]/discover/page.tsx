@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Building2, GraduationCap, Calendar, ListChecks, Search, Loader2, Sparkles, Clock, ArrowRight, BookmarkIcon, BookmarkCheckIcon } from "lucide-react";
+import { EnglishTestPromo } from "@/components/landing/EnglishTestPromo";
 
 export default function DiscoverPage() {
     const [url, setUrl] = useState("");
@@ -375,6 +376,11 @@ export default function DiscoverPage() {
                         </div>
                     </div>
                 )}
+
+                {/* English Proficiency Resources - Moved to bottom */}
+                <div className="mt-12 border-t border-neutral-800/50 pt-12">
+                    <EnglishTestPromo />
+                </div>
             </div>
 
             {/* Sidebar History Area */}

@@ -15,9 +15,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "AssistedApp | Automate Your University Applications",
+    title: "Accepta | Automate Your University Applications",
     description:
         "Discover fully funded scholarships, tailor your CV with AI, and auto-fill university portals instantly.",
+    icons: {
+        icon: "/icon.png",
+        shortcut: "/icon.png",
+        apple: "/icon.png",
+    },
 };
 
 export default function RootLayout({
