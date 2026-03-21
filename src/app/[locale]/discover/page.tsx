@@ -4,31 +4,28 @@ import { useState, useEffect } from "react";
 import { Building2, GraduationCap, Calendar, ListChecks, Search, Loader2, Sparkles, Clock, ArrowRight, BookmarkIcon, BookmarkCheckIcon } from "lucide-react";
 import { EnglishTestPromo } from "@/components/landing/EnglishTestPromo";
 
+import { useAppStore } from "@/store/useAppStore";
+import { useHasHydrated } from "@/hooks/useHasHydrated";
+
 export default function DiscoverPage() {
-    const [url, setUrl] = useState("");
+    const {
+        url, setUrl,
+        programData, setProgramData,
+        searchHistory, setSearchHistory,
+        fitData, setFitData,
+        resetDiscover
+    } = useAppStore();
+
+    const hasHydrated = useHasHydrated();
+    
     const [isLoading, setIsLoading] = useState(false);
-    const [programData, setProgramData] = useState<Record<string, unknown> | null>(null);
     const [error, setError] = useState<string | null>(null);
-
-    // History State
-    const [searchHistory, setSearchHistory] = useState<{ url: string; data: Record<string, unknown> }[]>([]);
-
-    // Evaluate Fit State
     const [isEvaluating, setIsEvaluating] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
-    const [fitData, setFitData] = useState<{ matchScore: number; reasoning: string } | null>(null);
 
     // Rate-limit countdown state
     const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
-
-    // Load History on Mount
-    useEffect(() => {
-        const savedHistory = localStorage.getItem("discoverHistory");
-        if (savedHistory) {
-            setSearchHistory(JSON.parse(savedHistory));
-        }
-    }, []);
 
     // Auto-retry countdown timer
     useEffect(() => {
@@ -77,11 +74,10 @@ export default function DiscoverPage() {
             setProgramData(data.data);
             setIsSaved(false); // Reset saved status on new scan
 
-            // Update History
+            // Update History (Zustand persists this automatically)
             const newHistoryItem = { url, data: data.data };
             const updatedHistory = [newHistoryItem, ...searchHistory.filter((item) => item.url !== url)].slice(0, 10);
             setSearchHistory(updatedHistory);
-            localStorage.setItem("discoverHistory", JSON.stringify(updatedHistory));
 
         } catch (err) {
             if (err instanceof Error) {
@@ -194,6 +190,14 @@ export default function DiscoverPage() {
             setIsSaving(false);
         }
     };
+
+    if (!hasHydrated) {
+        return (
+            <div className="flex-1 flex justify-center items-center h-full">
+                <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col gap-8 lg:flex-row">

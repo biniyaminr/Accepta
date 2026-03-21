@@ -81,7 +81,18 @@ function getSkillsForRole(role: string) {
     return ['Communication', 'Teamwork', 'Problem Solving', 'Leadership', 'Microsoft Office', 'Public Speaking'];
 }
 
+import { useAppStore } from "@/store/useAppStore";
+import { useHasHydrated } from "@/hooks/useHasHydrated";
+
 export default function OnboardingWizard() {
+    const {
+        step1Draft, setStep1Draft,
+        step2Draft, setStep2Draft,
+        step3Draft, setStep3Draft,
+        resetOnboarding,
+    } = useAppStore();
+
+    const hasHydrated = useHasHydrated();
     const t = useTranslations("OnboardingWizard");
     const { user, isLoaded: isUserLoaded } = useUser();
     const router = useRouter();
@@ -158,6 +169,28 @@ export default function OnboardingWizard() {
         loadStepData();
     }, [isUserLoaded, form1, form2, form3]);
 
+    // --- DRAFT PERSISTENCE ---
+    useEffect(() => {
+        const sub1 = form1.watch((val) => setStep1Draft(val));
+        const sub2 = form2.watch((val) => setStep2Draft(val));
+        const sub3 = form3.watch((val) => setStep3Draft(val));
+        return () => {
+            sub1.unsubscribe();
+            sub2.unsubscribe();
+            sub3.unsubscribe();
+        };
+    }, [form1, form2, form3, setStep1Draft, setStep2Draft, setStep3Draft]);
+
+    // Apply drafts on mount (merging with server data)
+    useEffect(() => {
+        if (hasHydrated) {
+            if (step1Draft) form1.reset({ ...form1.getValues(), ...step1Draft });
+            if (step2Draft) form2.reset({ ...form2.getValues(), ...step2Draft });
+            if (step3Draft) form3.reset({ ...form3.getValues(), ...step3Draft });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasHydrated]);
+
     const handleNext = async () => {
         let isValid = false;
         let data = {};
@@ -211,6 +244,7 @@ export default function OnboardingWizard() {
         try {
             const res = await fetch("/api/onboarding/complete", { method: "POST" });
             if (res.ok) {
+                resetOnboarding(); // Clear drafts
                 toast.success("Welcome aboard!", { description: "Onboarding complete. Entering Mission Control..." });
                 router.push("/dashboard");
             } else {
@@ -223,7 +257,7 @@ export default function OnboardingWizard() {
         }
     };
 
-    if (isLoading) {
+    if (!hasHydrated || isLoading) {
         return (
             <div className="flex h-[60vh] items-center justify-center">
                 <Loader2 className="w-8 h-8 animate-spin text-violet-500" />

@@ -7,68 +7,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Loader2, Download, Wand2, GraduationCap, Building, UploadCloud, Sparkles } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
 
+import { useAppStore } from "@/store/useAppStore";
+import { useHasHydrated } from "@/hooks/useHasHydrated";
+
 export default function ResumeBuilder() {
-    const [targetProgram, setTargetProgram] = useState("");
-    const [targetUniversity, setTargetUniversity] = useState("");
+    const {
+        targetProgram, setTargetProgram,
+        targetUniversity, setTargetUniversity,
+        resumeData, setResumeData,
+        tailoredSummary, setTailoredSummary,
+        educationList, setEducationList,
+        tailoredExperience, setTailoredExperience,
+        tailoredSkills, setTailoredSkills,
+        uploadedFileName, setUploadedFileName,
+        resetCVMaker
+    } = useAppStore();
+
+    const hasHydrated = useHasHydrated();
+    
     const [isTailoring, setIsTailoring] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
-    const [resumeData, setResumeData] = useState<any>(null);
-    const [tailoredSummary, setTailoredSummary] = useState("");
-    const [educationList, setEducationList] = useState<any[]>([]);
-    const [tailoredExperience, setTailoredExperience] = useState<any[]>([]);
-    const [tailoredSkills, setTailoredSkills] = useState<string[]>([]);
-    const [uploadedFileName, setUploadedFileName] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cvRef = useRef<HTMLDivElement>(null);
 
-    // PERSISTENCE: Load state from localStorage on mount
     useEffect(() => {
-        const saved = localStorage.getItem("accepta_cv_maker_state");
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                if (data.targetProgram) setTargetProgram(data.targetProgram);
-                if (data.targetUniversity) setTargetUniversity(data.targetUniversity);
-                if (data.resumeData) setResumeData(data.resumeData);
-                if (data.tailoredSummary) setTailoredSummary(data.tailoredSummary);
-                if (data.educationList) setEducationList(data.educationList);
-                if (data.tailoredExperience) setTailoredExperience(data.tailoredExperience);
-                if (data.tailoredSkills) setTailoredSkills(data.tailoredSkills);
-                if (data.uploadedFileName) setUploadedFileName(data.uploadedFileName);
-            } catch (e) {
-                console.error("Failed to load CV session", e);
-            }
-        }
-    }, []);
-
-    // PERSISTENCE: Save state to localStorage on change
-    useEffect(() => {
-        const stateToSave = {
-            targetProgram,
-            targetUniversity,
-            resumeData,
-            tailoredSummary,
-            educationList,
-            tailoredExperience,
-            tailoredSkills,
-            uploadedFileName
-        };
-        localStorage.setItem("accepta_cv_maker_state", JSON.stringify(stateToSave));
-    }, [targetProgram, targetUniversity, resumeData, tailoredSummary, educationList, tailoredExperience, tailoredSkills, uploadedFileName]);
-
-    const handleReset = () => {
-        if (confirm("Are you sure you want to clear this CV session? This will reset all tailored content.")) {
-            localStorage.removeItem("accepta_cv_maker_state");
-            window.location.reload(); // Simplest way to reset all states back to initial DB fetch
-        }
-    };
-
-    useEffect(() => {
-        // Fetch base profile data on load ONLY if we don't have a tailored session already
-        const saved = localStorage.getItem("accepta_cv_maker_state");
-        if (saved) return; 
-
+        // Fetch base profile data on load
         fetch("/api/resume-data")
             .then(res => {
                 if (!res.ok && res.status !== 404) throw new Error("Failed to fetch");
@@ -134,25 +98,25 @@ export default function ResumeBuilder() {
                     console.log("Parsed AI Data:", parsedData);
 
                     if (parsedData.fullName || parsedData.email) {
-                        setResumeData((prev: any) => ({
-                            ...prev,
-                            fullName: parsedData.fullName || prev?.fullName,
-                            email: parsedData.email || prev?.email,
-                            phone: parsedData.phone || prev?.phone,
-                            address: parsedData.location || prev?.address
-                        }));
+                        setResumeData({
+                            ...resumeData,
+                            fullName: parsedData.fullName || resumeData?.fullName,
+                            email: parsedData.email || resumeData?.email,
+                            phone: parsedData.phone || resumeData?.phone,
+                            address: parsedData.location || resumeData?.address,
+                            extracurriculars: parsedData.experience || []
+                        });
                     }
 
-                    setTailoredSummary(parsedData.professionalSummary || "");
-
+                    setTailoredSummary(parsedData.professionalSummary || parsedData.summary || "");
+                    
                     if (parsedData.education && Array.isArray(parsedData.education) && parsedData.education.length > 0) {
                         setEducationList(parsedData.education);
-                    } else {
-                        console.warn("AI returned empty education array. Falling back to DB profile education.");
-                        // Keep the existing educationList (which was initialized with resumeData.educations)
+                    } else if (parsedData.educations && Array.isArray(parsedData.educations) && parsedData.educations.length > 0) {
+                        setEducationList(parsedData.educations);
                     }
 
-                    setTailoredExperience(parsedData.experience || []);
+                    setTailoredExperience(parsedData.experience || parsedData.extracurriculars || []);
                     setTailoredSkills(parsedData.skills || []);
                 } catch (e) {
                     console.error("Failed to parse JSON API response:", e, dataText);
@@ -192,7 +156,7 @@ export default function ResumeBuilder() {
         setSelectedFile(file);
     };
 
-    if (!resumeData) {
+    if (!hasHydrated || !resumeData) {
         return (
             <div className="flex-1 flex justify-center items-center h-full">
                 <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
@@ -287,7 +251,7 @@ export default function ResumeBuilder() {
                             )}
                         </Button>
 
-                        <div className="pt-4 border-t border-neutral-800 space-y-3">
+                        <div className="pt-4 border-t border-neutral-800">
                             <Button
                                 onClick={() => handleDownloadPdf()}
                                 disabled={isExporting}
@@ -302,7 +266,12 @@ export default function ResumeBuilder() {
                             </Button>
                             
                             <Button
-                                onClick={handleReset}
+                                onClick={() => {
+                                    if (confirm("Are you sure you want to clear this CV session? This will reset all tailored content.")) {
+                                        resetCVMaker();
+                                        window.location.reload();
+                                    }
+                                }}
                                 variant="ghost"
                                 size="sm"
                                 className="w-full text-neutral-500 hover:text-red-400 hover:bg-red-400/5 transition-all text-xs"
@@ -319,94 +288,94 @@ export default function ResumeBuilder() {
                 {/* The A4 Paper using native CSS Zoom */}
                 <div ref={cvRef} className="w-[800px] min-h-[1130px] bg-white shadow-2xl p-10 lg:p-12 mx-auto max-sm:[zoom:0.43] sm:[zoom:0.8] lg:[zoom:1] print:[zoom:1] text-black font-sans box-border print:p-0">
 
-                        {/* Header */}
-                        <div className="border-b-2 border-neutral-800 pb-4 lg:pb-6 mb-6">
-                            <h1 contentEditable={true} suppressContentEditableWarning={true} className="text-4xl lg:text-5xl font-bold uppercase tracking-wider text-neutral-900 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">{resumeData.fullName}</h1>
-                            <div className="flex gap-4 text-sm text-neutral-600 mt-3 font-medium">
-                                <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">{resumeData.email}</span>
-                                {resumeData.phone && <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">• {resumeData.phone}</span>}
-                                {resumeData.address && <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">• {resumeData.address}, {resumeData.city}, {resumeData.country}</span>}
+                    {/* Header */}
+                    <div className="border-b-2 border-neutral-800 pb-4 lg:pb-6 mb-6">
+                        <h1 contentEditable={true} suppressContentEditableWarning={true} className="text-4xl lg:text-5xl font-bold uppercase tracking-wider text-neutral-900 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">{resumeData.fullName}</h1>
+                        <div className="flex gap-4 text-sm text-neutral-600 mt-3 font-medium">
+                            <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">{resumeData.email}</span>
+                            {resumeData.phone && <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">• {resumeData.phone}</span>}
+                            {resumeData.address && <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">• {resumeData.address}, {resumeData.city}, {resumeData.country}</span>}
+                        </div>
+                    </div>
+
+                    {/* Summary */}
+                    {tailoredSummary && (
+                        <div className="mb-6">
+                            <h2 className="text-lg font-bold uppercase tracking-widest text-neutral-800 mb-2 border-b border-neutral-300 pb-1">Professional Summary</h2>
+                            <p contentEditable={true} suppressContentEditableWarning={true} className="text-sm text-neutral-700 leading-relaxed hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 p-1 -ml-1">{tailoredSummary}</p>
+                        </div>
+                    )}
+
+                    {/* Education */}
+                    {educationList.length > 0 && (
+                        <div className="mb-8">
+                            <h2 className="text-lg font-bold uppercase tracking-widest text-neutral-800 mb-4 border-b border-neutral-300 pb-1">Education</h2>
+                            <div className="space-y-4">
+                                {educationList.map((edu: any, i: number) => (
+                                    <div key={i}>
+                                        <div className="flex justify-between items-baseline font-bold text-neutral-900">
+                                            <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">
+                                                {edu.institutionName || edu.institution}
+                                            </span>
+                                            <span contentEditable={true} suppressContentEditableWarning={true} className="text-sm font-medium text-neutral-600 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">
+                                                {edu.date ? edu.date : edu.startDate
+                                                    ? `${new Date(edu.startDate).getFullYear()} - ${edu.gradDate ? new Date(edu.gradDate).getFullYear() : 'Present'}`
+                                                    : ''}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-baseline text-sm mt-1">
+                                            <span contentEditable={true} suppressContentEditableWarning={true} className="italic text-neutral-700 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">
+                                                {edu.degree}{edu.location ? `, ${edu.location}` : edu.city ? `, ${edu.city}` : ''}{edu.country && !edu.location ? `, ${edu.country}` : ''}
+                                            </span>
+                                            {edu.gpa && <span contentEditable={true} suppressContentEditableWarning={true} className="font-semibold text-neutral-800 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">GPA: {edu.gpa}</span>}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
+                    )}
 
-                        {/* Summary */}
-                        {tailoredSummary && (
-                            <div className="mb-6">
-                                <h2 className="text-lg font-bold uppercase tracking-widest text-neutral-800 mb-2 border-b border-neutral-300 pb-1">Professional Summary</h2>
-                                <p contentEditable={true} suppressContentEditableWarning={true} className="text-sm text-neutral-700 leading-relaxed hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 p-1 -ml-1">{tailoredSummary}</p>
-                            </div>
-                        )}
-
-                        {/* Education */}
-                        {educationList.length > 0 && (
-                            <div className="mb-8">
-                                <h2 className="text-lg font-bold uppercase tracking-widest text-neutral-800 mb-4 border-b border-neutral-300 pb-1">Education</h2>
-                                <div className="space-y-4">
-                                    {educationList.map((edu: any, i: number) => (
-                                        <div key={i}>
-                                            <div className="flex justify-between items-baseline font-bold text-neutral-900">
-                                                <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">
-                                                    {edu.institutionName || edu.institution}
-                                                </span>
-                                                <span contentEditable={true} suppressContentEditableWarning={true} className="text-sm font-medium text-neutral-600 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">
-                                                    {edu.date ? edu.date : edu.startDate
-                                                        ? `${new Date(edu.startDate).getFullYear()} - ${edu.gradDate ? new Date(edu.gradDate).getFullYear() : 'Present'}`
-                                                        : ''}
-                                                </span>
-                                            </div>
-                                            <div className="flex justify-between items-baseline text-sm mt-1">
-                                                <span contentEditable={true} suppressContentEditableWarning={true} className="italic text-neutral-700 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">
-                                                    {edu.degree}{edu.location ? `, ${edu.location}` : edu.city ? `, ${edu.city}` : ''}{edu.country && !edu.location ? `, ${edu.country}` : ''}
-                                                </span>
-                                                {edu.gpa && <span contentEditable={true} suppressContentEditableWarning={true} className="font-semibold text-neutral-800 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">GPA: {edu.gpa}</span>}
-                                            </div>
+                    {/* Extracurriculars / Experience */}
+                    {(tailoredExperience.length > 0 || resumeData.extracurriculars?.length > 0) && (
+                        <div className="mb-8">
+                            <h2 className="text-lg font-bold uppercase tracking-widest text-neutral-800 mb-4 border-b border-neutral-300 pb-1">Experience & Activities</h2>
+                            <div className="space-y-6">
+                                {(tailoredExperience.length > 0 ? tailoredExperience : resumeData.extracurriculars).map((ex: any, i: number) => (
+                                    <div key={i}>
+                                        <div className="flex justify-between items-baseline font-bold text-neutral-900">
+                                            <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">{ex.role} <span className="font-normal text-neutral-500">at</span> {ex.organization || ex.company}</span>
+                                            <span contentEditable={true} suppressContentEditableWarning={true} className="text-sm font-medium text-neutral-600 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">
+                                                {ex.startDate
+                                                    ? `${new Date(ex.startDate).getFullYear()} - ${ex.endDate ? new Date(ex.endDate).getFullYear() : 'Present'}`
+                                                    : ex.date?.toString() || ''}
+                                            </span>
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
 
-                        {/* Extracurriculars / Experience */}
-                        {(tailoredExperience.length > 0 || resumeData.extracurriculars?.length > 0) && (
-                            <div className="mb-8">
-                                <h2 className="text-lg font-bold uppercase tracking-widest text-neutral-800 mb-4 border-b border-neutral-300 pb-1">Experience & Activities</h2>
-                                <div className="space-y-6">
-                                    {(tailoredExperience.length > 0 ? tailoredExperience : resumeData.extracurriculars).map((ex: any, i: number) => (
-                                        <div key={i}>
-                                            <div className="flex justify-between items-baseline font-bold text-neutral-900">
-                                                <span contentEditable={true} suppressContentEditableWarning={true} className="hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1 -ml-1">{ex.role} <span className="font-normal text-neutral-500">at</span> {ex.organization || ex.company}</span>
-                                                <span contentEditable={true} suppressContentEditableWarning={true} className="text-sm font-medium text-neutral-600 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 px-1">
-                                                    {ex.startDate
-                                                        ? `${new Date(ex.startDate).getFullYear()} - ${ex.endDate ? new Date(ex.endDate).getFullYear() : 'Present'}`
-                                                        : ex.date?.toString() || ''}
-                                                </span>
-                                            </div>
-
-                                            {/* AI Tailored specific output rendering */}
-                                            <ul className="list-disc list-outside ml-4 mt-2 text-sm text-neutral-700 space-y-1">
-                                                {ex.bullets ? ex.bullets.map((point: string, idx: number) => (
-                                                    <li key={idx} contentEditable={true} suppressContentEditableWarning={true} className="leading-relaxed pl-1 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 p-0.5 -ml-1">{point}</li>
-                                                )) : (ex.description || '').split('\n').filter((p: string) => p.trim() !== '').map((point: string, idx: number) => (
-                                                    <li key={idx} contentEditable={true} suppressContentEditableWarning={true} className="leading-relaxed pl-1 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 p-0.5 -ml-1">{point.replace(/^[-•]\s*/, '')}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ))}
-                                </div>
+                                        {/* AI Tailored specific output rendering */}
+                                        <ul className="list-disc list-outside ml-4 mt-2 text-sm text-neutral-700 space-y-1">
+                                            {ex.bullets ? ex.bullets.map((point: string, idx: number) => (
+                                                <li key={idx} contentEditable={true} suppressContentEditableWarning={true} className="leading-relaxed pl-1 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 p-0.5 -ml-1">{point}</li>
+                                            )) : (ex.description || '').split('\n').filter((p: string) => p.trim() !== '').map((point: string, idx: number) => (
+                                                <li key={idx} contentEditable={true} suppressContentEditableWarning={true} className="leading-relaxed pl-1 hover:bg-neutral-100 transition-colors rounded outline-none focus:ring-1 focus:ring-blue-500/50 p-0.5 -ml-1">{point.replace(/^[-•]\s*/, '')}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))}
                             </div>
-                        )}
+                        </div>
+                    )}
 
-                        {/* Skills */}
-                        {tailoredSkills.length > 0 && (
-                            <div className="mb-8">
-                                <h2 className="text-lg font-bold uppercase tracking-widest text-neutral-800 mb-4 border-b border-neutral-300 pb-1">Skills</h2>
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                    {tailoredSkills.map((skill, i) => (
-                                        <span key={i} contentEditable={true} suppressContentEditableWarning={true} className="text-sm font-medium text-neutral-700 bg-neutral-100/80 px-3 py-1.5 rounded-sm border border-neutral-200 hover:bg-neutral-200 transition-colors outline-none focus:ring-1 focus:ring-blue-500/50">{skill}</span>
-                                    ))}
-                                </div>
+                    {/* Skills */}
+                    {tailoredSkills.length > 0 && (
+                        <div className="mb-8">
+                            <h2 className="text-lg font-bold uppercase tracking-widest text-neutral-800 mb-4 border-b border-neutral-300 pb-1">Skills</h2>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {tailoredSkills.map((skill, i) => (
+                                    <span key={i} contentEditable={true} suppressContentEditableWarning={true} className="text-sm font-medium text-neutral-700 bg-neutral-100/80 px-3 py-1.5 rounded-sm border border-neutral-200 hover:bg-neutral-200 transition-colors outline-none focus:ring-1 focus:ring-blue-500/50">{skill}</span>
+                                ))}
                             </div>
-                        )}
+                        </div>
+                    )}
 
                 </div>
             </div>
