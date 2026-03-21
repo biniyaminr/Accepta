@@ -103,18 +103,21 @@ function autoFillForm(profileData) {
 
         // 4. File Input Context-Aware Mapping
         if (element.type === 'file') {
-            // Build tight context to avoid false positives from huge wrappers
-            let fileContext = `${element.name || ''} ${element.id || ''} ${element.className || ''}`.toLowerCase();
-            
+            let fileContext = `${element.name || ''} ${element.id || ''} ${element.className || ''} `.toLowerCase();
+
+            // Associated label text just in case
             if (element.id) {
                 const label = document.querySelector(`label[for="${element.id}"]`);
                 if (label) fileContext += ` ${label.textContent}`.toLowerCase();
             }
-            
-            // Include immediate parent and previous sibling text
-            const parentText = element.parentElement ? element.parentElement.textContent.toLowerCase() : '';
-            const prevSiblingText = element.previousElementSibling ? element.previousElementSibling.textContent.toLowerCase() : '';
-            fileContext += ` ${parentText} ${prevSiblingText}`;
+
+            // 2. Look up the DOM tree for a structural wrapper (Table Row, List Item, or generic parent)
+            const wrapper = element.closest('tr') || element.closest('li') || (element.parentElement ? element.parentElement.parentElement : null);
+
+            if (wrapper) {
+                // Grab all visible text in that entire row/block
+                fileContext += ` ${wrapper.innerText || wrapper.textContent}`.toLowerCase();
+            }
 
             const local = profileData.localFiles || {};
 
