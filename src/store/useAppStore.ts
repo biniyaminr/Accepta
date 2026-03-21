@@ -37,9 +37,11 @@ interface OnboardingState {
     step1Draft: any;
     step2Draft: any;
     step3Draft: any;
+    vaultDocuments: any[];
     setStep1Draft: (draft: any) => void;
     setStep2Draft: (draft: any) => void;
     setStep3Draft: (draft: any) => void;
+    setVaultDocuments: (docs: any[]) => void;
     resetOnboarding: () => void;
 }
 
@@ -95,13 +97,16 @@ export const useAppStore = create<AppState>()(
             step1Draft: null,
             step2Draft: null,
             step3Draft: null,
+            vaultDocuments: [],
             setStep1Draft: (step1Draft) => set({ step1Draft }),
             setStep2Draft: (step2Draft) => set({ step2Draft }),
             setStep3Draft: (step3Draft) => set({ step3Draft }),
+            setVaultDocuments: (vaultDocuments) => set({ vaultDocuments }),
             resetOnboarding: () => set({ 
                 step1Draft: null, 
                 step2Draft: null, 
-                step3Draft: null 
+                step3Draft: null,
+                vaultDocuments: []
             }),
         }),
         {

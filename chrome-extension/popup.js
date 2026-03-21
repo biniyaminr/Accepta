@@ -55,9 +55,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         vaultSection.innerHTML = `
             <div style="font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Cloud Vault Documents</div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                ${renderDocStatus('CV', profile.cvUrl)}
-                ${renderDocStatus('Passport', profile.passportUrl)}
-                ${renderDocStatus('Transcript', profile.transcriptUrl)}
+                ${renderDocStatus('CV', profile.files?.cvUrl)}
+                ${renderDocStatus('Passport', profile.files?.passportUrl)}
+                ${renderDocStatus('Transcript', profile.files?.transcriptUrl)}
             </div>
         `;
         profileDataContainer.appendChild(vaultSection);

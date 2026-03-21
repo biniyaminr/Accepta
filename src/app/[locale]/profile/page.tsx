@@ -89,6 +89,7 @@ export default function OnboardingWizard() {
         step1Draft, setStep1Draft,
         step2Draft, setStep2Draft,
         step3Draft, setStep3Draft,
+        vaultDocuments, setVaultDocuments,
         resetOnboarding,
     } = useAppStore();
 
@@ -99,15 +100,18 @@ export default function OnboardingWizard() {
     const [currentStep, setCurrentStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const [uploadedDocs, setUploadedDocs] = useState<{ type: string, url: string, name: string }[]>([]);
 
     // Strict upload state for Cloud Vault (Step 4)
     const [passportUrl, setPassportUrl] = useState<string | null>(null);
     const [passportName, setPassportName] = useState<string | null>(null);
     const [cvUrl, setCvUrl] = useState<string | null>(null);
     const [cvName, setCvName] = useState<string | null>(null);
+    const [transcriptUrl, setTranscriptUrl] = useState<string | null>(null);
+    const [transcriptName, setTranscriptName] = useState<string | null>(null);
+    
     const [isPassportUploading, setIsPassportUploading] = useState(false);
     const [isCvUploading, setIsCvUploading] = useState(false);
+    const [isTranscriptUploading, setIsTranscriptUploading] = useState(false);
 
     const form1 = useForm<z.infer<typeof step1Schema>>({
         resolver: zodResolver(step1Schema),
@@ -153,12 +157,14 @@ export default function OnboardingWizard() {
                 if (res4.ok) {
                     const data = await res4.json();
                     const docs: { type: string, url: string, name: string }[] = data.documents || [];
-                    setUploadedDocs(docs);
+                    setVaultDocuments(docs);
                     // Restore strict URL state from previously saved uploads
                     const savedPassport = docs.find(d => d.type === 'PASSPORT');
                     const savedCv = docs.find(d => d.type === 'RESUME');
+                    const savedTranscript = docs.find(d => d.type === 'TRANSCRIPT');
                     if (savedPassport) { setPassportUrl(savedPassport.url); setPassportName(savedPassport.name); }
                     if (savedCv) { setCvUrl(savedCv.url); setCvName(savedCv.name); }
+                    if (savedTranscript) { setTranscriptUrl(savedTranscript.url); setTranscriptName(savedTranscript.name); }
                 }
             } catch (err) {
                 console.error("Load error:", err);
@@ -167,7 +173,16 @@ export default function OnboardingWizard() {
             }
         }
         loadStepData();
-    }, [isUserLoaded, form1, form2, form3]);
+    }, [isUserLoaded, form1, form2, form3, setVaultDocuments]);
+
+    // Keep global vaultDocuments in sync with local UI state for Step 4
+    useEffect(() => {
+        const docs = [];
+        if (passportUrl) docs.push({ type: 'PASSPORT', url: passportUrl, name: passportName });
+        if (cvUrl) docs.push({ type: 'RESUME', url: cvUrl, name: cvName });
+        if (transcriptUrl) docs.push({ type: 'TRANSCRIPT', url: transcriptUrl, name: transcriptName });
+        setVaultDocuments(docs);
+    }, [passportUrl, cvUrl, transcriptUrl, passportName, cvName, transcriptName, setVaultDocuments]);
 
     // --- DRAFT PERSISTENCE ---
     useEffect(() => {
@@ -205,15 +220,16 @@ export default function OnboardingWizard() {
             isValid = await form3.trigger();
             data = form3.getValues();
         } else if (currentStep === 4) {
-             if (!passportUrl || !cvUrl) {
-                 toast.error("Missing Documents", { description: "Please upload both Passport/ID and CV to your vault." });
+             if (!passportUrl || !cvUrl || !transcriptUrl) {
+                 toast.error("Missing Documents", { description: "Please upload Passport/ID, CV, and Transcript to your vault." });
                  return;
              }
              isValid = true;
              // Build docs from strict URL state, not stale array
              data = { documents: [
-                 { type: 'PASSPORT', fileUrl: passportUrl, name: passportName || 'passport' },
-                 { type: 'RESUME',   fileUrl: cvUrl,       name: cvName   || 'cv'        },
+                 { type: 'PASSPORT', url: passportUrl, name: passportName || 'passport' },
+                 { type: 'RESUME',   url: cvUrl,       name: cvName   || 'cv'        },
+                 ...(transcriptUrl ? [{ type: 'TRANSCRIPT', url: transcriptUrl, name: transcriptName || 'transcript' }] : [])
              ]};
         }
 
@@ -476,30 +492,26 @@ export default function OnboardingWizard() {
 
                     {currentStep === 4 && (
                         <div className="space-y-8">
-                            <div className="grid md:grid-cols-2 gap-8">
+                            <div className="grid md:grid-cols-3 gap-6">
                                 {/* --- Passport / ID Upload --- */}
-                                <div className={`space-y-4 p-6 rounded-2xl border-2 border-dashed transition-colors ${
+                                <div className={`space-y-4 p-5 rounded-2xl border-2 border-dashed transition-colors ${
                                     passportUrl ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-violet-500/30 bg-violet-500/5'
                                 } text-center`}>
                                     {passportUrl ? (
-                                        <CheckCircle2Icon className="w-10 h-10 text-emerald-400 mx-auto" />
+                                        <CheckCircle2Icon className="w-8 h-8 text-emerald-400 mx-auto" />
                                     ) : isPassportUploading ? (
-                                        <Loader2 className="w-10 h-10 text-violet-400 mx-auto animate-spin" />
+                                        <Loader2 className="w-8 h-8 text-violet-400 mx-auto animate-spin" />
                                     ) : (
-                                        <CloudIcon className="w-10 h-10 text-violet-400 mx-auto" />
+                                        <CloudIcon className="w-8 h-8 text-violet-400 mx-auto" />
                                     )}
-                                    <div>
+                                    <div className="text-sm">
                                         <h3 className="font-bold text-neutral-200">{t("passport")}</h3>
-                                        <p className="text-xs text-neutral-500">JPG, PNG, or PDF. Max 8MB.</p>
                                     </div>
                                     {passportUrl ? (
                                         <div className="space-y-2">
-                                            <div className="flex items-center gap-2 text-emerald-400 text-sm font-semibold justify-center">
-                                                <CheckCircle2Icon className="w-4 h-4" /> Vaulted Successfully
-                                            </div>
-                                            <p className="text-xs text-neutral-600 truncate">{passportName}</p>
+                                            <p className="text-[10px] text-neutral-600 truncate px-2">{passportName}</p>
                                             <button
-                                                className="text-xs text-violet-400 hover:underline"
+                                                className="text-[10px] text-violet-400 hover:underline"
                                                 onClick={() => { setPassportUrl(null); setPassportName(null); }}
                                             >Replace</button>
                                         </div>
@@ -517,36 +529,32 @@ export default function OnboardingWizard() {
                                             }}
                                             onUploadError={() => {
                                                 setIsPassportUploading(false);
-                                                toast.error("Upload failed. Please check your connection and try again.");
+                                                toast.error("Upload failed.");
                                             }}
-                                            className="ut-button:bg-violet-600 ut-label:text-violet-400"
+                                            className="ut-button:bg-violet-600 ut-button:scale-75 ut-label:hidden"
                                         />
                                     )}
                                 </div>
 
                                 {/* --- CV / Resume Upload --- */}
-                                <div className={`space-y-4 p-6 rounded-2xl border-2 border-dashed transition-colors ${
-                                    cvUrl ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-orange-500/30 bg-orange-500/5'
+                                <div className={`space-y-4 p-5 rounded-2xl border-2 border-dashed transition-colors ${
+                                    cvUrl ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-indigo-500/30 bg-indigo-500/5'
                                 } text-center`}>
                                     {cvUrl ? (
-                                        <CheckCircle2Icon className="w-10 h-10 text-emerald-400 mx-auto" />
+                                        <CheckCircle2Icon className="w-8 h-8 text-emerald-400 mx-auto" />
                                     ) : isCvUploading ? (
-                                        <Loader2 className="w-10 h-10 text-orange-400 mx-auto animate-spin" />
+                                        <Loader2 className="w-8 h-8 text-indigo-400 mx-auto animate-spin" />
                                     ) : (
-                                        <CloudIcon className="w-10 h-10 text-orange-400 mx-auto" />
+                                        <CloudIcon className="w-8 h-8 text-indigo-400 mx-auto" />
                                     )}
-                                    <div>
+                                    <div className="text-sm">
                                         <h3 className="font-bold text-neutral-200">{t("cv")}</h3>
-                                        <p className="text-xs text-neutral-500">PDF Format only. Max 8MB.</p>
                                     </div>
                                     {cvUrl ? (
                                         <div className="space-y-2">
-                                            <div className="flex items-center gap-2 text-emerald-400 text-sm font-semibold justify-center">
-                                                <CheckCircle2Icon className="w-4 h-4" /> Vaulted Successfully
-                                            </div>
-                                            <p className="text-xs text-neutral-600 truncate">{cvName}</p>
+                                            <p className="text-[10px] text-neutral-600 truncate px-2">{cvName}</p>
                                             <button
-                                                className="text-xs text-orange-400 hover:underline"
+                                                className="text-[10px] text-indigo-400 hover:underline"
                                                 onClick={() => { setCvUrl(null); setCvName(null); }}
                                             >Replace</button>
                                         </div>
@@ -559,23 +567,66 @@ export default function OnboardingWizard() {
                                                 if (res && res[0]?.ufsUrl) {
                                                     setCvUrl(res[0].ufsUrl);
                                                     setCvName(res[0].name);
-                                                    toast.success("Document securely vaulted.", { description: "CV uploaded." });
+                                                    toast.success("CV securely vaulted.");
                                                 }
                                             }}
                                             onUploadError={() => {
                                                 setIsCvUploading(false);
-                                                toast.error("Upload failed. Please check your connection and try again.");
+                                                toast.error("Upload failed.");
                                             }}
-                                            className="ut-button:bg-orange-600 ut-label:text-orange-400"
+                                            className="ut-button:bg-indigo-600 ut-button:scale-75 ut-label:hidden"
+                                        />
+                                    )}
+                                </div>
+
+                                {/* --- Transcript Upload --- */}
+                                <div className={`space-y-4 p-5 rounded-2xl border-2 border-dashed transition-colors ${
+                                    transcriptUrl ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-orange-500/30 bg-orange-500/5'
+                                } text-center`}>
+                                    {transcriptUrl ? (
+                                        <CheckCircle2Icon className="w-8 h-8 text-emerald-400 mx-auto" />
+                                    ) : isTranscriptUploading ? (
+                                        <Loader2 className="w-8 h-8 text-orange-400 mx-auto animate-spin" />
+                                    ) : (
+                                        <CloudIcon className="w-8 h-8 text-orange-400 mx-auto" />
+                                    )}
+                                    <div className="text-sm">
+                                        <h3 className="font-bold text-neutral-200">Transcript</h3>
+                                    </div>
+                                    {transcriptUrl ? (
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] text-neutral-600 truncate px-2">{transcriptName}</p>
+                                            <button
+                                                className="text-[10px] text-orange-400 hover:underline"
+                                                onClick={() => { setTranscriptUrl(null); setTranscriptName(null); }}
+                                            >Replace</button>
+                                        </div>
+                                    ) : (
+                                        <UploadButton
+                                            endpoint="documentUploader"
+                                            onUploadBegin={() => setIsTranscriptUploading(true)}
+                                            onClientUploadComplete={(res: any[]) => {
+                                                setIsTranscriptUploading(false);
+                                                if (res && res[0]?.ufsUrl) {
+                                                    setTranscriptUrl(res[0].ufsUrl);
+                                                    setTranscriptName(res[0].name);
+                                                    toast.success("Transcript securely vaulted.");
+                                                }
+                                            }}
+                                            onUploadError={() => {
+                                                setIsTranscriptUploading(false);
+                                                toast.error("Upload failed.");
+                                            }}
+                                            className="ut-button:bg-orange-600 ut-button:scale-75 ut-label:hidden"
                                         />
                                     )}
                                 </div>
                             </div>
 
                             {/* Progress hint */}
-                            {(!passportUrl || !cvUrl) && (
+                            {(!passportUrl || !cvUrl || !transcriptUrl) && (
                                 <p className="text-center text-xs text-neutral-500">
-                                    Both documents are required to proceed. Your files are encrypted and stored securely.
+                                    All documents are required to proceed. Your files are encrypted and stored securely.
                                 </p>
                             )}
                         </div>
@@ -626,13 +677,23 @@ export default function OnboardingWizard() {
                                         </div>
                                     )}
                                     {cvName ? (
-                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-xs text-orange-300">
+                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs text-indigo-300">
                                             <CheckCircle2Icon className="w-3 h-3" />
                                             CV: {cvName}
                                         </div>
                                     ) : (
                                         <div className="px-3 py-1.5 rounded-full bg-neutral-800/60 text-xs text-neutral-500 border border-neutral-700 border-dashed">
                                             No CV uploaded
+                                        </div>
+                                    )}
+                                    {transcriptName ? (
+                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-xs text-orange-300">
+                                            <CheckCircle2Icon className="w-3 h-3" />
+                                            TRANSCRIPT: {transcriptName}
+                                        </div>
+                                    ) : (
+                                        <div className="px-3 py-1.5 rounded-full bg-neutral-800/60 text-xs text-neutral-500 border border-neutral-700 border-dashed">
+                                            No Transcript uploaded
                                         </div>
                                     )}
                                 </div>

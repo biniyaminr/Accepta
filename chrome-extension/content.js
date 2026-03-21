@@ -107,12 +107,12 @@ function autoFillForm(profileData) {
             const isResume = context.match(/resume|cv|curriculum|vitae/i);
             const isTranscript = context.match(/transcript|grades|mark\s*sheet|academic\s*record|education\s*doc/i);
 
-            if (isPassport && profileData.passportUrl) {
-                injectFile(element, profileData.passportUrl, 'passport.pdf');
-            } else if (isResume && profileData.cvUrl) {
-                injectFile(element, profileData.cvUrl, 'resume.pdf');
-            } else if (isTranscript && profileData.transcriptUrl) {
-                injectFile(element, profileData.transcriptUrl, 'transcript.pdf');
+            if (isPassport && profileData.files?.passportUrl) {
+                injectFile(element, profileData.files.passportUrl, 'passport.pdf');
+            } else if (isResume && profileData.files?.cvUrl) {
+                injectFile(element, profileData.files.cvUrl, 'resume.pdf');
+            } else if (isTranscript && profileData.files?.transcriptUrl) {
+                injectFile(element, profileData.files.transcriptUrl, 'transcript.pdf');
             }
         }
     });

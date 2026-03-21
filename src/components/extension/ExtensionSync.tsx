@@ -13,28 +13,14 @@ export function ExtensionSync() {
         step1Draft,
         step2Draft,
         step3Draft,
+        vaultDocuments
     } = useAppStore();
     
     useEffect(() => {
         if (!isLoaded || !user) return;
 
         const syncData = async () => {
-            // Fetch Vault URLs for the extension
-            let vaultUrls = { passportUrl: null, cvUrl: null, transcriptUrl: null };
-            try {
-                const res = await fetch("/api/onboarding/step?step=4");
-                if (res.ok) {
-                    const data = await res.json();
-                    const docs = data.documents || [];
-                    vaultUrls.passportUrl = docs.find((d: any) => d.type === 'PASSPORT')?.url;
-                    vaultUrls.cvUrl = docs.find((d: any) => d.type === 'RESUME')?.url;
-                    vaultUrls.transcriptUrl = docs.find((d: any) => d.type === 'TRANSCRIPT')?.url;
-                }
-            } catch (err) {
-                console.error("Sync: Failed to fetch vault URLs", err);
-            }
-
-            // Prepare the payload merging Clerk info with drafts and URLs
+            // Prepare the payload merging Clerk info with drafts and vault documents
             const payload = {
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -44,7 +30,14 @@ export function ExtensionSync() {
                 nationality: step1Draft?.citizenship,
                 gender: step1Draft?.gender,
                 phone: step1Draft?.phone,
-                ...vaultUrls,
+                
+                // Use nested files structure as requested
+                files: {
+                    passportUrl: vaultDocuments.find(d => d.type === 'PASSPORT')?.url || null,
+                    cvUrl: vaultDocuments.find(d => d.type === 'RESUME')?.url || null,
+                    transcriptUrl: vaultDocuments.find(d => d.type === 'TRANSCRIPT')?.url || null
+                },
+                
                 educations: step2Draft ? [step2Draft] : [],
                 experiences: step3Draft?.experiences || []
             };
@@ -58,7 +51,7 @@ export function ExtensionSync() {
         };
 
         syncData();
-    }, [isLoaded, user, step1Draft, step2Draft, step3Draft]);
+    }, [isLoaded, user, step1Draft, step2Draft, step3Draft, vaultDocuments]);
 
     return null; // Invisible component
 }
