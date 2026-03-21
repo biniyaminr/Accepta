@@ -156,15 +156,15 @@ export default function OnboardingWizard() {
                 const res4 = await fetch("/api/onboarding/step?step=4");
                 if (res4.ok) {
                     const data = await res4.json();
-                    const docs: { type: string, url: string, name: string }[] = data.documents || [];
+                    const docs: { type: string, fileUrl: string, name: string }[] = data.documents || [];
                     setVaultDocuments(docs);
                     // Restore strict URL state from previously saved uploads
                     const savedPassport = docs.find(d => d.type === 'PASSPORT');
                     const savedCv = docs.find(d => d.type === 'RESUME');
                     const savedTranscript = docs.find(d => d.type === 'TRANSCRIPT');
-                    if (savedPassport) { setPassportUrl(savedPassport.url); setPassportName(savedPassport.name); }
-                    if (savedCv) { setCvUrl(savedCv.url); setCvName(savedCv.name); }
-                    if (savedTranscript) { setTranscriptUrl(savedTranscript.url); setTranscriptName(savedTranscript.name); }
+                    if (savedPassport) { setPassportUrl(savedPassport.fileUrl); setPassportName(savedPassport.name); }
+                    if (savedCv) { setCvUrl(savedCv.fileUrl); setCvName(savedCv.name); }
+                    if (savedTranscript) { setTranscriptUrl(savedTranscript.fileUrl); setTranscriptName(savedTranscript.name); }
                 }
             } catch (err) {
                 console.error("Load error:", err);

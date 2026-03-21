@@ -18,6 +18,12 @@ export function ExtensionSync() {
     
     useEffect(() => {
         if (!isLoaded || !user) return;
+        
+        // Guard: Don't sync if documents aren't ready yet or empty
+        if (!vaultDocuments || vaultDocuments.length === 0) {
+            console.log("🚀 Accepta: Sync deferred - Vault is empty or loading...");
+            return;
+        }
 
         const syncData = async () => {
             // Prepare the payload merging Clerk info with drafts and vault documents
