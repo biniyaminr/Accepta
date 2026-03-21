@@ -118,25 +118,47 @@ function autoFillForm(profileData) {
 }
 
 /**
- * Aggressive File Injection using DataTransfer
+ * Refactored File Injection: Fetches through Background (Proxy) to bypass CORS
  */
 async function injectFile(inputElement, url, filename) {
     try {
-        console.log(`📂 Accepta: Attempting to inject file from ${url}`);
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const file = new File([blob], filename, { type: blob.type });
+        console.log(`📂 Accepta: Requesting background fetch for ${filename}`);
+        
+        // Request background script to fetch the file (bypasses CORS)
+        chrome.runtime.sendMessage({ type: 'FETCH_FILE', url }, async (response) => {
+            if (!response || !response.success) {
+                console.error(`❌ Accepta: Background fetch failed for ${filename}`, response?.error);
+                return;
+            }
 
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        inputElement.files = dataTransfer.files;
+            // Rebuild blob from DataURL/Base64
+            const res = await fetch(response.dataUrl);
+            const blob = await res.blob();
+            const file = new File([blob], filename, { type: blob.type });
 
-        // Trigger events for React/Frameworks
-        inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-        inputElement.style.border = '2px solid #8b5cf6'; // Violet success
-        console.log(`✅ Accepta: Successfully injected ${filename}`);
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            // FRAMEWORK OVERRIDE: React/Angular often block standard .files assignment
+            try {
+                const nativeValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+                if (nativeValueSetter) {
+                    nativeValueSetter.call(inputElement, ''); // Clear it first
+                }
+            } catch (e) { console.warn("Native setter override failed", e); }
+
+            // Inject file
+            inputElement.files = dataTransfer.files;
+
+            // Trigger events for React/Frameworks
+            inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+            inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+            
+            inputElement.style.border = '2px solid #8b5cf6'; // Violet success
+            console.log(`✅ Accepta: Successfully injected ${filename} via Proxy`);
+        });
     } catch (err) {
-        console.error(`❌ Accepta: File injection failed for ${filename}`, err);
+        console.error(`❌ Accepta: File sync failed for ${filename}`, err);
     }
 }
 
