@@ -104,12 +104,15 @@ function autoFillForm(profileData) {
         // 4. File Input Injection (Aggressive)
         if (element.type === 'file') {
             const isPassport = context.match(/passport|id\s*card|identity/i);
-            const isResume = context.match(/resume|cv|curriculum/i);
+            const isResume = context.match(/resume|cv|curriculum|vitae/i);
+            const isTranscript = context.match(/transcript|grades|mark\s*sheet|academic\s*record|education\s*doc/i);
 
             if (isPassport && profileData.passportUrl) {
                 injectFile(element, profileData.passportUrl, 'passport.pdf');
             } else if (isResume && profileData.cvUrl) {
                 injectFile(element, profileData.cvUrl, 'resume.pdf');
+            } else if (isTranscript && profileData.transcriptUrl) {
+                injectFile(element, profileData.transcriptUrl, 'transcript.pdf');
             }
         }
     });

@@ -20,7 +20,7 @@ export function ExtensionSync() {
 
         const syncData = async () => {
             // Fetch Vault URLs for the extension
-            let vaultUrls = { passportUrl: null, cvUrl: null };
+            let vaultUrls = { passportUrl: null, cvUrl: null, transcriptUrl: null };
             try {
                 const res = await fetch("/api/onboarding/step?step=4");
                 if (res.ok) {
@@ -28,6 +28,7 @@ export function ExtensionSync() {
                     const docs = data.documents || [];
                     vaultUrls.passportUrl = docs.find((d: any) => d.type === 'PASSPORT')?.url;
                     vaultUrls.cvUrl = docs.find((d: any) => d.type === 'RESUME')?.url;
+                    vaultUrls.transcriptUrl = docs.find((d: any) => d.type === 'TRANSCRIPT')?.url;
                 }
             } catch (err) {
                 console.error("Sync: Failed to fetch vault URLs", err);

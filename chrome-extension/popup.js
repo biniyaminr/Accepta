@@ -47,6 +47,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
+        // 2. Add Cloud Vault Section
+        const vaultSection = document.createElement('div');
+        vaultSection.style.marginTop = '20px';
+        vaultSection.style.borderTop = '1px solid var(--border-color)';
+        vaultSection.style.paddingTop = '12px';
+        vaultSection.innerHTML = `
+            <div style="font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Cloud Vault Documents</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${renderDocStatus('CV', profile.cvUrl)}
+                ${renderDocStatus('Passport', profile.passportUrl)}
+                ${renderDocStatus('Transcript', profile.transcriptUrl)}
+            </div>
+        `;
+        profileDataContainer.appendChild(vaultSection);
+
         // Attach copy listeners
         document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -83,3 +98,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 });
+
+/**
+ * Helper to render document status rows in the popup
+ */
+function renderDocStatus(label, url) {
+    const isReady = !!url;
+    return `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+            <span style="font-size: 12px; color: var(--text-primary);">${label}</span>
+            <span style="font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 99px; 
+                ${isReady ? 'background: #064e3b; color: #34d399;' : 'background: #450a0a; color: #f87171;'}">
+                ${isReady ? '🟢 Ready' : '🔴 Missing'}
+            </span>
+        </div>
+    `;
+}
