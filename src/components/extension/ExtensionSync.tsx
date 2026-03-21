@@ -12,21 +12,15 @@ export function ExtensionSync() {
     const {
         step1Draft,
         step2Draft,
-        step3Draft,
-        vaultDocuments
+        step3Draft
     } = useAppStore();
     
     useEffect(() => {
         if (!isLoaded || !user) return;
-        
-        // Guard: Don't sync if documents aren't ready yet or empty
-        if (!vaultDocuments || vaultDocuments.length === 0) {
-            console.log("🚀 Accepta: Sync deferred - Vault is empty or loading...");
-            return;
-        }
 
         const syncData = async () => {
-            // Prepare the payload merging Clerk info with drafts and vault documents
+            // Prepare the payload merging Clerk info with drafts
+            // Documents are now handled locally in the extension popup
             const payload = {
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -37,13 +31,6 @@ export function ExtensionSync() {
                 gender: step1Draft?.gender,
                 phone: step1Draft?.phone,
                 
-                // Use nested files structure as requested
-                files: {
-                    passportUrl: vaultDocuments.find(d => d.type === 'PASSPORT')?.fileUrl || null,
-                    cvUrl: vaultDocuments.find(d => d.type === 'RESUME')?.fileUrl || null,
-                    transcriptUrl: vaultDocuments.find(d => d.type === 'TRANSCRIPT')?.fileUrl || null
-                },
-                
                 educations: step2Draft ? [step2Draft] : [],
                 experiences: step3Draft?.experiences || []
             };
@@ -53,11 +40,11 @@ export function ExtensionSync() {
                 payload
             }, '*');
             
-            console.log('🚀 Accepta: Syncing enhanced vault data...', payload);
+            console.log('🚀 Accepta: Syncing profile data...', payload);
         };
 
         syncData();
-    }, [isLoaded, user, step1Draft, step2Draft, step3Draft, vaultDocuments]);
+    }, [isLoaded, user, step1Draft, step2Draft, step3Draft]);
 
     return null; // Invisible component
 }

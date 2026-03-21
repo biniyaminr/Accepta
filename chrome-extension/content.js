@@ -101,18 +101,20 @@ function autoFillForm(profileData) {
             forceFill(profileData.educations[0].gpa);
         }
 
-        // 4. File Input Injection (Aggressive)
+        // 4. File Input Injection (Direct Base64)
         if (element.type === 'file') {
             const isPassport = context.match(/passport|id\s*card|identity/i);
             const isResume = context.match(/resume|cv|curriculum|vitae/i);
             const isTranscript = context.match(/transcript|grades|mark\s*sheet|academic\s*record|education\s*doc/i);
 
-            if (isPassport && profileData.files?.passportUrl) {
-                injectFile(element, profileData.files.passportUrl, 'passport.pdf');
-            } else if (isResume && profileData.files?.cvUrl) {
-                injectFile(element, profileData.files.cvUrl, 'resume.pdf');
-            } else if (isTranscript && profileData.files?.transcriptUrl) {
-                injectFile(element, profileData.files.transcriptUrl, 'transcript.pdf');
+            const local = profileData.localFiles || {};
+
+            if (isPassport && local.passportFile) {
+                injectFile(element, local.passportFile.data, local.passportFile.name);
+            } else if (isResume && local.cvFile) {
+                injectFile(element, local.cvFile.data, local.cvFile.name);
+            } else if (isTranscript && local.transcriptFile) {
+                injectFile(element, local.transcriptFile.data, local.transcriptFile.name);
             }
         }
     });
@@ -121,45 +123,56 @@ function autoFillForm(profileData) {
 }
 
 /**
- * Refactored File Injection: Fetches through Background (Proxy) to bypass CORS
+ * Enhanced File Injection: Supports direct Base64 OR Proxy URL Fetch
  */
-async function injectFile(inputElement, url, filename) {
+async function injectFile(inputElement, dataOrUrl, filename) {
     try {
-        console.log(`📂 Accepta: Requesting background fetch for ${filename}`);
+        let file;
         
-        // Request background script to fetch the file (bypasses CORS)
-        chrome.runtime.sendMessage({ type: 'FETCH_FILE', url }, async (response) => {
+        // Check if dataOrUrl is a Base64 string (Direct Local Upload)
+        if (dataOrUrl.startsWith('data:')) {
+            console.log(`📂 Accepta: Injecting local Base64 file: ${filename}`);
+            const res = await fetch(dataOrUrl);
+            const blob = await res.blob();
+            file = new File([blob], filename, { type: blob.type });
+        } else {
+            console.log(`📂 Accepta: Requesting background proxy fetch for ${filename}`);
+            // Fallback to background fetch for sync'd URLs
+            const response = await new Promise(resolve => {
+                chrome.runtime.sendMessage({ type: 'FETCH_FILE', url: dataOrUrl }, resolve);
+            });
+
             if (!response || !response.success) {
-                console.error(`❌ Accepta: Background fetch failed for ${filename}`, response?.error);
+                console.error(`❌ Accepta: Proxy fetch failed for ${filename}`, response?.error);
                 return;
             }
-
-            // Rebuild blob from DataURL/Base64
             const res = await fetch(response.dataUrl);
             const blob = await res.blob();
-            const file = new File([blob], filename, { type: blob.type });
+            file = new File([blob], filename, { type: blob.type });
+        }
 
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
+        if (!file) return;
 
-            // FRAMEWORK OVERRIDE: React/Angular often block standard .files assignment
-            try {
-                const nativeValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
-                if (nativeValueSetter) {
-                    nativeValueSetter.call(inputElement, ''); // Clear it first
-                }
-            } catch (e) { console.warn("Native setter override failed", e); }
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
 
-            // Inject file
-            inputElement.files = dataTransfer.files;
+        // FRAMEWORK OVERRIDE: React/Angular often block standard .files assignment
+        try {
+            const nativeValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+            if (nativeValueSetter) {
+                nativeValueSetter.call(inputElement, ''); // Clear it first
+            }
+        } catch (e) { console.warn("Native setter override failed", e); }
 
-            // Trigger events for React/Frameworks
-            inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-            inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-            
-            inputElement.style.border = '2px solid #8b5cf6'; // Violet success
-            console.log(`✅ Accepta: Successfully injected ${filename} via Proxy`);
-        });
+        // Inject file
+        inputElement.files = dataTransfer.files;
+
+        // Trigger events for React/Frameworks
+        inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+        inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        inputElement.style.border = '2px solid #8b5cf6'; // Violet success
+        console.log(`✅ Accepta: Successfully injected ${filename}`);
     } catch (err) {
         console.error(`❌ Accepta: File sync failed for ${filename}`, err);
     }
@@ -168,9 +181,15 @@ async function injectFile(inputElement, url, filename) {
 // Listen for messages from the popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "fill_form") {
-        console.log("Accepta: Fill command received", request.profileData);
-        const count = autoFillForm(request.profileData);
-        sendResponse({ success: true, fieldsFilled: count });
+        console.log("Accepta: Fill command received. Fetching local files...");
+        
+        chrome.storage.local.get(['cvFile', 'passportFile', 'transcriptFile'], (localFiles) => {
+            const enhancedProfile = { ...request.profileData, localFiles };
+            const count = autoFillForm(enhancedProfile);
+            sendResponse({ success: true, fieldsFilled: count });
+        });
+        
+        return true; // Keep channel open for async response
     }
 });
 
