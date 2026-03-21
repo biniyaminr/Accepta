@@ -110,11 +110,11 @@ function autoFillForm(profileData) {
             const local = profileData.localFiles || {};
 
             if (isPassport && local.passportFile) {
-                injectFile(element, local.passportFile.data, local.passportFile.name);
+                injectFileIntoInput(element, local.passportFile);
             } else if (isResume && local.cvFile) {
-                injectFile(element, local.cvFile.data, local.cvFile.name);
+                injectFileIntoInput(element, local.cvFile);
             } else if (isTranscript && local.transcriptFile) {
-                injectFile(element, local.transcriptFile.data, local.transcriptFile.name);
+                injectFileIntoInput(element, local.transcriptFile);
             }
         }
     });
@@ -123,58 +123,49 @@ function autoFillForm(profileData) {
 }
 
 /**
- * Enhanced File Injection: Supports direct Base64 OR Proxy URL Fetch
+ * Bulletproof Base64 to File Decoder
  */
-async function injectFile(inputElement, dataOrUrl, filename) {
-    try {
-        let file;
-        
-        // Check if dataOrUrl is a Base64 string (Direct Local Upload)
-        if (dataOrUrl.startsWith('data:')) {
-            console.log(`📂 Accepta: Injecting local Base64 file: ${filename}`);
-            const res = await fetch(dataOrUrl);
-            const blob = await res.blob();
-            file = new File([blob], filename, { type: blob.type });
-        } else {
-            console.log(`📂 Accepta: Requesting background proxy fetch for ${filename}`);
-            // Fallback to background fetch for sync'd URLs
-            const response = await new Promise(resolve => {
-                chrome.runtime.sendMessage({ type: 'FETCH_FILE', url: dataOrUrl }, resolve);
-            });
+function base64ToFile(base64String, filename, mimeType = 'application/pdf') {
+    const arr = base64String.split(',');
+    const bstr = atob(arr.length > 1 ? arr[1] : arr[0]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while(n--) { u8arr[n] = bstr.charCodeAt(n); }
+    return new File([u8arr], filename, { type: mimeType });
+}
 
-            if (!response || !response.success) {
-                console.error(`❌ Accepta: Proxy fetch failed for ${filename}`, response?.error);
-                return;
-            }
-            const res = await fetch(response.dataUrl);
-            const blob = await res.blob();
-            file = new File([blob], filename, { type: blob.type });
+/**
+ * Enhanced File Injector: Bypasses React/Angular/Vue event suppression
+ */
+function injectFileIntoInput(inputElement, fileDataObj) {
+    try {
+        if (!fileDataObj || !fileDataObj.data) {
+            console.warn(`⚠️ Accepta: No local file data found for ${inputElement.id}`);
+            return;
         }
 
-        if (!file) return;
-
+        const file = base64ToFile(fileDataObj.data, fileDataObj.name);
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
 
-        // FRAMEWORK OVERRIDE: React/Angular often block standard .files assignment
-        try {
-            const nativeValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
-            if (nativeValueSetter) {
-                nativeValueSetter.call(inputElement, ''); // Clear it first
-            }
-        } catch (e) { console.warn("Native setter override failed", e); }
-
-        // Inject file
+        // 1. Assign the file
         inputElement.files = dataTransfer.files;
 
-        // Trigger events for React/Frameworks
+        // 2. The React/Vue Bypass (Value Tracker)
+        const tracker = inputElement._valueTracker;
+        if (tracker) { 
+            tracker.setValue(""); 
+        }
+
+        // 3. Force the events to bubble up so the website recognizes it
         inputElement.dispatchEvent(new Event('input', { bubbles: true }));
         inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-        
+
+        // Visual Feedback
         inputElement.style.border = '2px solid #8b5cf6'; // Violet success
-        console.log(`✅ Accepta: Successfully injected ${filename}`);
-    } catch (err) {
-        console.error(`❌ Accepta: File sync failed for ${filename}`, err);
+        console.log(`✅ Accepta: Injected ${fileDataObj.name} into ${inputElement.id || 'file input'}`);
+    } catch (error) {
+        console.error("❌ Accepta: Injection failed:", error);
     }
 }
 
@@ -185,11 +176,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         
         chrome.storage.local.get(['cvFile', 'passportFile', 'transcriptFile'], (localFiles) => {
             const enhancedProfile = { ...request.profileData, localFiles };
-            const count = autoFillForm(enhancedProfile);
-            sendResponse({ success: true, fieldsFilled: count });
+            autoFillForm(enhancedProfile);
+            sendResponse({ success: true });
         });
         
-        return true; // Keep channel open for async response
+        return true; 
     }
 });
 
