@@ -12,27 +12,26 @@ const FIELD_PATTERNS = {
     gpa: /gpa|grade.*point|cgpa|marks|percentage/i,
     gender: /gender|sex/i,
 };
-function getExpandedContext(element) {
-    let current = element;
-    let text = (`${element.id || ''} ${element.name || ''}`).toLowerCase();
+function findFileInputForKeyword(keyword) {
+    const fileInputs = Array.from(document.querySelectorAll('input[type="file"]'));
+    const allElements = Array.from(document.body.querySelectorAll('*'));
 
-    // Step up the DOM tree up to 5 levels to find the label
-    for (let i = 0; i < 5; i++) {
-        if (current.parentElement) {
-            current = current.parentElement;
-            let parentText = (current.innerText || current.textContent || "").toLowerCase();
+    // 1. Find all elements containing the keyword
+    const matches = allElements.filter(el => 
+        el.textContent && el.textContent.toLowerCase().includes(keyword)
+    );
 
-            // Clean out the generic button text so it doesn't trick us
-            parentText = parentText.replace(/choose file|no file chosen|browse/g, "").trim();
+    if (matches.length === 0) return null;
 
-            // If we captured real descriptive words, add them and stop
-            if (parentText.length > 5) {
-                text += " " + parentText;
-                break; 
-            }
-        }
-    }
-    return text;
+    // 2. Sort by text length to isolate the exact label (avoids grabbing the whole <body> tag)
+    matches.sort((a, b) => a.textContent.length - b.textContent.length);
+    const bestLabel = matches[0];
+
+    // 3. Find the file input that appears immediately after this label in the HTML
+    const labelIndex = allElements.indexOf(bestLabel);
+    const targetInput = fileInputs.find(input => allElements.indexOf(input) > labelIndex);
+
+    return targetInput;
 }
 
 function autoFillForm(profileData) {
@@ -123,21 +122,8 @@ function autoFillForm(profileData) {
             forceFill(profileData.educations[0].gpa);
         }
 
-        // 4. File Input Context-Aware Mapping (Expanding Bubble)
-        if (element.type === 'file') {
-            const fileContext = getExpandedContext(element);
-            const local = profileData.localFiles || {};
+        // Note: File injection is now handled separately by the Sequential Scanner
 
-            if ((fileContext.includes('curriculum') || fileContext.includes('cv') || fileContext.includes('resume')) && local.cvFile) {
-                injectFileIntoInput(element, local.cvFile);
-            } else if ((fileContext.includes('passport') || fileContext.includes('identity') || fileContext.includes('id card')) && local.passportFile) {
-                injectFileIntoInput(element, local.passportFile);
-            } else if ((fileContext.includes('transcript') || fileContext.includes('diploma') || fileContext.includes('academic')) && local.transcriptFile) {
-                injectFileIntoInput(element, local.transcriptFile);
-            } else {
-                console.log(`⏭️ Accepta: Skipped file input [${element.id}] - No matching context or missing vault file.`);
-            }
-        }
     });
 
     return filledCount;
@@ -195,9 +181,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "fill_form") {
         console.log("Accepta: Fill command received. Fetching local files...");
         
-        chrome.storage.local.get(['cvFile', 'passportFile', 'transcriptFile'], (localFiles) => {
-            const enhancedProfile = { ...request.profileData, localFiles };
-            autoFillForm(enhancedProfile);
+        chrome.storage.local.get(['cvFile', 'passportFile', 'transcriptFile'], (vault) => {
+            // Auto-fill standard text inputs
+            autoFillForm(request.profileData);
+            
+            // Sequential DOM Scanner for File Injections
+            if (vault.cvFile) {
+                const cvInput = findFileInputForKeyword('curriculum') || findFileInputForKeyword('cv') || findFileInputForKeyword('resume');
+                if (cvInput) injectFileIntoInput(cvInput, vault.cvFile);
+            }
+            
+            if (vault.passportFile) {
+                const passInput = findFileInputForKeyword('passport') || findFileInputForKeyword('identity');
+                if (passInput) injectFileIntoInput(passInput, vault.passportFile);
+            }
+            
+            if (vault.transcriptFile) {
+                const transInput = findFileInputForKeyword('transcript') || findFileInputForKeyword('diploma') || findFileInputForKeyword('academic');
+                if (transInput) injectFileIntoInput(transInput, vault.transcriptFile);
+            }
+            
             sendResponse({ success: true });
         });
         
