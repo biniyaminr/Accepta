@@ -5,6 +5,7 @@ import { AppSidebar } from "./AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { OnboardingGuard } from "../auth/OnboardingGuard";
+import { ExtensionSync } from "../extension/ExtensionSync";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -22,6 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     return (
         <TooltipProvider>
+            <ExtensionSync />
             <OnboardingGuard>
                 <SidebarProvider defaultOpen>
                     <AppSidebar />

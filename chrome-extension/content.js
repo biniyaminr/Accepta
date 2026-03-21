@@ -100,16 +100,73 @@ function autoFillForm(profileData) {
         else if (context.match(/gpa|cgpa|grade|percentage/) && profileData.educations?.length > 0) {
             forceFill(profileData.educations[0].gpa);
         }
+
+        // 4. File Input Injection (Aggressive)
+        if (element.type === 'file') {
+            const isPassport = context.match(/passport|id\s*card|identity/i);
+            const isResume = context.match(/resume|cv|curriculum/i);
+
+            if (isPassport && profileData.passportUrl) {
+                injectFile(element, profileData.passportUrl, 'passport.pdf');
+            } else if (isResume && profileData.cvUrl) {
+                injectFile(element, profileData.cvUrl, 'resume.pdf');
+            }
+        }
     });
 
     return filledCount;
 }
 
+/**
+ * Aggressive File Injection using DataTransfer
+ */
+async function injectFile(inputElement, url, filename) {
+    try {
+        console.log(`📂 Accepta: Attempting to inject file from ${url}`);
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const file = new File([blob], filename, { type: blob.type });
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        inputElement.files = dataTransfer.files;
+
+        // Trigger events for React/Frameworks
+        inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+        inputElement.style.border = '2px solid #8b5cf6'; // Violet success
+        console.log(`✅ Accepta: Successfully injected ${filename}`);
+    } catch (err) {
+        console.error(`❌ Accepta: File injection failed for ${filename}`, err);
+    }
+}
+
 // Listen for messages from the popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "fill_form") {
-        console.log("AssistedApp: Fill command received", request.profileData);
+        console.log("Accepta: Fill command received", request.profileData);
         const count = autoFillForm(request.profileData);
         sendResponse({ success: true, fieldsFilled: count });
+    }
+});
+
+// BRIDGE: Listen for SYNC messages from the web app
+window.addEventListener('message', (event) => {
+    // Only accept messages from our own window
+    if (event.source !== window) return;
+
+    if (event.data && event.data.type === 'ACCEPTA_SYNC_VAULT') {
+        console.log('🚀 Accepta Content Script: Intercepted vault sync', event.data.payload);
+        
+        // Forward to background script to save in chrome.storage.local
+        chrome.runtime.sendMessage({ 
+            type: 'SYNC_VAULT', 
+            payload: event.data.payload 
+        }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error('❌ Sync failed:', chrome.runtime.lastError);
+            } else {
+                console.log('✅ Vault sync complete');
+            }
+        });
     }
 });
