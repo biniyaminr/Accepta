@@ -12,6 +12,28 @@ const FIELD_PATTERNS = {
     gpa: /gpa|grade.*point|cgpa|marks|percentage/i,
     gender: /gender|sex/i,
 };
+function getExpandedContext(element) {
+    let current = element;
+    let text = (`${element.id || ''} ${element.name || ''}`).toLowerCase();
+
+    // Step up the DOM tree up to 5 levels to find the label
+    for (let i = 0; i < 5; i++) {
+        if (current.parentElement) {
+            current = current.parentElement;
+            let parentText = (current.innerText || current.textContent || "").toLowerCase();
+
+            // Clean out the generic button text so it doesn't trick us
+            parentText = parentText.replace(/choose file|no file chosen|browse/g, "").trim();
+
+            // If we captured real descriptive words, add them and stop
+            if (parentText.length > 5) {
+                text += " " + parentText;
+                break; 
+            }
+        }
+    }
+    return text;
+}
 
 function autoFillForm(profileData) {
     let filledCount = 0;
@@ -101,24 +123,9 @@ function autoFillForm(profileData) {
             forceFill(profileData.educations[0].gpa);
         }
 
-        // 4. File Input Context-Aware Mapping
+        // 4. File Input Context-Aware Mapping (Expanding Bubble)
         if (element.type === 'file') {
-            let fileContext = `${element.name || ''} ${element.id || ''} ${element.className || ''} `.toLowerCase();
-
-            // Associated label text just in case
-            if (element.id) {
-                const label = document.querySelector(`label[for="${element.id}"]`);
-                if (label) fileContext += ` ${label.textContent}`.toLowerCase();
-            }
-
-            // 2. Look up the DOM tree for a structural wrapper (Table Row, List Item, or generic parent)
-            const wrapper = element.closest('tr') || element.closest('li') || (element.parentElement ? element.parentElement.parentElement : null);
-
-            if (wrapper) {
-                // Grab all visible text in that entire row/block
-                fileContext += ` ${wrapper.innerText || wrapper.textContent}`.toLowerCase();
-            }
-
+            const fileContext = getExpandedContext(element);
             const local = profileData.localFiles || {};
 
             if ((fileContext.includes('curriculum') || fileContext.includes('cv') || fileContext.includes('resume')) && local.cvFile) {
