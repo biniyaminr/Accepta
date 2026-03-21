@@ -101,20 +101,31 @@ function autoFillForm(profileData) {
             forceFill(profileData.educations[0].gpa);
         }
 
-        // 4. File Input Injection (Direct Base64)
+        // 4. File Input Context-Aware Mapping
         if (element.type === 'file') {
-            const isPassport = context.match(/passport|id\s*card|identity/i);
-            const isResume = context.match(/resume|cv|curriculum|vitae/i);
-            const isTranscript = context.match(/transcript|grades|mark\s*sheet|academic\s*record|education\s*doc/i);
+            // Build tight context to avoid false positives from huge wrappers
+            let fileContext = `${element.name || ''} ${element.id || ''} ${element.className || ''}`.toLowerCase();
+            
+            if (element.id) {
+                const label = document.querySelector(`label[for="${element.id}"]`);
+                if (label) fileContext += ` ${label.textContent}`.toLowerCase();
+            }
+            
+            // Include immediate parent and previous sibling text
+            const parentText = element.parentElement ? element.parentElement.textContent.toLowerCase() : '';
+            const prevSiblingText = element.previousElementSibling ? element.previousElementSibling.textContent.toLowerCase() : '';
+            fileContext += ` ${parentText} ${prevSiblingText}`;
 
             const local = profileData.localFiles || {};
 
-            if (isPassport && local.passportFile) {
-                injectFileIntoInput(element, local.passportFile);
-            } else if (isResume && local.cvFile) {
+            if ((fileContext.includes('curriculum') || fileContext.includes('cv') || fileContext.includes('resume')) && local.cvFile) {
                 injectFileIntoInput(element, local.cvFile);
-            } else if (isTranscript && local.transcriptFile) {
+            } else if ((fileContext.includes('passport') || fileContext.includes('identity') || fileContext.includes('id card')) && local.passportFile) {
+                injectFileIntoInput(element, local.passportFile);
+            } else if ((fileContext.includes('transcript') || fileContext.includes('diploma') || fileContext.includes('academic')) && local.transcriptFile) {
                 injectFileIntoInput(element, local.transcriptFile);
+            } else {
+                console.log(`⏭️ Accepta: Skipped file input [${element.id}] - No matching context or missing vault file.`);
             }
         }
     });
