@@ -55,10 +55,31 @@ const step3Schema = z.object({
         role: z.string().min(2, "Role required"),
         organization: z.string().min(2, "Org required"),
         description: z.string().optional(),
+        techStack: z.string().optional(),
         startDate: z.string().optional(),
         endDate: z.string().optional(),
     })).min(1, "At least one experience required"),
 });
+
+function getSkillsForRole(role: string) {
+    const r = role.toLowerCase();
+    if (r.includes("software") || r.includes("developer") || r.includes("engineer")) {
+        return ['React', 'Node.js', 'Python', 'AWS', 'Docker', 'TypeScript', 'Git', 'SQL'];
+    }
+    if (r.includes("design") || r.includes("ui") || r.includes("ux") || r.includes("creative")) {
+        return ['Figma', 'Adobe XD', 'UI Design', 'UX Research', 'Prototyping', 'Tailwind CSS'];
+    }
+    if (r.includes("data") || r.includes("analyst") || r.includes("science")) {
+        return ['Python', 'SQL', 'Tableau', 'Power BI', 'R', 'Machine Learning', 'Statistics'];
+    }
+    if (r.includes("manager") || r.includes("lead") || r.includes("coordinator")) {
+        return ['Project Management', 'Agile', 'Scrum', 'Jira', 'Strategic Planning', 'Leadership'];
+    }
+    if (r.includes("marketing") || r.includes("sales") || r.includes("content")) {
+        return ['SEO', 'Google Analytics', 'Social Media', 'Content Strategy', 'Copywriting', 'CRM'];
+    }
+    return ['Communication', 'Teamwork', 'Problem Solving', 'Leadership', 'Microsoft Office', 'Public Speaking'];
+}
 
 export default function OnboardingWizard() {
     const t = useTranslations("OnboardingWizard");
@@ -89,7 +110,7 @@ export default function OnboardingWizard() {
 
     const form3 = useForm<z.infer<typeof step3Schema>>({
         resolver: zodResolver(step3Schema),
-        defaultValues: { experiences: [{ role: "", organization: "", description: "", startDate: "", endDate: "" }] }
+        defaultValues: { experiences: [{ role: "", organization: "", description: "", techStack: "", startDate: "", endDate: "" }] }
     });
 
     // Load existing data
@@ -390,13 +411,28 @@ export default function OnboardingWizard() {
                                                 <FormMessage />
                                             </FormItem>
                                         )} />
+                                        <FormField control={form3.control} name={`experiences.${i}.techStack`} render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t("techStack")}</FormLabel>
+                                                <FormControl>
+                                                    <SuggestionInput
+                                                        value={field.value || ""}
+                                                        onChange={field.onChange}
+                                                        isMulti={true}
+                                                        placeholder="e.g. React, Python, AWS..."
+                                                        suggestions={getSkillsForRole(form3.watch(`experiences.${i}.role`) || "")}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )} />
                                     </div>
                                 ))}
                                 <Button 
                                     type="button" 
                                     variant="outline" 
                                     size="sm"
-                                    onClick={() => form3.setValue("experiences", [...form3.getValues("experiences"), { role: "", organization: "", description: "" }])}
+                                    onClick={() => form3.setValue("experiences", [...form3.getValues("experiences"), { role: "", organization: "", description: "", techStack: "" }])}
                                 >
                                     + Add Role
                                 </Button>
@@ -530,6 +566,17 @@ export default function OnboardingWizard() {
                                     <p className="text-xs text-neutral-500 uppercase font-bold">{t("major")}</p>
                                     <p className="text-neutral-200">{form2.getValues("major")}</p>
                                 </div>
+                            </div>
+                            <div className="space-y-4 pt-4 border-t border-neutral-800">
+                                <p className="text-xs text-neutral-500 uppercase font-bold mb-2">Professional Experience</p>
+                                {form3.getValues("experiences").map((exp, idx) => (
+                                    <div key={idx} className="space-y-1 pl-4 border-l border-violet-500/30">
+                                        <p className="text-sm font-bold text-neutral-200">{exp.role} @ {exp.organization}</p>
+                                        {exp.techStack && (
+                                            <p className="text-xs text-violet-400 font-medium italic">Skills: {exp.techStack}</p>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                             <div className="pt-4 border-t border-neutral-800">
                                 <p className="text-xs text-neutral-500 uppercase font-bold mb-3">Attached Documents</p>

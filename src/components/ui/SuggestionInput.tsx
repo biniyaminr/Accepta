@@ -12,6 +12,7 @@ interface SuggestionInputProps {
     placeholder?: string;
     suggestions: string[];
     className?: string;
+    isMulti?: boolean;
 }
 
 export function SuggestionInput({
@@ -21,6 +22,7 @@ export function SuggestionInput({
     placeholder,
     suggestions,
     className,
+    isMulti = false,
 }: SuggestionInputProps) {
     const [isFocused, setIsFocused] = useState(false);
 
@@ -57,7 +59,19 @@ export function SuggestionInput({
                         <button
                             key={suggestion}
                             type="button"
-                            onClick={() => onChange(suggestion)}
+                            onClick={() => {
+                                if (isMulti) {
+                                    const currentValues = value.split(",").map(v => v.trim()).filter(Boolean);
+                                    if (!currentValues.includes(suggestion)) {
+                                        const newValue = currentValues.length > 0 
+                                            ? `${currentValues.join(", ")}, ${suggestion}` 
+                                            : suggestion;
+                                        onChange(newValue);
+                                    }
+                                } else {
+                                    onChange(suggestion);
+                                }
+                            }}
                             className={cn(
                                 "group relative px-3 py-1 rounded-full text-xs font-medium",
                                 "bg-neutral-900/70 text-neutral-400 border border-neutral-800",
