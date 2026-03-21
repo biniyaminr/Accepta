@@ -2,86 +2,262 @@
 <html>
 
 <head>
+  <meta charset="UTF-8">
   <style>
+    :root {
+      --bg-dark: #030712;
+      --card-bg: #0f172a;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #7c3aed; /* Violet-600 */
+      --accent-secondary: #4f46e5; /* Indigo-600 */
+      --success-glow: #10b981;
+    }
+
     body {
-      font-family: system-ui, sans-serif;
-      width: 320px;
-      padding: 16px;
-      background: #0f172a;
-      color: #f8fafc;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      width: 340px;
+      padding: 0;
+      background: var(--bg-dark);
+      color: var(--text-primary);
       margin: 0;
+      overflow-x: hidden;
     }
 
-    h3 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-size: 16px;
-      color: #38bdf8;
+    .container {
+      padding: 18px;
     }
 
+    /* Header Section */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Status Indicator */
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124, 58, 237, 0.1);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #a78bfa;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #8b5cf6;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #8b5cf6;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Action Button */
     button#autofill-btn {
       width: 100%;
-      padding: 10px;
-      background: #10b981;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
       color: white;
       border: none;
-      border-radius: 6px;
-      font-weight: bold;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
-      margin-bottom: 16px;
-      transition: 0.2s;
+      margin-bottom: 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
     }
 
     button#autofill-btn:hover {
-      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+      filter: brightness(1.1);
+    }
+
+    button#autofill-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Vault Section */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .vault-card {
+      background: #0f172a / 40%;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
     }
 
     .data-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #334155;
+      padding: 10px 12px;
+      border-bottom: 1px solid #1e293b;
+      background: rgba(15, 23, 42, 0.3);
+    }
+
+    .data-row:last-child {
+      border-bottom: none;
     }
 
     .data-label {
-      font-size: 12px;
-      color: #94a3b8;
-      margin-bottom: 2px;
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-bottom: 1px;
     }
 
     .data-value {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
+      color: var(--text-primary);
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      max-width: 150px;
+      max-width: 160px;
     }
 
     .copy-btn {
-      background: #38bdf8;
-      color: #0f172a;
-      border: none;
-      border-radius: 4px;
-      padding: 4px 12px;
-      font-size: 12px;
+      background: #1e293b;
+      color: var(--text-secondary);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 10px;
       cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #334155;
+      color: #fff;
+      border-color: #475569;
     }
 
     .copy-btn.copied {
-      background: #10b981;
-      color: white;
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    /* Footer */
+    .footer {
+      background: #090e1a;
+      padding: 12px 18px;
+      border-top: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #000;
+    }
+
+    .profile-status {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .profile-name {
+      font-weight: 600;
+      color: var(--text-primary);
     }
   </style>
 </head>
 
 <body>
-  <button id="autofill-btn">🚀 Auto-Fill This Page</button>
-  <h3>Your Data Vault</h3>
-  <div id="profileData">Loading data...</div>
+  <div class="container">
+    <header class="header">
+      <div class="brand">
+        <img src="logo.png" class="logo" alt="Accepta">
+        <span class="title">Accepta</span>
+      </div>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        Vault Connected
+      </div>
+    </header>
+
+    <button id="autofill-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4-4-4"/><path d="M3 3h18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M12 14v7"/><path d="M16 10h-6"/></svg>
+      Auto-Fill This Page
+    </button>
+
+    <span class="section-label">Your Data Vault</span>
+    <div id="profileData" class="vault-card">
+      <div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 12px;">
+        Connecting to vault...
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div id="avatar" class="avatar">U</div>
+    <div class="profile-status">
+      <span id="active-profile" class="profile-name">Guest Profile</span> Active
+    </div>
+  </footer>
+
   <script src="popup.js"></script>
 </body>
 

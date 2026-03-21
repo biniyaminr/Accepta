@@ -9,6 +9,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const profile = await response.json();
 
+        // Populate Footer
+        const profileName = document.getElementById('active-profile');
+        const avatar = document.getElementById('avatar');
+        if (profile.firstName) {
+            profileName.innerText = `${profile.firstName}'s Profile`;
+            avatar.innerText = profile.firstName.charAt(0).toUpperCase();
+        }
+
         profileDataContainer.innerHTML = ''; // Clear loading text
         // Filter out empty values and map to UI
         const fieldsToDisplay = [
