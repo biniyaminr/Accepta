@@ -1,5 +1,6 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { ClerkProvider } from "@clerk/nextjs";
 import Layout from "@/components/layout/Layout";
 import { notFound } from "next/navigation";
 
@@ -21,8 +22,10 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <Layout>{children}</Layout>
-    </NextIntlClientProvider>
+    <ClerkProvider>
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <Layout>{children}</Layout>
+      </NextIntlClientProvider>
+    </ClerkProvider>
   );
 }
