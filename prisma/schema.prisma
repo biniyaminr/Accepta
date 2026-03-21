@@ -23,6 +23,7 @@ model User {
   zipCode         String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
+  isOnboardingComplete Boolean     @default(false)
   educations      Education[]
   testScores      TestScore[]
   extracurriculars Extracurricular[]

@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { AppSidebar } from "./AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { OnboardingGuard } from "../auth/OnboardingGuard";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -21,9 +22,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     return (
         <TooltipProvider>
-            <SidebarProvider defaultOpen>
-                <AppSidebar />
-                <div className="flex-1 w-full flex flex-col min-h-screen transition-all duration-300">
+            <OnboardingGuard>
+                <SidebarProvider defaultOpen>
+                    <AppSidebar />
+                    <div className="flex-1 w-full flex flex-col min-h-screen transition-all duration-300">
                     <header className="h-16 flex items-center px-6 border-b border-border/10 bg-background/50 backdrop-blur-md sticky top-0 z-30">
                         <SidebarTrigger className="hover:bg-neutral-800/50 text-neutral-400 hover:text-neutral-200 transition-colors" />
                     </header>
@@ -37,6 +39,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </main>
                 </div>
             </SidebarProvider>
+            </OnboardingGuard>
         </TooltipProvider>
     );
 }
