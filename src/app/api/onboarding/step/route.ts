@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export async function GET(request: Request) {
     try {
@@ -86,9 +86,12 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const { userId: clerkId } = await auth();
-        if (!clerkId) {
+        const clerkUser = await currentUser();
+        if (!clerkId || !clerkUser) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
+
+        const email = clerkUser.emailAddresses[0]?.emailAddress;
 
         const body = await request.json();
         const { step, data } = body;
@@ -99,21 +102,13 @@ export async function POST(request: Request) {
 
         const user = await prisma.user.upsert({
             where: { userId: clerkId },
-            update: {}, // We'll update specific fields in the switch
+            update: {}, 
             create: {
                 userId: clerkId,
-                fullName: data.fullName || "TBD", // Temporary if not provided in step 1
-                email: "TBD", // We should probably get this from Clerk
+                fullName: data.fullName || clerkUser.username || clerkUser.firstName || "TBD",
+                email: email || "TBD",
             },
         });
-
-        // If it's a new user, update the email from Clerk or the body if provided
-        if (user.email === "TBD" && data.email) {
-            await prisma.user.update({
-                where: { id: user.id },
-                data: { email: data.email },
-            });
-        }
 
         switch (parseInt(step)) {
             case 1:
@@ -183,22 +178,29 @@ export async function POST(request: Request) {
             case 4:
                 // Documents are handled via uploadthing mostly, but we can save links here if needed
                 if (data.documents && Array.isArray(data.documents)) {
-                    // Similar to experiences, but usually documents are additive
                     for (const doc of data.documents) {
-                        await prisma.document.upsert({
-                            where: { id: doc.id || 'new-doc' },
-                            create: {
-                                name: doc.name,
-                                type: doc.type,
-                                fileUrl: doc.fileUrl,
-                                userId: user.id,
-                            },
-                            update: {
-                                name: doc.name,
-                                type: doc.type,
-                                fileUrl: doc.fileUrl,
-                            },
+                        const existingDoc = await prisma.document.findFirst({
+                            where: { userId: user.id, type: doc.type }
                         });
+                        
+                        if (existingDoc) {
+                            await prisma.document.update({
+                                where: { id: existingDoc.id },
+                                data: {
+                                    name: doc.name,
+                                    fileUrl: doc.url || doc.fileUrl,
+                                }
+                            });
+                        } else {
+                            await prisma.document.create({
+                                data: {
+                                    name: doc.name,
+                                    type: doc.type,
+                                    fileUrl: doc.url || doc.fileUrl,
+                                    userId: user.id,
+                                },
+                            });
+                        }
                     }
                 }
                 break;
