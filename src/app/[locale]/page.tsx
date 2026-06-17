@@ -4,7 +4,19 @@ import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import AcceptaLogo from "@/images/acceptalogo.png";
-import { Globe, FileText, Zap, CheckCircle, Sparkles } from "lucide-react";
+import {
+  Globe,
+  FileText,
+  Zap,
+  CheckCircle,
+  Sparkles,
+  Mail,
+  LayoutDashboard,
+  TrendingUp,
+  ArrowRight,
+  Users,
+  Globe2,
+} from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 import { EnglishTestPromo } from "@/components/landing/EnglishTestPromo";
@@ -17,8 +29,18 @@ export default function LandingPage() {
   const tJourney = useTranslations("Journey");
   const tDeepDive = useTranslations("DeepDive");
   const tBottomCTA = useTranslations("BottomCTA");
+
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-violet-500/30">
+
+      {/* Announcement Bar */}
+      <div className="h-10 bg-gradient-to-r from-violet-600/20 to-indigo-600/20 border-b border-violet-500/20 flex items-center justify-center gap-3 px-4 text-sm">
+        <span className="text-neutral-300">🎓 Now tracking 10,000+ scholarships across 50+ countries</span>
+        <a href="#" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors flex items-center gap-1">
+          Explore <ArrowRight className="w-3 h-3" />
+        </a>
+      </div>
+
       {/* Nav */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-neutral-800/50 bg-neutral-950/80 backdrop-blur-md sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-3 no-underline hover:opacity-80 transition-opacity">
@@ -39,14 +61,14 @@ export default function LandingPage() {
           <nav>
             <SignedOut>
               <SignUpButton mode="modal">
-                <button className="text-neutral-300 hover:text-white hover:bg-neutral-800 px-4 py-2 rounded-md transition-colors font-medium">
+                <button className="text-neutral-300 hover:text-white border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 px-5 py-2 rounded-full transition-all font-medium text-sm">
                   {tNav("getStarted")}
                 </button>
               </SignUpButton>
             </SignedOut>
             <SignedIn>
               <Link href="/dashboard">
-                <button className="bg-neutral-800 text-white hover:bg-neutral-700 px-4 py-2 rounded-md transition-colors font-medium">
+                <button className="bg-violet-600 hover:bg-violet-500 text-white px-5 py-2 rounded-full transition-all font-medium text-sm shadow-[0_0_20px_-5px_rgba(139,92,246,0.5)]">
                   {tNav("missionControl")}
                 </button>
               </Link>
@@ -55,87 +77,246 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero */}
-      <main className="flex-1 flex flex-col items-center px-4 relative overflow-hidden pt-24">
-        {/* Background Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-600/20 rounded-full blur-[120px] pointer-events-none" />
+      <main className="flex-1 flex flex-col items-center relative overflow-hidden">
 
-        <div className="max-w-4xl mx-auto text-center z-10 space-y-8 mb-16 relative">
-          <div className="absolute top-0 left-1/2 w-[800px] h-[400px] bg-violet-600/20 blur-[100px] rounded-full -translate-x-1/2 pointer-events-none -z-10" />
+        {/* ── HERO ── */}
+        <section className="w-full flex flex-col items-center px-4 pt-28 pb-16 relative">
+          {/* Ambient glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-violet-600/15 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute top-32 left-1/4 w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute top-32 right-1/4 w-[400px] h-[400px] bg-violet-500/10 rounded-full blur-[100px] pointer-events-none" />
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-neutral-200 to-neutral-500">
-            {tHero("title")}
-          </h1>
-          <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-            {tHero("subtitle")}
-          </p>
+          <div className="max-w-4xl mx-auto text-center z-10 space-y-8 relative">
+            {/* Pill badge */}
+            <div className="flex justify-center">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-semibold uppercase tracking-widest">
+                <Sparkles className="w-3.5 h-3.5" />
+                AI-Powered · Free to Start
+              </span>
+            </div>
 
-          <div className="pt-8 flex items-center justify-center gap-4">
-            <SignedOut>
-              <SignUpButton mode="modal">
-                <button className="h-14 px-8 text-lg font-semibold bg-violet-600 hover:bg-violet-500 text-white rounded-full shadow-[0_0_40px_-10px_rgba(139,92,246,0.6)] transition-all hover:scale-105">
-                  Start Applying for Free
-                </button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <Link href="/dashboard">
-                <button className="h-14 px-8 text-lg font-semibold bg-violet-600 hover:bg-violet-500 text-white rounded-full shadow-[0_0_40px_-10px_rgba(139,92,246,0.6)] transition-all hover:scale-105">
-                  Mission Control
-                </button>
-              </Link>
-            </SignedIn>
-          </div>
-        </div>
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-neutral-200 to-neutral-500 leading-[1.05]">
+              {tHero("title")}
+            </h1>
+            <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed font-light">
+              {tHero("subtitle")}
+            </p>
 
-        {/* Hero Image / Video Placeholder */}
-        <div className="w-full max-w-5xl mx-auto px-4 z-10 mb-32">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-2 shadow-2xl backdrop-blur-sm">
-            <div className="relative aspect-video rounded-xl overflow-hidden bg-neutral-900 flex items-center justify-center border border-white/5">
-              <img
-                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                alt="Student working on laptop"
-                className="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-overlay"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent pointer-events-none" />
+            {/* CTA buttons */}
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <button className="h-14 px-8 text-base font-semibold bg-violet-600 hover:bg-violet-500 text-white rounded-full shadow-[0_0_40px_-10px_rgba(139,92,246,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_50px_-5px_rgba(139,92,246,0.7)]">
+                    Start Applying for Free
+                  </button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <Link href="/dashboard">
+                  <button className="h-14 px-8 text-base font-semibold bg-violet-600 hover:bg-violet-500 text-white rounded-full shadow-[0_0_40px_-10px_rgba(139,92,246,0.6)] transition-all hover:scale-105">
+                    {tNav("missionControl")}
+                  </button>
+                </Link>
+              </SignedIn>
+              <a
+                href="#how-it-works"
+                className="h-14 px-8 text-base font-semibold border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white rounded-full transition-all hover:scale-105 flex items-center gap-2"
+              >
+                See how it works ↓
+              </a>
+            </div>
+
+            {/* Trust stats pills */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              {[
+                "✓ 10,000+ Scholarships",
+                "✓ 50+ Countries",
+                "✓ Free to Start",
+              ].map((label) => (
+                <span
+                  key={label}
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold"
+                >
+                  {label}
+                </span>
+              ))}
             </div>
           </div>
-        </div>
 
-        {/* Features Grid */}
-        <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pb-32 z-10">
-          <div className="bg-neutral-900/50 border border-neutral-800 p-8 rounded-2xl hover:bg-neutral-900 transition-colors group">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Globe className="w-6 h-6 text-blue-400" />
+          {/* Mock Dashboard Hero Image */}
+          <div className="w-full max-w-5xl mx-auto px-4 z-10 mt-16 relative">
+            {/* Floating AI badge */}
+            <span className="absolute -top-4 -right-4 md:right-8 bg-violet-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-20">
+              ✨ AI Fit: 94%
+            </span>
+
+            {/* Mock browser chrome */}
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-2 shadow-[0_40px_100px_-20px_rgba(139,92,246,0.3)] backdrop-blur-sm">
+              {/* Browser header */}
+              <div className="h-10 bg-neutral-900 rounded-t-xl border-b border-neutral-800 flex items-center px-4 gap-3">
+                <div className="flex gap-1.5 shrink-0">
+                  <div className="w-3 h-3 rounded-full bg-red-500/70" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/70" />
+                </div>
+                <div className="flex-1 mx-4 h-6 bg-neutral-800 rounded-md flex items-center px-3 gap-2 max-w-sm">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="text-neutral-500 text-xs">app.accepta.io/dashboard</span>
+                </div>
+              </div>
+
+              {/* Dashboard content */}
+              <div className="bg-neutral-900 rounded-b-xl overflow-hidden flex" style={{ minHeight: 320 }}>
+                {/* Sidebar */}
+                <div className="w-48 bg-neutral-950 border-r border-neutral-800 p-4 flex flex-col gap-2 shrink-0">
+                  <div className="h-8 w-20 bg-violet-600/30 rounded mb-4" />
+                  {[
+                    { color: "bg-violet-500/30 border-violet-500/40", label: "bg-neutral-600" },
+                    { color: "bg-blue-500/20 border-blue-500/30", label: "bg-neutral-700" },
+                    { color: "bg-emerald-500/20 border-emerald-500/30", label: "bg-neutral-700" },
+                    { color: "bg-amber-500/20 border-amber-500/30", label: "bg-neutral-700" },
+                  ].map((item, i) => (
+                    <div key={i} className={`h-9 rounded-lg border ${item.color} flex items-center px-3 gap-2`}>
+                      <div className={`w-2 h-2 rounded-full ${item.label}`} />
+                      <div className={`h-2 w-16 ${item.label} rounded-full`} />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Main content */}
+                <div className="flex-1 p-5 flex flex-col gap-4">
+                  {/* Header bar */}
+                  <div className="flex items-center justify-between">
+                    <div className="h-5 w-40 bg-neutral-700 rounded" />
+                    <div className="h-8 w-24 bg-violet-600/40 border border-violet-500/30 rounded-full" />
+                  </div>
+
+                  {/* Scholarship cards */}
+                  <div className="flex gap-4 flex-1">
+                    {[
+                      { badge: "🏆 Scholarship", badgeColor: "bg-amber-500/20 border-amber-500/30 text-amber-400", pct: "91%", pctColor: "border-violet-500/50 text-violet-400" },
+                      { badge: "💸 Free", badgeColor: "bg-emerald-500/20 border-emerald-500/30 text-emerald-400", pct: "87%", pctColor: "border-blue-500/50 text-blue-400" },
+                    ].map((card, i) => (
+                      <div key={i} className="flex-1 bg-neutral-800/60 border border-neutral-700 rounded-xl p-4 flex flex-col gap-3">
+                        <div className="flex items-start justify-between">
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${card.badgeColor}`}>
+                            {card.badge}
+                          </span>
+                          <div className={`w-10 h-10 rounded-full border-2 ${card.pctColor} flex items-center justify-center`}>
+                            <span className="text-xs font-bold">{card.pct}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <div className="h-3 w-3/4 bg-neutral-600 rounded" />
+                          <div className="h-2.5 w-1/2 bg-neutral-700 rounded" />
+                        </div>
+                        <div className="flex gap-2 mt-auto">
+                          <div className="h-7 flex-1 bg-violet-600/30 border border-violet-500/30 rounded-lg" />
+                          <div className="h-7 w-16 bg-neutral-700 rounded-lg" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">{tFeatures("feedTitle")}</h3>
-            <p className="text-neutral-400 leading-relaxed">
-              {tFeatures("feedDesc")}
+          </div>
+        </section>
+
+        {/* ── STATS STRIP ── */}
+        <section className="w-full bg-neutral-900/40 border-y border-neutral-800/50 py-10">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="flex flex-wrap justify-center divide-x divide-neutral-800">
+              {[
+                { number: "10,000+", label: "Scholarships Tracked" },
+                { number: "50+", label: "Countries Covered" },
+                { number: "3 min", label: "Average Setup Time" },
+                { number: "Free", label: "To Get Started" },
+              ].map((stat, i) => (
+                <div key={i} className="flex-1 min-w-[140px] flex flex-col items-center justify-center py-4 px-8 text-center">
+                  <span className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">{stat.number}</span>
+                  <span className="text-sm text-neutral-400 mt-1">{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 6-FEATURE GRID ── */}
+        <section className="w-full max-w-6xl mx-auto px-4 py-24 z-10 border-t border-neutral-800/50">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
+              Everything you need to get accepted
+            </h2>
+            <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+              A complete AI toolkit for international students — from finding scholarships to submitting your application.
             </p>
           </div>
 
-          <div className="bg-neutral-900/50 border border-neutral-800 p-8 rounded-2xl hover:bg-neutral-900 transition-colors group">
-            <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <FileText className="w-6 h-6 text-violet-400" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Card 1 — Live Feed */}
+            <div className="bg-gradient-to-br from-neutral-900/80 to-neutral-900/40 border border-neutral-800 hover:border-blue-500/40 hover:shadow-[0_0_30px_-10px_rgba(59,130,246,0.4)] transition-all duration-300 group p-8 rounded-2xl">
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all">
+                <Globe className="w-6 h-6 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">{tFeatures("feedTitle")}</h3>
+              <p className="text-neutral-400 leading-relaxed text-sm">{tFeatures("feedDesc")}</p>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">{tFeatures("cvTitle")}</h3>
-            <p className="text-neutral-400 leading-relaxed">
-              {tFeatures("cvDesc")}
-            </p>
-          </div>
 
-          <div className="bg-neutral-900/50 border border-neutral-800 p-8 rounded-2xl hover:bg-neutral-900 transition-colors group">
-            <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Zap className="w-6 h-6 text-orange-400" />
+            {/* Card 2 — AI CV */}
+            <div className="bg-gradient-to-br from-neutral-900/80 to-neutral-900/40 border border-neutral-800 hover:border-violet-500/40 hover:shadow-[0_0_30px_-10px_rgba(139,92,246,0.4)] transition-all duration-300 group p-8 rounded-2xl">
+              <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-violet-500/20 transition-all">
+                <FileText className="w-6 h-6 text-violet-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">{tFeatures("cvTitle")}</h3>
+              <p className="text-neutral-400 leading-relaxed text-sm">{tFeatures("cvDesc")}</p>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">{tFeatures("chromeTitle")}</h3>
-            <p className="text-neutral-400 leading-relaxed">
-              {tFeatures("chromeDesc")}
-            </p>
-          </div>
-        </div>
 
-        {/* The Problem Statement (Empathy Section) */}
+            {/* Card 3 — Chrome */}
+            <div className="bg-gradient-to-br from-neutral-900/80 to-neutral-900/40 border border-neutral-800 hover:border-orange-500/40 hover:shadow-[0_0_30px_-10px_rgba(249,115,22,0.4)] transition-all duration-300 group p-8 rounded-2xl">
+              <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-500/20 transition-all">
+                <Zap className="w-6 h-6 text-orange-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">{tFeatures("chromeTitle")}</h3>
+              <p className="text-neutral-400 leading-relaxed text-sm">{tFeatures("chromeDesc")}</p>
+            </div>
+
+            {/* Card 4 — Letter Studio */}
+            <div className="bg-gradient-to-br from-neutral-900/80 to-neutral-900/40 border border-neutral-800 hover:border-violet-500/40 hover:shadow-[0_0_30px_-10px_rgba(139,92,246,0.4)] transition-all duration-300 group p-8 rounded-2xl">
+              <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-violet-500/20 transition-all">
+                <Mail className="w-6 h-6 text-violet-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Letter Studio</h3>
+              <p className="text-neutral-400 leading-relaxed text-sm">
+                Generate motivation letters, scholarship letters, and cover letters tailored to each program.
+              </p>
+            </div>
+
+            {/* Card 5 — Application Tracker */}
+            <div className="bg-gradient-to-br from-neutral-900/80 to-neutral-900/40 border border-neutral-800 hover:border-emerald-500/40 hover:shadow-[0_0_30px_-10px_rgba(16,185,129,0.4)] transition-all duration-300 group p-8 rounded-2xl">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all">
+                <LayoutDashboard className="w-6 h-6 text-emerald-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Application Tracker</h3>
+              <p className="text-neutral-400 leading-relaxed text-sm">
+                Visualize your pipeline with a drag-and-drop Kanban board. Never miss a deadline.
+              </p>
+            </div>
+
+            {/* Card 6 — Profile Strength */}
+            <div className="bg-gradient-to-br from-neutral-900/80 to-neutral-900/40 border border-neutral-800 hover:border-amber-500/40 hover:shadow-[0_0_30px_-10px_rgba(245,158,11,0.4)] transition-all duration-300 group p-8 rounded-2xl">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all">
+                <TrendingUp className="w-6 h-6 text-amber-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Profile Strength Score</h3>
+              <p className="text-neutral-400 leading-relaxed text-sm">
+                See exactly how complete your profile is and what's needed to maximize AI recommendation accuracy.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── PROBLEM STATEMENT ── */}
         <section className="w-full bg-zinc-900/50 border-y border-white/5 py-24 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 blur-[100px] rounded-full pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-500/10 blur-[100px] rounded-full pointer-events-none" />
@@ -152,27 +333,27 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* How It Works (Step-by-Step Journey) */}
-        <section className="py-24 max-w-5xl mx-auto px-4 relative z-10 w-full">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">
+        {/* ── HOW IT WORKS ── */}
+        <section id="how-it-works" className="py-24 max-w-5xl mx-auto px-4 relative z-10 w-full border-t border-neutral-800/50">
+          <div className="absolute top-24 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+          <div className="text-center mb-20 relative z-10">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
               {tJourney("title")}
             </h2>
             <p className="text-xl text-neutral-400">{tJourney("subtitle")}</p>
           </div>
 
-          <div className="space-y-12 relative before:absolute before:inset-0 before:ml-8 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/10 before:to-transparent">
+          <div className="space-y-12 relative z-10 before:absolute before:inset-0 before:ml-8 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-violet-500/20 before:to-transparent">
 
             {/* Step 1 */}
-            <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+            <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
               <div className="flex items-center justify-center w-16 h-16 rounded-full border-4 border-neutral-950 bg-neutral-900 text-blue-400 group-hover:bg-blue-900/50 group-hover:text-blue-300 shadow-[0_0_20px_rgba(59,130,246,0.2)] group-hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                 <FileText className="w-6 h-6" />
               </div>
-              <div className="w-[calc(100%-5rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-                <div className="flex items-center mb-1">
-                  <span className="text-sm font-semibold text-blue-400 tracking-wider uppercase">Step 1</span>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">{tJourney("step1Title")}</h3>
+              <div className="w-[calc(100%-5rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[0.07] hover:border-blue-500/20 transition-all">
+                <span className="text-xs font-semibold text-blue-400 tracking-wider uppercase">Step 1</span>
+                <h3 className="text-2xl font-bold text-white mt-1 mb-2">{tJourney("step1Title")}</h3>
                 <p className="text-neutral-400 leading-relaxed">{tJourney("step1Desc")}</p>
               </div>
             </div>
@@ -182,11 +363,9 @@ export default function LandingPage() {
               <div className="flex items-center justify-center w-16 h-16 rounded-full border-4 border-neutral-950 bg-neutral-900 text-violet-400 group-hover:bg-violet-900/50 group-hover:text-violet-300 shadow-[0_0_20px_rgba(139,92,246,0.2)] group-hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] transition-all shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                 <Globe className="w-6 h-6" />
               </div>
-              <div className="w-[calc(100%-5rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-                <div className="flex items-center mb-1">
-                  <span className="text-sm font-semibold text-violet-400 tracking-wider uppercase">Step 2</span>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">{tJourney("step2Title")}</h3>
+              <div className="w-[calc(100%-5rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[0.07] hover:border-violet-500/20 transition-all">
+                <span className="text-xs font-semibold text-violet-400 tracking-wider uppercase">Step 2</span>
+                <h3 className="text-2xl font-bold text-white mt-1 mb-2">{tJourney("step2Title")}</h3>
                 <p className="text-neutral-400 leading-relaxed">{tJourney("step2Desc")}</p>
               </div>
             </div>
@@ -196,48 +375,112 @@ export default function LandingPage() {
               <div className="flex items-center justify-center w-16 h-16 rounded-full border-4 border-neutral-950 bg-neutral-900 text-orange-400 group-hover:bg-orange-900/50 group-hover:text-orange-300 shadow-[0_0_20px_rgba(249,115,22,0.2)] group-hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] transition-all shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                 <Zap className="w-6 h-6" />
               </div>
-              <div className="w-[calc(100%-5rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-                <div className="flex items-center mb-1">
-                  <span className="text-sm font-semibold text-orange-400 tracking-wider uppercase">Step 3</span>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">{tJourney("step3Title")}</h3>
+              <div className="w-[calc(100%-5rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[0.07] hover:border-orange-500/20 transition-all">
+                <span className="text-xs font-semibold text-orange-400 tracking-wider uppercase">Step 3</span>
+                <h3 className="text-2xl font-bold text-white mt-1 mb-2">{tJourney("step3Title")}</h3>
                 <p className="text-neutral-400 leading-relaxed">{tJourney("step3Desc")}</p>
               </div>
             </div>
-
           </div>
         </section>
 
-        {/* English Proficiency Resources */}
+        {/* ── TESTIMONIALS ── */}
+        <section className="w-full py-24 border-t border-neutral-800/50 relative overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+          <div className="max-w-6xl mx-auto px-4 relative z-10">
+            <div className="text-center mb-16">
+              <div className="flex justify-center mb-4">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-semibold uppercase tracking-widest">
+                  <Users className="w-3.5 h-3.5" />
+                  Student Stories
+                </span>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
+                Trusted by students worldwide
+              </h2>
+              <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+                Join thousands of students who have simplified their application journey.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  quote: "Accepta completely transformed my application process. I got into my dream program in Germany within 3 months.",
+                  name: "Sara M.",
+                  university: "TU Munich",
+                  initials: "SM",
+                  bg: "bg-violet-600",
+                },
+                {
+                  quote: "The AI fit score saved me from applying to programs I wasn't qualified for. Focused my energy on the right ones.",
+                  name: "Daniel K.",
+                  university: "University of Amsterdam",
+                  initials: "DK",
+                  bg: "bg-blue-600",
+                },
+                {
+                  quote: "Letter Studio generated a motivation letter that my advisor said was the best she'd ever seen. Accepted with scholarship!",
+                  name: "Mia T.",
+                  university: "KU Leuven",
+                  initials: "MT",
+                  bg: "bg-emerald-600",
+                },
+              ].map((t, i) => (
+                <div key={i} className="bg-neutral-900/50 border border-neutral-800 hover:border-neutral-700 rounded-2xl p-8 flex flex-col gap-5 transition-all hover:shadow-[0_0_30px_-10px_rgba(139,92,246,0.2)] hover:-translate-y-1">
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: 5 }).map((_, si) => (
+                      <span key={si} className="text-amber-400 text-lg">★</span>
+                    ))}
+                  </div>
+                  <p className="text-neutral-300 italic leading-relaxed flex-1">"{t.quote}"</p>
+                  <div className="flex items-center gap-3 pt-2 border-t border-neutral-800">
+                    <div className={`w-10 h-10 rounded-full ${t.bg} flex items-center justify-center text-white font-bold text-sm shrink-0`}>
+                      {t.initials}
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold text-sm">{t.name}</div>
+                      <div className="text-neutral-500 text-xs">{t.university}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── ENGLISH TEST PROMO ── */}
         <EnglishTestPromo />
 
-        {/* Features Deep Dive */}
-        <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 w-full border-t border-neutral-800/50 mt-12">
+        {/* ── FEATURES DEEP DIVE ── */}
+        <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 w-full border-t border-neutral-800/50">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
               {tDeepDive("mainTitle")}
             </h2>
-            <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+            <p className="text-xl text-neutral-400 max-w-2xl mx-auto font-light">
               {tDeepDive("mainSubtitle")}
             </p>
           </div>
 
           <div className="space-y-32">
+
             {/* Feature 1: AI CV Tailoring */}
-            <div className="flex flex-col lg:flex-row items-center gap-12">
+            <div className="flex flex-col lg:flex-row items-center gap-16">
               <div className="flex-1 space-y-6">
-                <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center">
                   <FileText className="w-6 h-6 text-violet-400" />
                 </div>
                 <h3 className="text-3xl font-bold text-white">{tDeepDive("block1Title")}</h3>
-                <p className="text-lg text-neutral-400 leading-relaxed">
+                <p className="text-lg text-neutral-400 leading-relaxed font-light">
                   {tDeepDive("block1Desc")}
                 </p>
-                <ul className="space-y-3 pt-4">
+                <ul className="space-y-3 pt-2">
                   {[
                     tDeepDive("block1Bullet1"),
                     tDeepDive("block1Bullet2"),
-                    tDeepDive("block1Bullet3")
+                    tDeepDive("block1Bullet3"),
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-neutral-300">
                       <CheckCircle className="w-5 h-5 text-violet-500 shrink-0" />
@@ -246,41 +489,40 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <div className="flex-1 w-full relative">
+              <div className="flex-1 w-full">
                 <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-800/80 shadow-2xl overflow-hidden flex flex-col">
-                  {/* Mock Browser Header */}
                   <div className="h-12 border-b border-neutral-800/80 flex items-center px-4 gap-2 bg-neutral-900/50">
                     <div className="flex gap-1.5 shrink-0">
-                      <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />
-                      <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50" />
-                      <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" />
+                      <div className="w-3 h-3 rounded-full bg-red-500/50" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+                      <div className="w-3 h-3 rounded-full bg-green-500/50" />
                     </div>
                     <div className="w-full max-w-sm mx-auto h-6 bg-neutral-800/50 rounded-md flex items-center px-3 gap-2">
                       <div className="w-3 h-3 rounded-sm bg-neutral-700" />
                       <div className="w-24 h-2 bg-neutral-700 rounded-full" />
                     </div>
                   </div>
-                  {/* Mock UI Content */}
                   <div className="flex-1 p-6 flex gap-6">
-                    <div className="w-1/3 space-y-4">
-                      <div className="h-4 w-20 bg-neutral-800 rounded-sm mb-2" />
+                    <div className="w-1/3 space-y-3">
+                      <div className="h-4 w-20 bg-neutral-800 rounded mb-2" />
                       <div className="h-10 w-full bg-neutral-800/50 rounded-md border border-neutral-700" />
                       <div className="h-10 w-full bg-neutral-800/50 rounded-md border border-neutral-700" />
-                      <div className="h-10 w-full bg-violet-600/20 border border-violet-500/30 rounded-md mt-6" />
+                      <div className="h-10 w-full bg-violet-600/20 border border-violet-500/30 rounded-md mt-4" />
                     </div>
-                    <div className="flex-1 bg-white/5 rounded-lg border border-white/10 p-6 space-y-6">
+                    <div className="flex-1 bg-white/5 rounded-lg border border-white/10 p-5 space-y-5">
                       <div className="space-y-2">
-                        <div className="h-6 w-48 bg-neutral-700 rounded-md" />
-                        <div className="h-4 w-32 bg-neutral-800 rounded-md" />
+                        <div className="h-5 w-48 bg-neutral-700 rounded" />
+                        <div className="h-3 w-32 bg-neutral-800 rounded" />
                       </div>
-                      <div className="space-y-3">
-                        <div className="h-3 w-full bg-neutral-800 rounded-full" />
-                        <div className="h-3 w-[90%] bg-neutral-800 rounded-full" />
-                        <div className="h-3 w-[75%] bg-neutral-800 rounded-full" />
+                      <div className="space-y-2.5">
+                        {[100, 90, 75].map((w, i) => (
+                          <div key={i} className="h-2.5 bg-neutral-800 rounded-full" style={{ width: `${w}%` }} />
+                        ))}
                       </div>
-                      <div className="space-y-3">
-                        <div className="h-3 w-full bg-neutral-800 rounded-full" />
-                        <div className="h-3 w-[85%] bg-neutral-800 rounded-full" />
+                      <div className="space-y-2.5">
+                        {[100, 85].map((w, i) => (
+                          <div key={i} className="h-2.5 bg-neutral-800 rounded-full" style={{ width: `${w}%` }} />
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -289,20 +531,20 @@ export default function LandingPage() {
             </div>
 
             {/* Feature 2: Chrome Extension */}
-            <div className="flex flex-col lg:flex-row-reverse items-center gap-12">
+            <div className="flex flex-col lg:flex-row-reverse items-center gap-16">
               <div className="flex-1 space-y-6">
-                <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center">
                   <Zap className="w-6 h-6 text-orange-400" />
                 </div>
                 <h3 className="text-3xl font-bold text-white">{tDeepDive("block2Title")}</h3>
-                <p className="text-lg text-neutral-400 leading-relaxed">
+                <p className="text-lg text-neutral-400 leading-relaxed font-light">
                   {tDeepDive("block2Desc")}
                 </p>
-                <ul className="space-y-3 pt-4">
+                <ul className="space-y-3 pt-2">
                   {[
                     tDeepDive("block2Bullet1"),
                     tDeepDive("block2Bullet2"),
-                    tDeepDive("block2Bullet3")
+                    tDeepDive("block2Bullet3"),
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-neutral-300">
                       <CheckCircle className="w-5 h-5 text-orange-500 shrink-0" />
@@ -311,19 +553,16 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <div className="flex-1 w-full relative">
+              <div className="flex-1 w-full">
                 <div className="aspect-[4/3] rounded-2xl bg-gradient-to-tr from-neutral-800 to-neutral-900 border border-neutral-800/80 shadow-2xl overflow-hidden flex items-center justify-center relative p-8">
-                  {/* Mock Web Page */}
-                  <div className="absolute inset-0 bg-neutral-950/50 flex flex-col px-10 pt-16 gap-6 opacity-30">
-                    <div className="h-8 w-64 bg-neutral-700 rounded-md mb-4" />
-                    <div className="space-y-2"><div className="h-4 w-24 bg-neutral-800 rounded-md" /><div className="h-12 w-full max-w-md bg-neutral-800 rounded-md" /></div>
-                    <div className="space-y-2"><div className="h-4 w-32 bg-neutral-800 rounded-md" /><div className="h-12 w-full max-w-md bg-neutral-800 rounded-md" /></div>
+                  <div className="absolute inset-0 bg-neutral-950/50 flex flex-col px-10 pt-14 gap-5 opacity-25 pointer-events-none">
+                    <div className="h-7 w-64 bg-neutral-700 rounded mb-2" />
+                    <div className="space-y-1.5"><div className="h-3 w-24 bg-neutral-800 rounded" /><div className="h-11 w-full max-w-md bg-neutral-800 rounded-md" /></div>
+                    <div className="space-y-1.5"><div className="h-3 w-32 bg-neutral-800 rounded" /><div className="h-11 w-full max-w-md bg-neutral-800 rounded-md" /></div>
                   </div>
-
-                  {/* Mock Extension Popup overlying it */}
-                  <div className="relative z-10 w-80 h-[400px] bg-neutral-900 rounded-xl border border-neutral-700 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden ml-auto mr-12 rotate-2 hover:rotate-0 transition-transform duration-500">
+                  <div className="relative z-10 w-72 h-96 bg-neutral-900 rounded-xl border border-neutral-700 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden ml-auto mr-8 rotate-2 hover:rotate-0 transition-transform duration-500">
                     <div className="h-14 bg-gradient-to-r from-orange-600/80 to-pink-600/80 flex items-center justify-between px-4">
-                      <span className="font-bold text-white tracking-tight">AssistedApp</span>
+                      <span className="font-bold text-white tracking-tight text-sm">AssistedApp</span>
                       <div className="w-6 h-6 bg-white/20 rounded-md flex items-center justify-center">
                         <Zap className="w-3 h-3 text-white" />
                       </div>
@@ -332,11 +571,11 @@ export default function LandingPage() {
                       <div className="w-full h-10 bg-orange-500/20 border border-orange-500/50 rounded-lg flex items-center justify-center text-orange-400 font-medium text-sm gap-2">
                         <Sparkles className="w-4 h-4" /> Auto-Fill Page
                       </div>
-                      <div className="space-y-2 mt-4">
+                      <div className="space-y-2 mt-2">
                         <div className="text-xs text-neutral-500 font-semibold uppercase tracking-wider">Master Profile</div>
-                        {[1, 2, 3].map(i => (
+                        {[1, 2, 3].map((i) => (
                           <div key={i} className="h-12 bg-neutral-800/80 rounded-md border border-neutral-700 border-dashed flex items-center px-3 gap-3">
-                            <div className="w-6 h-6 rounded-sm bg-neutral-700" />
+                            <div className="w-6 h-6 rounded-sm bg-neutral-700 shrink-0" />
                             <div className="space-y-1.5 flex-1">
                               <div className="h-2 w-1/2 bg-neutral-600 rounded-full" />
                               <div className="h-1.5 w-1/3 bg-neutral-700 rounded-full" />
@@ -351,20 +590,20 @@ export default function LandingPage() {
             </div>
 
             {/* Feature 3: Live Matching */}
-            <div className="flex flex-col lg:flex-row items-center gap-12">
+            <div className="flex flex-col lg:flex-row items-center gap-16">
               <div className="flex-1 space-y-6">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
                   <Globe className="w-6 h-6 text-blue-400" />
                 </div>
                 <h3 className="text-3xl font-bold text-white">{tDeepDive("block3Title")}</h3>
-                <p className="text-lg text-neutral-400 leading-relaxed">
+                <p className="text-lg text-neutral-400 leading-relaxed font-light">
                   {tDeepDive("block3Desc")}
                 </p>
-                <ul className="space-y-3 pt-4">
+                <ul className="space-y-3 pt-2">
                   {[
                     tDeepDive("block3Bullet1"),
                     tDeepDive("block3Bullet2"),
-                    tDeepDive("block3Bullet3")
+                    tDeepDive("block3Bullet3"),
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-neutral-300">
                       <CheckCircle className="w-5 h-5 text-blue-500 shrink-0" />
@@ -373,27 +612,29 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <div className="flex-1 w-full relative">
+              <div className="flex-1 w-full">
                 <div className="aspect-[4/3] rounded-2xl bg-gradient-to-bl from-neutral-800 to-neutral-900 border border-neutral-800/80 shadow-2xl overflow-hidden flex flex-col p-6 gap-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="h-6 w-32 bg-neutral-700 rounded-md" />
+                  <div className="flex justify-between items-center mb-1">
+                    <div className="h-5 w-32 bg-neutral-700 rounded" />
                     <div className="h-8 w-8 bg-neutral-800 rounded-full" />
                   </div>
-
-                  {[1, 2].map(i => (
+                  {[
+                    { pct: "91%", color: "border-violet-500/50 text-violet-400" },
+                    { pct: "87%", color: "border-blue-500/50 text-blue-400" },
+                  ].map((card, i) => (
                     <div key={i} className="flex-1 bg-neutral-950/40 border border-neutral-800 rounded-xl p-5 flex flex-col">
-                      <div className="flex justify-between items-start mb-4">
+                      <div className="flex justify-between items-start mb-3">
                         <div className="space-y-2 flex-1">
-                          <div className="h-5 w-3/4 bg-neutral-600 rounded-md" />
-                          <div className="h-4 w-1/2 bg-neutral-700/50 rounded-md" />
+                          <div className="h-4 w-3/4 bg-neutral-600 rounded" />
+                          <div className="h-3 w-1/2 bg-neutral-700/60 rounded" />
                         </div>
-                        <div className="w-12 h-12 rounded-full border-4 border-blue-500/30 flex items-center justify-center shrink-0 ml-4">
-                          <span className="text-blue-400 font-bold text-sm">9{i}%</span>
+                        <div className={`w-12 h-12 rounded-full border-4 ${card.color} flex items-center justify-center shrink-0 ml-4`}>
+                          <span className={`font-bold text-xs ${card.color.split(" ")[1]}`}>{card.pct}</span>
                         </div>
                       </div>
                       <div className="flex gap-2 mt-auto">
                         <div className="h-8 w-24 bg-blue-600/20 rounded-md border border-blue-500/30" />
-                        <div className="h-8 w-24 bg-neutral-800 rounded-md" />
+                        <div className="h-8 w-20 bg-neutral-800 rounded-md" />
                       </div>
                     </div>
                   ))}
@@ -404,39 +645,163 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Final Bottom CTA */}
-        <section className="w-full py-32 relative overflow-hidden flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-violet-900/20 pointer-events-none" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-violet-600/30 blur-[150px] rounded-full pointer-events-none -z-10" />
+        {/* ── FAQ ── */}
+        <section className="w-full py-24 border-t border-neutral-800/50 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-violet-600/8 blur-[120px] rounded-full pointer-events-none" />
 
-          <div className="max-w-3xl mx-auto px-4 text-center z-10 space-y-8">
-            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">
+          <div className="max-w-3xl mx-auto px-4 relative z-10">
+            <div className="text-center mb-14">
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-3">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-neutral-400">Everything you need to know before getting started.</p>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                {
+                  q: "Is Accepta really free?",
+                  a: "Yes. The core features — profile setup, scholarship feed, AI fit evaluation, and letter generation — are completely free. Pro features are available for power users.",
+                },
+                {
+                  q: "Do I need a Chrome extension?",
+                  a: "No. The Chrome extension is optional for portal auto-fill. All AI tools work directly in the browser without any extension.",
+                },
+                {
+                  q: "What languages are supported?",
+                  a: "The platform currently supports English and Amharic (አማርኛ), with more languages coming soon.",
+                },
+                {
+                  q: "How accurate is the AI Fit Score?",
+                  a: "Our AI analyzes your academic background, test scores, and experience against program requirements to generate a personalized fit score. It's directional guidance, not a guarantee.",
+                },
+              ].map((faq, i) => (
+                <div key={i} className="bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 rounded-2xl p-6 transition-all">
+                  <h3 className="text-white font-semibold text-lg mb-3 flex items-start gap-3">
+                    <span className="text-violet-400 shrink-0 mt-0.5">Q.</span>
+                    {faq.q}
+                  </h3>
+                  <p className="text-neutral-400 leading-relaxed pl-6">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── BOTTOM CTA ── */}
+        <section className="w-full py-32 relative overflow-hidden flex items-center justify-center border-t border-neutral-800/50">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-violet-900/20 pointer-events-none" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-violet-600/25 blur-[150px] rounded-full pointer-events-none" />
+          <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-indigo-600/15 blur-[100px] rounded-full pointer-events-none" />
+
+          <div className="max-w-3xl mx-auto px-4 text-center z-10 space-y-8 relative">
+            <div className="flex justify-center">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-semibold uppercase tracking-widest">
+                <Globe2 className="w-3.5 h-3.5" />
+                Join Thousands of Students
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
               {tBottomCTA("title")}
             </h2>
-            <div className="pt-4 flex items-center justify-center gap-4">
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
               <SignedOut>
                 <SignUpButton mode="modal">
-                  <button className="h-16 px-10 text-xl font-bold bg-white hover:bg-neutral-200 text-neutral-950 rounded-full shadow-[0_0_50px_-10px_rgba(255,255,255,0.5)] transition-all hover:scale-105">
+                  <button className="h-16 px-10 text-xl font-bold bg-white hover:bg-neutral-100 text-neutral-950 rounded-full shadow-[0_0_50px_-10px_rgba(255,255,255,0.4)] transition-all hover:scale-105">
                     {tBottomCTA("button")}
                   </button>
                 </SignUpButton>
               </SignedOut>
               <SignedIn>
                 <Link href="/dashboard">
-                  <button className="h-16 px-10 text-xl font-bold bg-white hover:bg-neutral-200 text-neutral-950 rounded-full shadow-[0_0_50px_-10px_rgba(255,255,255,0.5)] transition-all hover:scale-105">
+                  <button className="h-16 px-10 text-xl font-bold bg-white hover:bg-neutral-100 text-neutral-950 rounded-full shadow-[0_0_50px_-10px_rgba(255,255,255,0.4)] transition-all hover:scale-105">
                     {tNav("missionControl")}
                   </button>
                 </Link>
               </SignedIn>
             </div>
+            <p className="text-neutral-500 text-sm">{tBottomCTA("footer")}</p>
           </div>
         </section>
 
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-neutral-800/50 py-8 text-center text-neutral-500 text-sm">
-        <p>{tBottomCTA("footer")}</p>
+      {/* ── FOOTER ── */}
+      <footer className="border-t border-neutral-800/50 bg-neutral-950">
+        <div className="max-w-6xl mx-auto px-4 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+
+            {/* Col 1 — Brand */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Image src={AcceptaLogo} alt="Accepta" width={40} height={40} className="rounded-lg" />
+                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-neutral-200">
+                  Accepta
+                </span>
+              </div>
+              <p className="text-neutral-500 text-sm leading-relaxed max-w-xs">
+                Automate your path to the world's best universities.
+              </p>
+              <div className="flex gap-3 pt-2">
+                <div className="w-8 h-8 rounded-lg bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center cursor-pointer transition-colors">
+                  <Globe className="w-4 h-4 text-neutral-400" />
+                </div>
+                <div className="w-8 h-8 rounded-lg bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center cursor-pointer transition-colors">
+                  <Mail className="w-4 h-4 text-neutral-400" />
+                </div>
+              </div>
+            </div>
+
+            {/* Col 2 — Product */}
+            <div>
+              <h4 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Product</h4>
+              <ul className="space-y-3">
+                {[
+                  { label: "Dashboard", href: "/dashboard" },
+                  { label: "Live Feed", href: "#" },
+                  { label: "Letter Studio", href: "#" },
+                  { label: "AI CV Maker", href: "#" },
+                  { label: "Chrome Extension", href: "#" },
+                ].map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} className="text-neutral-500 hover:text-neutral-200 text-sm transition-colors">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Col 3 — Resources */}
+            <div>
+              <h4 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Resources</h4>
+              <ul className="space-y-3">
+                {[
+                  "Scholarship Guide",
+                  "IELTS Prep",
+                  "Duolingo Test",
+                  "Application Tips",
+                ].map((label) => (
+                  <li key={label}>
+                    <a href="#" className="text-neutral-500 hover:text-neutral-200 text-sm transition-colors">
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="border-t border-neutral-800/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-neutral-600 text-sm">
+              © {new Date().getFullYear()} Accepta. All rights reserved.
+            </p>
+            <p className="text-neutral-600 text-sm">
+              Built with ❤️ for international students
+            </p>
+          </div>
+        </div>
       </footer>
     </div>
   );
