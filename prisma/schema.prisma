@@ -29,6 +29,7 @@ model User {
   extracurriculars Extracurricular[]
   documents       Document[]
   applications    Application[]
+  recommendations Recommendation[]
 }
 
 model Education {
@@ -47,14 +48,15 @@ model Education {
 }
 
 model TestScore {
-  id        String   @id @default(cuid())
-  testType  String   // e.g., SAT, ACT, IELTS, Duolingo
-  score     String
-  dateTaken DateTime?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(cuid())
+  testType   String    // e.g., SAT, ACT, IELTS, Duolingo
+  score      String
+  dateTaken  DateTime?
+  expiryDate DateTime?
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Extracurricular {
@@ -76,6 +78,7 @@ model Document {
   name          String
   type          String       // e.g., TRANSCRIPT, PASSPORT, RESUME
   fileUrl       String
+  expiryDate    DateTime?
   userId        String
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   applicationId String?
@@ -97,8 +100,28 @@ model Application {
   userId               String
   user                 User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   documents            Document[]
+  recommendations      Recommendation[]
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
+}
+
+model Recommendation {
+    id               String       @id @default(cuid())
+    recommenderName  String
+    recommenderEmail String?
+    recommenderTitle String?
+    relationship     String       // e.g. "Professor", "Supervisor", "Mentor"
+    status           String       @default("NOT_ASKED") // NOT_ASKED, ASKED, CONFIRMED, SUBMITTED, DECLINED
+    applicationId    String?      // optional link to a specific application
+    application      Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+    dueDate          DateTime?
+    notes            String?
+    askedDate        DateTime?
+    reminderSent     Boolean      @default(false)
+    userId           String
+    user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt        DateTime     @default(now())
+    updatedAt        DateTime     @updatedAt
 }
 
 model Opportunity {

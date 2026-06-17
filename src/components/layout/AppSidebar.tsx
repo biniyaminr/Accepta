@@ -16,7 +16,7 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar";
-import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard, Sparkles, Mail } from "lucide-react";
+import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard, Sparkles, Mail, MessageSquare, Users, CalendarDays, FileSearch } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -43,6 +43,11 @@ export function AppSidebar() {
             icon: FileText,
         },
         {
+            title: t("essayReview"),
+            url: "/essay-review",
+            icon: FileSearch,
+        },
+        {
             title: "Letter Studio",
             url: "/letters",
             icon: Mail,
@@ -61,6 +66,21 @@ export function AppSidebar() {
             title: t("applicationTracker"),
             url: "/applications",
             icon: GraduationCap,
+        },
+        {
+            title: t("interviewPrep"),
+            url: "/interview-prep",
+            icon: MessageSquare,
+        },
+        {
+            title: t("recommendations"),
+            url: "/recommendations",
+            icon: Users,
+        },
+        {
+            title: t("calendar"),
+            url: "/calendar",
+            icon: CalendarDays,
         },
         {
             title: t("liveFeed"),

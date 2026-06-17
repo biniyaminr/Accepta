@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { ClockIcon, CheckCircle2Icon, AlertCircleIcon, FileIcon, PlusIcon, UserIcon, GraduationCapIcon, BriefcaseIcon, BookOpenIcon, ShieldIcon } from "lucide-react";
 import { toast } from "sonner";
+import { ExpiryAlerts } from "@/components/dashboard/ExpiryAlerts";
 
 export function DashboardContent() {
     const t = useTranslations("Dashboard");
@@ -313,6 +314,9 @@ export function DashboardContent() {
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Document & Test Expiry Alerts */}
+            <ExpiryAlerts />
 
             <div className="grid gap-6 md:grid-cols-2">
                 <Card className="col-span-1 bg-neutral-900/40 border-border/50 backdrop-blur-sm shadow-xl">

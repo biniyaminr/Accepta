@@ -29,14 +29,17 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
         }
 
         const body = await request.json();
-        const { name, type, applicationId } = body;
+        const { name, type, applicationId, expiryDate } = body;
 
         const updatedDoc = await prisma.document.update({
             where: { id },
             data: {
                 name,
                 type,
-                applicationId: applicationId === "none" ? null : applicationId
+                applicationId: applicationId === "none" ? null : applicationId,
+                ...(expiryDate !== undefined && {
+                    expiryDate: expiryDate ? new Date(expiryDate) : null
+                })
             }
         });
 
