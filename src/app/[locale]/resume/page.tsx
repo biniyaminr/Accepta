@@ -8,23 +8,21 @@ import { Loader2, Download, Wand2, GraduationCap, Building, UploadCloud, Sparkle
 import { useReactToPrint } from "react-to-print";
 
 import { useAppStore } from "@/store/useAppStore";
-import { useHasHydrated } from "@/hooks/useHasHydrated";
 
 export default function ResumeBuilder() {
     const {
         targetProgram, setTargetProgram,
         targetUniversity, setTargetUniversity,
-        resumeData, setResumeData,
         tailoredSummary, setTailoredSummary,
-        educationList, setEducationList,
         tailoredExperience, setTailoredExperience,
         tailoredSkills, setTailoredSkills,
         uploadedFileName, setUploadedFileName,
         resetCVMaker
     } = useAppStore();
 
-    const hasHydrated = useHasHydrated();
-    
+    const [resumeData, setResumeData] = useState<any>(null);
+    const [educationList, setEducationList] = useState<any[]>([]);
+
     const [isTailoring, setIsTailoring] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -156,7 +154,7 @@ export default function ResumeBuilder() {
         setSelectedFile(file);
     };
 
-    if (!hasHydrated || !resumeData) {
+    if (!resumeData) {
         return (
             <div className="flex-1 flex justify-center items-center h-full">
                 <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />

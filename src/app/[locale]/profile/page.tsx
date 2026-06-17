@@ -41,8 +41,6 @@ import { useTranslations } from "next-intl";
 import { UploadButton } from "@/lib/uploadthing";
 import { useRouter } from "next/navigation";
 import { SuggestionInput } from "@/components/ui/SuggestionInput";
-import { useAppStore } from "@/store/useAppStore";
-import { useHasHydrated } from "@/hooks/useHasHydrated";
 import { Link } from "@/i18n/routing";
 
 // ─── Schemas ────────────────────────────────────────────────────────────────
@@ -1216,15 +1214,8 @@ function ProfileView({ profile, onRefresh }: { profile: FullProfile; onRefresh: 
 // ─── Onboarding Wizard ───────────────────────────────────────────────────────
 
 function OnboardingWizard() {
-    const {
-        step1Draft, setStep1Draft,
-        step2Draft, setStep2Draft,
-        step3Draft, setStep3Draft,
-        vaultDocuments, setVaultDocuments,
-        resetOnboarding,
-    } = useAppStore();
+    const [vaultDocuments, setVaultDocuments] = useState<{ type: string; fileUrl: string; name: string | null }[]>([]);
 
-    const hasHydrated = useHasHydrated();
     const t = useTranslations("OnboardingWizard");
     const { user, isLoaded: isUserLoaded } = useUser();
     const router = useRouter();
@@ -1289,7 +1280,7 @@ function OnboardingWizard() {
             }
         }
         loadStepData();
-    }, [isUserLoaded, form1, form2, form3, setVaultDocuments]);
+    }, [isUserLoaded, form1, form2, form3]);
 
     useEffect(() => {
         const docs = [];
@@ -1297,23 +1288,7 @@ function OnboardingWizard() {
         if (cvUrl) docs.push({ type: 'RESUME', fileUrl: cvUrl, name: cvName });
         if (transcriptUrl) docs.push({ type: 'TRANSCRIPT', fileUrl: transcriptUrl, name: transcriptName });
         setVaultDocuments(docs);
-    }, [passportUrl, cvUrl, transcriptUrl, passportName, cvName, transcriptName, setVaultDocuments]);
-
-    useEffect(() => {
-        const sub1 = form1.watch((val) => setStep1Draft(val));
-        const sub2 = form2.watch((val) => setStep2Draft(val));
-        const sub3 = form3.watch((val) => setStep3Draft(val));
-        return () => { sub1.unsubscribe(); sub2.unsubscribe(); sub3.unsubscribe(); };
-    }, [form1, form2, form3, setStep1Draft, setStep2Draft, setStep3Draft]);
-
-    useEffect(() => {
-        if (hasHydrated) {
-            if (step1Draft) form1.reset({ ...form1.getValues(), ...step1Draft });
-            if (step2Draft) form2.reset({ ...form2.getValues(), ...step2Draft });
-            if (step3Draft) form3.reset({ ...form3.getValues(), ...step3Draft });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasHydrated]);
+    }, [passportUrl, cvUrl, transcriptUrl, passportName, cvName, transcriptName]);
 
     const handleNext = async () => {
         let isValid = false;
@@ -1358,7 +1333,6 @@ function OnboardingWizard() {
         try {
             const res = await fetch("/api/onboarding/complete", { method: "POST" });
             if (res.ok) {
-                resetOnboarding();
                 toast.success("Welcome aboard!", { description: "Onboarding complete. Entering Mission Control..." });
                 router.push("/dashboard");
             } else { throw new Error("Completion failed"); }
@@ -1369,7 +1343,7 @@ function OnboardingWizard() {
         }
     };
 
-    if (!hasHydrated || isLoading) {
+    if (isLoading) {
         return (
             <div className="flex h-[60vh] items-center justify-center">
                 <Loader2 className="w-8 h-8 animate-spin text-violet-500" />

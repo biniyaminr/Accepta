@@ -2,49 +2,46 @@
 
 import { useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { useAppStore } from '@/store/useAppStore';
 
 export function ExtensionSync() {
     const { user, isLoaded } = useUser();
-    
-    // We want to sync the profile data and any relevant vault URLs
-    // In this app, the vault URLs are often in the onboarding state or profile
-    const {
-        step1Draft,
-        step2Draft,
-        step3Draft
-    } = useAppStore();
-    
+
     useEffect(() => {
         if (!isLoaded || !user) return;
 
         const syncData = async () => {
-            // Prepare the payload merging Clerk info with drafts
-            // Documents are now handled locally in the extension popup
-            const payload = {
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.primaryEmailAddress?.emailAddress,
-                fullName: user.fullName,
-                dob: step1Draft?.dob,
-                nationality: step1Draft?.citizenship,
-                gender: step1Draft?.gender,
-                phone: step1Draft?.phone,
-                
-                educations: step2Draft ? [step2Draft] : [],
-                experiences: step3Draft?.experiences || []
-            };
+            try {
+                // Fetch profile data directly from the DB — source of truth
+                const res = await fetch('/api/profile');
+                if (!res.ok) return;
+                const profile = await res.json();
 
-            window.postMessage({
-                type: 'ACCEPTA_SYNC_VAULT',
-                payload
-            }, '*');
-            
-            console.log('🚀 Accepta: Syncing profile data...', payload);
+                const payload = {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.primaryEmailAddress?.emailAddress,
+                    fullName: profile.fullName || user.fullName,
+                    dob: profile.dob,
+                    nationality: profile.citizenship,
+                    phone: profile.phone,
+
+                    educations: profile.educations || [],
+                    experiences: profile.extracurriculars || [],
+                };
+
+                window.postMessage({
+                    type: 'ACCEPTA_SYNC_VAULT',
+                    payload
+                }, '*');
+
+                console.log('🚀 Accepta: Syncing profile data...', payload);
+            } catch (err) {
+                console.error('ExtensionSync: failed to fetch profile', err);
+            }
         };
 
         syncData();
-    }, [isLoaded, user, step1Draft, step2Draft, step3Draft]);
+    }, [isLoaded, user]);
 
     return null; // Invisible component
 }
