@@ -10,7 +10,7 @@
     "Features": {
         "feedTitle": "የቀጥታ ዕድሎች መረጃ",
         "feedDesc": "ከዓለም አቀፍ ዩኒቨርሲቲ ስኮላርሺፖች ጋር ይገናኙ እና የ AI ብቃትዎን ያረጋግጡ።",
-        "cvTitle": "የ AI ሲቪ አዘጋጅ",
+        "cvTitle": "የ ኤአይ ሲቪ አዘጋጅ",
         "cvDesc": "ያለዎትን ሲቪ ያስገቡ እና አርቴፊሻል ኢንተለጀንስ ለሚፈልጉት ፕሮግራም በትክክል እንዲያዘጋጀው ያድርጉ።",
         "chromeTitle": "የክሮም ራስ-ሙሌት",
         "chromeDesc": "ሰነዶችዎን በደመና ላይ ያስቀምጡ እና የዩኒቨርሲቲ ፖርታሎችን ወዲያውኑ ይሙሉ።"
@@ -81,7 +81,7 @@
         "nationality": "ዜግነት",
         "institution": "የተቋሙ ስም",
         "major": "ትምህርት / የጥናት መስክ",
-        "gpa": "GPA / ውጤቶች",
+        "gpa": "ጂፒኤ / ውጤቶች",
         "city": "ከተማ",
         "country": "ሀገር",
         "startDate": "የመጀመሪያ ቀን",
@@ -90,7 +90,7 @@
         "roleDesc": "የኃላፊነትዎ አጭር መግለጫ።",
         "techStack": "ቁልፍ ክህሎቶች እና ቴክኖሎጂዎች (Tech Stack)",
         "passport": "ፓስፖርት / መታወቂያ ፎቶ",
-        "cv": "የአሁኑ ሲቪ (PDF)",
+        "cv": "የአሁኑ ሲቪ (ፒዲኤፍ)",
         "prev": "ቀዳሚ",
         "next": "ቀጣይ እርምጃ",
         "complete": "አረጋግጥ እና ወደ ዳሽቦርድ ግባ",
@@ -185,10 +185,10 @@
         "documents": "ሰነዶች",
         "uploadedToVault": "ወደ ቮልት ተጭኗል",
         "profileStrength": "የመገለጫ ጥንካሬ",
-        "profileStrengthDesc": "ሙሉ መገለጫ የተሻለ AI ድርሰቶችን፣ ከፍ ያሉ ብቃት ነጥቦችን እና ፈጣን ራስ-ሙሌቶችን ይሰጥዎታል።",
+        "profileStrengthDesc": "ሙሉ መገለጫ የተሻለ ኤአይ ድርሰቶችን፣ ከፍ ያሉ ብቃት ነጥቦችን እና ፈጣን ራስ-ሙሌቶችን ይሰጥዎታል።",
         "complete": "ሙሉ",
         "profileComplete": "መገለጫዎ ተጠናቋል!",
-        "completeProfileAI": "የ AI ምክሮችን ለማሻሻል መገለጫዎን ያጠናቅቁ።",
+        "completeProfileAI": "የ ኤአይ ምክሮችን ለማሻሻል መገለጫዎን ያጠናቅቁ።",
         "identity": "ግላዊ ማንነት",
         "education": "ትምህርት",
         "experience": "ልምድ",
@@ -263,7 +263,7 @@
         "upcomingDeadlines": "ቀጣዮቹ ማብቂያዎች",
         "noDeadlines": "በቀጣዮቹ 30 ቀናት ምንም ማብቂያዎች የሉም።",
         "loading": "በመጫን ላይ...",
-        "daysLeft": "{count} ቀ",
+        "daysLeft": "{count} ቀን",
         "today": "ዛሬ!",
         "viewAllApplications": "ሁሉንም ማመልከቻዎች ይመልከቱ →"
     }
