@@ -16,7 +16,7 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar";
-import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard, Sparkles } from "lucide-react";
+import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard, Sparkles, Mail } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -41,6 +41,11 @@ export function AppSidebar() {
             title: t("aiEssays"),
             url: "/essays",
             icon: FileText,
+        },
+        {
+            title: "Letter Studio",
+            url: "/letters",
+            icon: Mail,
         },
         {
             title: t("aiCvMaker"),
