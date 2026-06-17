@@ -101,13 +101,14 @@ function CountryLabel({ country }: { country: string | null }) {
 
 // ── Deadline Countdown ────────────────────────────────────────────────────────
 
-function getDeadlineInfo(deadline: string | null): {
-    labelKey: string;
-    days: number;
-    colorClass: string;
-    isUrgent: boolean;
-} {
-    if (!deadline) return { labelKey: "noDeadline", days: 0, colorClass: "text-neutral-500", isUrgent: false };
+function getDeadlineInfo(
+    deadline: string | null,
+    tNoDeadline: string,
+    tExpired: string,
+    tToday: string,
+    tDaysLeft: (days: number) => string,
+): { label: string; colorClass: string; isUrgent: boolean } {
+    if (!deadline) return { label: tNoDeadline, colorClass: "text-neutral-500", isUrgent: false };
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -115,17 +116,12 @@ function getDeadlineInfo(deadline: string | null): {
     deadlineDate.setHours(0, 0, 0, 0);
     const days = differenceInDays(deadlineDate, today);
 
-    if (days < 0) return { labelKey: "expired", days, colorClass: "text-neutral-500 line-through", isUrgent: false };
-    if (days === 0) return { labelKey: "todayDeadline", days, colorClass: "text-red-400 font-bold", isUrgent: true };
-    if (days <= 7) return { labelKey: "daysLeft", days, colorClass: "text-red-400 font-semibold", isUrgent: true };
-    if (days <= 14) return { labelKey: "daysLeft", days, colorClass: "text-amber-400 font-medium", isUrgent: false };
-    if (days <= 30) return { labelKey: "daysLeft", days, colorClass: "text-blue-400", isUrgent: false };
-    return { labelKey: "daysLeft", days, colorClass: "text-neutral-400", isUrgent: false };
-}
-
-function deadlineLabel(info: ReturnType<typeof getDeadlineInfo>, t: ReturnType<typeof useTranslations>): string {
-    if (info.labelKey === "daysLeft") return t("daysLeft", { days: info.days });
-    return t(info.labelKey as "noDeadline" | "expired" | "todayDeadline");
+    if (days < 0) return { label: tExpired, colorClass: "text-neutral-500 line-through", isUrgent: false };
+    if (days === 0) return { label: tToday, colorClass: "text-red-400 font-bold", isUrgent: true };
+    if (days <= 7) return { label: tDaysLeft(days), colorClass: "text-red-400 font-semibold", isUrgent: true };
+    if (days <= 14) return { label: tDaysLeft(days), colorClass: "text-amber-400 font-medium", isUrgent: false };
+    if (days <= 30) return { label: tDaysLeft(days), colorClass: "text-blue-400", isUrgent: false };
+    return { label: tDaysLeft(days), colorClass: "text-neutral-400", isUrgent: false };
 }
 
 // ── Detail Drawer ─────────────────────────────────────────────────────────────
@@ -157,7 +153,7 @@ function DetailDrawer({
 
     if (!opp) return null;
 
-    const deadlineInfo = getDeadlineInfo(opp.deadline);
+    const deadlineInfo = getDeadlineInfo(opp.deadline, t("noDeadline"), t("expired"), t("todayDeadline"), (d) => t("daysLeft", { days: d }));
 
     return (
         <>
@@ -215,7 +211,7 @@ function DetailDrawer({
                             <Calendar className="w-4 h-4 text-neutral-500 shrink-0 mt-0.5" />
                             <div>
                                 <span className={`block text-base font-bold ${deadlineInfo.colorClass}`}>
-                                    {deadlineLabel(deadlineInfo, t)}
+                                    {deadlineInfo.label}
                                     {deadlineInfo.isUrgent && (
                                         <span className="ml-2 inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse align-middle" />
                                     )}
@@ -329,10 +325,10 @@ function CompareModal({
             label: t("deadline"),
             render: (o) => {
                 if (!o.deadline) return <span className="text-neutral-600">{t("notSpecified")}</span>;
-                const info = getDeadlineInfo(o.deadline);
+                const info = getDeadlineInfo(o.deadline, t("noDeadline"), t("expired"), t("todayDeadline"), (d) => t("daysLeft", { days: d }));
                 return (
                     <div>
-                        <span className={`text-sm font-semibold ${info.colorClass}`}>{deadlineLabel(info, t)}</span>
+                        <span className={`text-sm font-semibold ${info.colorClass}`}>{info.label}</span>
                         <span className="block text-xs text-neutral-500 mt-0.5">{format(new Date(o.deadline), "PPP")}</span>
                     </div>
                 );
@@ -998,7 +994,7 @@ export default function OpportunitiesFeed() {
                         const isPinned = pinnedIds.has(opp.id);
                         const isBookmarked = bookmarkedIds.has(opp.id);
                         const isRead = readIds.has(opp.id);
-                        const deadlineInfo = getDeadlineInfo(opp.deadline);
+                        const deadlineInfo = getDeadlineInfo(opp.deadline, t("noDeadline"), t("expired"), t("todayDeadline"), (d) => t("daysLeft", { days: d }));
 
                         return (
                             <Card
@@ -1092,7 +1088,7 @@ export default function OpportunitiesFeed() {
                                                 <Calendar className="h-3.5 w-3.5 shrink-0 mt-0.5" />
                                                 <div>
                                                     <span className={`font-semibold ${deadlineInfo.colorClass}`}>
-                                                        {deadlineLabel(deadlineInfo, t)}
+                                                        {deadlineInfo.label}
                                                         {deadlineInfo.isUrgent && (
                                                             <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse align-middle" />
                                                         )}
