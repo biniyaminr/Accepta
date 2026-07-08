@@ -24,12 +24,21 @@ model User {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   isOnboardingComplete Boolean     @default(false)
+  planType        String            @default("FREE") // FREE, SPRINT, SEASON
+  expiresAt       DateTime?         // when the current pass expires; null on Free
+  referralSource  String?           // "How did you find Accepta?" answer from signup
+  utmSource       String?           // captured from the landing URL
+  utmMedium       String?
+  utmCampaign     String?
+  interviewed     Boolean           @default(false) // user-research pipeline flag
+  payments        Payment[]
   educations      Education[]
   testScores      TestScore[]
   extracurriculars Extracurricular[]
   documents       Document[]
   applications    Application[]
   recommendations Recommendation[]
+  notes           ApplicationNote[]
 }
 
 model Education {
@@ -101,8 +110,22 @@ model Application {
   user                 User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   documents            Document[]
   recommendations      Recommendation[]
+  notes                ApplicationNote[]
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
+}
+
+model ApplicationNote {
+  id            String      @id @default(cuid())
+  content       String
+  category      String      @default("general") // general, todo, feedback, research
+  isPinned      Boolean     @default(false)
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model Recommendation {
@@ -122,6 +145,19 @@ model Recommendation {
     user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
     createdAt        DateTime     @default(now())
     updatedAt        DateTime     @updatedAt
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  txRef     String   @unique // Chapa transaction reference
+  planType  String   // SPRINT, SEASON
+  amount    Int      // ETB
+  days      Int      // access days granted (30 or 90)
+  status    String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Opportunity {

@@ -16,11 +16,12 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar";
-import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard, Sparkles, Mail, MessageSquare, Users, CalendarDays, FileSearch } from "lucide-react";
+import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard, Sparkles, Mail, MessageSquare, Users, CalendarDays, FileSearch, BarChart3 } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Link } from "@/i18n/routing";
+import { PassStatus } from "./PassStatus";
 
 export function AppSidebar() {
     const pathname = usePathname();
@@ -81,6 +82,11 @@ export function AppSidebar() {
             title: t("calendar"),
             url: "/calendar",
             icon: CalendarDays,
+        },
+        {
+            title: t("analytics"),
+            url: "/analytics",
+            icon: BarChart3,
         },
         {
             title: t("liveFeed"),
@@ -146,6 +152,9 @@ export function AppSidebar() {
 
             {/* Auth Footer */}
             <SidebarFooter className="border-t border-border/50 p-4">
+                <SignedIn>
+                    <PassStatus />
+                </SignedIn>
                 {/* Language Switcher */}
                 <div className="px-1 mb-3">
                     <LanguageSwitcher />

@@ -1,20 +1,47 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
+import { PASS_PLANS, isPassPlanId } from "@/lib/plans";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
     try {
         const user = await currentUser();
         if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
+        const body = await request.json().catch(() => ({}));
+        const planId = typeof body.plan === "string" ? body.plan.toUpperCase() : "";
+        if (!isPassPlanId(planId)) {
+            return NextResponse.json({ error: "Invalid plan. Expected SPRINT or SEASON." }, { status: 400 });
+        }
+        const plan = PASS_PLANS[planId];
+
         const email = user.emailAddresses[0]?.emailAddress || "test@example.com";
-        const firstName = user.firstName || "Biniyam";
-        const lastName = user.lastName || "Dereje";
+        const firstName = user.firstName || "Accepta";
+        const lastName = user.lastName || "User";
+
+        const dbUser = await prisma.user.findUnique({ where: { userId: user.id } });
+        if (!dbUser) {
+            return NextResponse.json({ error: "Complete your profile before purchasing a pass." }, { status: 400 });
+        }
 
         const tx_ref = `TX-${Date.now()}-${user.id.slice(-5)}`;
 
-        console.log(`💳 Initializing Chapa transaction for ${email} (${tx_ref})...`);
+        await prisma.payment.create({
+            data: {
+                txRef: tx_ref,
+                planType: plan.id,
+                amount: plan.amount,
+                days: plan.days,
+                status: "PENDING",
+                userId: dbUser.id,
+            },
+        });
+
+        const origin = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+
+        console.log(`💳 Initializing Chapa transaction for ${email} (${tx_ref}, ${plan.id})...`);
 
         const chapaResponse = await fetch("https://api.chapa.co/v1/transaction/initialize", {
             method: "POST",
@@ -23,16 +50,17 @@ export async function POST() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                amount: "1000",
+                amount: String(plan.amount),
                 currency: "ETB",
                 email: email,
                 first_name: firstName,
                 last_name: lastName,
                 tx_ref: tx_ref,
-                return_url: "http://localhost:3000/dashboard?success=true",
+                return_url: `${origin}/api/chapa/verify?tx_ref=${tx_ref}`,
                 customization: {
-                    title: "AssistedApp Pro",
-                    description: "Lifetime access to all AI features",
+                    // Chapa limits: title 16 chars, description 50 chars
+                    title: "Accepta",
+                    description: `${plan.name} - ${plan.days} days unlimited access`,
                 },
             }),
         });

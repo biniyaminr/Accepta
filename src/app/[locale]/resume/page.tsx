@@ -8,6 +8,7 @@ import { Loader2, Download, Wand2, GraduationCap, Building, UploadCloud, Sparkle
 import { useReactToPrint } from "react-to-print";
 
 import { useAppStore } from "@/store/useAppStore";
+import { capture } from "@/lib/analytics";
 
 export default function ResumeBuilder() {
     const {
@@ -116,6 +117,7 @@ export default function ResumeBuilder() {
 
                     setTailoredExperience(parsedData.experience || parsedData.extracurriculars || []);
                     setTailoredSkills(parsedData.skills || []);
+                    capture("cv_tailored");
                 } catch (e) {
                     console.error("Failed to parse JSON API response:", e, dataText);
                     alert("The AI returned improperly formatted data. Please try again.");

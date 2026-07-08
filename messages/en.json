@@ -5,7 +5,31 @@
     },
     "Nav": {
         "getStarted": "Get Started",
-        "missionControl": "Mission Control"
+        "missionControl": "Mission Control",
+        "startFree": "Start Free",
+        "findScholarships": "Find My Scholarships — Free",
+        "startFreeNoCard": "Start Free — No Card Needed"
+    },
+    "Landing": {
+        "banner": "🎓 Live scholarship feed now in open beta",
+        "bannerCta": "Explore",
+        "pillLiveFeed": "✓ Live scholarship feed",
+        "pillUpdatedDaily": "✓ Updated daily",
+        "pillFree": "✓ Free to Start",
+        "statLiveNumber": "Live",
+        "statLiveLabel": "Scholarship Feed · Updated Daily",
+        "statBetaNumber": "Open Beta",
+        "statBetaLabel": "Free While We Grow",
+        "statSetupNumber": "3 min",
+        "statSetupLabel": "Average Setup Time",
+        "statFreeNumber": "Free",
+        "statFreeLabel": "To Get Started",
+        "earlyAccessLabel": "Early Access",
+        "earlyAccessTitle": "Built by an international student. Shaped by early users.",
+        "earlyAccessBody": "Accepta is in open beta. Everything you see was built by someone who has been through the scholarship grind — and it's free while we grow. Early users get direct input into what we build next, and lifetime respect from the founder.",
+        "feedbackTitle": "Found a bug or have an idea?",
+        "feedbackBody": "Tell us — we ship fixes weekly.",
+        "openBeta": "Open Beta"
     },
     "Features": {
         "feedTitle": "Live Opportunity Feed",
@@ -18,7 +42,7 @@
     "About": {
         "title": "The old way is broken.",
         "desc": "Applying to universities takes hundreds of hours. From rewriting CVs for every single program to manually typing your address 50 times across archaic portals, the entire process is exhausting and prone to error.",
-        "solution": "We built AssistedApp to fix that."
+        "solution": "We built Accepta to fix that."
     },
     "Sidebar": {
         "mainMenu": "MAIN MENU",
@@ -32,8 +56,9 @@
         "recommendations": "Recommendations",
         "calendar": "Calendar",
         "liveFeed": "Live Feed",
-        "pricing": "Pricing & Pro",
-        "essayReview": "Essay Reviewer"
+        "pricing": "Pricing & Passes",
+        "essayReview": "Essay Reviewer",
+        "analytics": "Analytics"
     },
     "Journey": {
         "title": "Your Journey to Acceptance",
@@ -67,7 +92,7 @@
     "BottomCTA": {
         "title": "Ready to land your dream program?",
         "button": "Start Applying for Free",
-        "footer": "© 2026 AssistedApp. All rights reserved."
+        "footer": "© 2026 Accepta. All rights reserved."
     },
     "OnboardingWizard": {
         "title": "Welcome to Your Future",
@@ -101,7 +126,17 @@
         "saving": "Saving Progress...",
         "summary": "Profile Summary",
         "summaryDesc": "Review your information before finalizing.",
-        "step5Desc": "Please review your master profile details before entering Mission Control."
+        "step5Desc": "Please review your master profile details before entering Mission Control.",
+        "referralQuestion": "How did you find Accepta?",
+        "referralPlaceholder": "Select an option",
+        "referralRequired": "Please tell us how you found Accepta.",
+        "referralTelegram": "Telegram group",
+        "referralWhatsapp": "WhatsApp group",
+        "referralFacebook": "Facebook group",
+        "referralReddit": "Reddit",
+        "referralTiktok": "TikTok / Reels",
+        "referralFriend": "A friend told me",
+        "referralOther": "Other"
     },
     "Feed": {
         "pageTitle": "Live Opportunities Feed",
@@ -371,6 +406,23 @@
         "today": "Today!",
         "viewAllApplications": "View all applications →"
     },
+    "Notes": {
+        "addNote": "Add Note",
+        "editNote": "Edit Note",
+        "saveNote": "Save",
+        "cancel": "Cancel",
+        "deleteNote": "Delete",
+        "confirmDelete": "Delete this note?",
+        "notesFor": "Notes for {university}",
+        "noNotes": "No notes yet. Add one to start tracking your progress.",
+        "general": "General",
+        "todo": "To-Do",
+        "feedback": "Feedback",
+        "research": "Research",
+        "pinned": "Pinned",
+        "placeholder": "Write a note...",
+        "category": "Category"
+    },
     "EssayReview": {
         "pageTitle": "AI Essay Reviewer",
         "pageSubtitle": "Paste your essay to get instant AI feedback on grammar, tone, structure, and content.",
@@ -400,5 +452,88 @@
         "hideRevised": "Hide Revised Version",
         "noEssay": "Please paste an essay to review.",
         "tooShort": "Essay is too short. Please enter at least 50 words."
+    },
+    "Analytics": {
+        "pageTitle": "Application Analytics",
+        "pageSubtitle": "Track your application progress and performance at a glance.",
+        "totalApplications": "Total Applications",
+        "submitted": "Submitted",
+        "avgFitScore": "Avg Fit Score",
+        "completionRate": "Completion Rate",
+        "applicationsByStatus": "Applications by Status",
+        "deadlinesByMonth": "Deadlines by Month",
+        "documentsProgress": "Documents Progress",
+        "recentActivity": "Recent Activity",
+        "countriesApplied": "Countries Applied",
+        "notStarted": "Not Started",
+        "inProgress": "In Progress",
+        "ready": "Ready",
+        "noData": "No application data yet. Start tracking applications to see analytics.",
+        "daysAgo": "{days}d ago",
+        "today": "Today"
+    },
+    "Pricing": {
+        "headline": "Pay for your season. Not forever.",
+        "subheadline": "No subscriptions. No auto-charges. One payment via Telebirr or CBE Birr covers your entire application push — like a top-up, it's yours until it expires.",
+        "etb": "ETB",
+        "oneTimePayment": "One-time payment. No auto-renewal.",
+        "mostPopular": "Most Popular",
+        "initializing": "Initializing...",
+        "securePayments": "Secure localized payments via Chapa",
+        "paymentErrorTitle": "Payment Error",
+        "paymentErrorDesc": "Failed to start payment process. Please try again.",
+        "freeName": "Starter",
+        "freeTagline": "Foundation for your journey",
+        "freeF1": "3 AI Program Scans per month",
+        "freeF2": "1 AI Motivation Letter per month",
+        "freeF3": "Basic Kanban Tracker",
+        "freeF4": "Standard Support",
+        "currentPlan": "Current Plan",
+        "startFree": "Start Free",
+        "sprintName": "Sprint Pass",
+        "sprintTagline": "One deadline this month",
+        "sprintPriceUnit": "ETB / 30 days",
+        "sprintF1": "Unlimited AI Program Scans",
+        "sprintF2": "Unlimited AI Motivation Letters",
+        "sprintF3": "AI CV Tailoring",
+        "sprintF4": "Priority Support",
+        "sprintCta": "Get 30 Days — Pay with Telebirr / CBE",
+        "seasonName": "Season Pass",
+        "seasonTagline": "Your whole application season, covered",
+        "seasonPriceUnit": "ETB / 90 days",
+        "seasonValueLine": "≈ 17 ETB/day — less than 5% of what an application agent charges",
+        "seasonEverything": "Everything in Sprint Pass, plus:",
+        "seasonF1": "Advanced Application Analytics",
+        "seasonF2": "Early Access to new features",
+        "seasonCta": "Get 90 Days — Pay with Telebirr / CBE",
+        "compareTitle": "Compare the real cost",
+        "compareAgent": "Application agent in Addis",
+        "compareAgentValue": "20,000+ ETB",
+        "compareIelts": "IELTS test fee",
+        "compareIeltsValue": "~30,000 ETB",
+        "compareSeason": "Accepta Season Pass",
+        "compareSeasonValue": "1,500 ETB",
+        "compareLine": "One funded scholarship is worth more than all of it combined.",
+        "faqTitle": "Frequently Asked Questions",
+        "faq1Q": "Is this a subscription?",
+        "faq1A": "No. You pay once, get 30 or 90 days of unlimited access, and it simply expires. We never store your payment details or charge you automatically.",
+        "faq2Q": "What happens when my pass expires?",
+        "faq2A": "You drop back to the Free plan. Your documents, applications, and tracker stay yours forever.",
+        "faq3Q": "How do I pay?",
+        "faq3A": "Telebirr or CBE Birr via Chapa — takes under a minute.",
+        "faq4Q": "Can someone abroad pay for me?",
+        "faq4A": "Yes — Chapa also accepts international Visa/Mastercard and PayPal, so a relative or sponsor can buy your pass."
+    },
+    "Plan": {
+        "sprintPass": "Sprint Pass",
+        "seasonPass": "Season Pass",
+        "daysLeft": "{days} days left",
+        "expiresBanner": "Your pass expires in 1 day.",
+        "expiresBannerPlural": "Your pass expires in {days} days.",
+        "extendCta": "Extend for 30 more days",
+        "paymentSuccessTitle": "Payment confirmed",
+        "paymentSuccessDesc": "Your pass is active. Enjoy unlimited access!",
+        "paymentFailedTitle": "Payment not completed",
+        "paymentFailedDesc": "Your payment could not be verified. You were not charged — please try again."
     }
 }

@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { OnboardingGuard } from "../auth/OnboardingGuard";
 import { ExtensionSync } from "../extension/ExtensionSync";
 import { DeadlineNotifications } from "./DeadlineNotifications";
+import { PassExpiryBanner } from "./PassExpiryBanner";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -33,6 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         <SidebarTrigger className="hover:bg-neutral-800/50 text-neutral-400 hover:text-neutral-200 transition-colors" />
                         <DeadlineNotifications />
                     </header>
+                    <PassExpiryBanner />
                     <main className="flex-1 w-full p-6 lg:p-10 relative overflow-x-hidden bg-gradient-to-br from-background via-background/90 to-background">
                         {/* Ambient background decoration */}
                         <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none -z-10" />

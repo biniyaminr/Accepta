@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { usePlan } from "@/hooks/usePlan";
+import { capture } from "@/lib/analytics";
 import {
     SparklesIcon, BuildingIcon, Loader2, DownloadIcon,
     MailIcon, BriefcaseIcon, AwardIcon, UserIcon,
@@ -280,6 +282,7 @@ function ManualContextForm({
 
 export default function LetterStudioPage() {
     const t = useTranslations("Letters");
+    const { plan } = usePlan();
     const [isLoading, setIsLoading] = useState(false);
     const [profileLoading, setProfileLoading] = useState(true);
     const [profile, setProfile] = useState<Profile | null>(null);
@@ -339,6 +342,7 @@ export default function LetterStudioPage() {
 
             setGeneratedLetter(data.letter);
             toast.success("Letter generated!");
+            capture("letter_generated", { plan: (plan?.planType ?? "FREE").toLowerCase() });
         } catch (error: any) {
             toast.error("Generation Failed", { description: error.message });
         } finally {

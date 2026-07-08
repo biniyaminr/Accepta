@@ -2,12 +2,18 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
-export async function POST() {
+export async function POST(request: Request) {
     try {
         const { userId: clerkId } = await auth();
         if (!clerkId) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
+
+        const body = await request.json().catch(() => ({}));
+        const referralSource = typeof body.referralSource === "string" ? body.referralSource : null;
+        const utmSource = typeof body.utmSource === "string" ? body.utmSource : null;
+        const utmMedium = typeof body.utmMedium === "string" ? body.utmMedium : null;
+        const utmCampaign = typeof body.utmCampaign === "string" ? body.utmCampaign : null;
 
         const user = await prisma.user.findUnique({
             where: { userId: clerkId },
@@ -33,12 +39,15 @@ export async function POST() {
             }, { status: 400 });
         }
 
-        // Update onboarding status
+        // Update onboarding status + acquisition data for the interview pipeline
         await prisma.user.update({
             where: { id: user.id },
-            data: { 
-                // @ts-ignore
-                isOnboardingComplete: true 
+            data: {
+                isOnboardingComplete: true,
+                ...(referralSource ? { referralSource } : {}),
+                ...(utmSource ? { utmSource } : {}),
+                ...(utmMedium ? { utmMedium } : {}),
+                ...(utmCampaign ? { utmCampaign } : {}),
             },
         });
 

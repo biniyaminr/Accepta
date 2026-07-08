@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -13,9 +14,27 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ClockIcon, CheckCircle2Icon, AlertCircleIcon, FileIcon, PlusIcon, UserIcon, GraduationCapIcon, BriefcaseIcon, BookOpenIcon, ShieldIcon } from "lucide-react";
 import { toast } from "sonner";
 import { ExpiryAlerts } from "@/components/dashboard/ExpiryAlerts";
+import { captureOnce } from "@/lib/analytics";
 
 export function DashboardContent() {
     const t = useTranslations("Dashboard");
+    const tPlan = useTranslations("Plan");
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    // Chapa's verify route redirects back here with ?payment=success|failed
+    useEffect(() => {
+        const payment = searchParams.get("payment");
+        if (!payment) return;
+        if (payment === "success") {
+            toast.success(tPlan("paymentSuccessTitle"), { description: tPlan("paymentSuccessDesc") });
+        } else {
+            toast.error(tPlan("paymentFailedTitle"), { description: tPlan("paymentFailedDesc") });
+        }
+        router.replace(pathname, { scroll: false });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams]);
     const [applications, setApplications] = useState<any[]>([]);
     const [documents, setDocuments] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -144,6 +163,13 @@ export function DashboardContent() {
     ];
     const profileScore = completionChecks.filter(c => c.done).length * 20;
     const profileScoreColor = profileScore < 40 ? '#f97316' : profileScore < 80 ? '#eab308' : '#22c55e';
+
+    // Fire once per user when Profile Strength first reaches 100%.
+    useEffect(() => {
+        if (profile?.id && profileScore === 100) {
+            captureOnce(`profile_completed_${profile.id}`, "profile_completed");
+        }
+    }, [profile?.id, profileScore]);
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">

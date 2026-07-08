@@ -6,6 +6,8 @@ import { EnglishTestPromo } from "@/components/landing/EnglishTestPromo";
 
 import { useAppStore } from "@/store/useAppStore";
 import { useHasHydrated } from "@/hooks/useHasHydrated";
+import { usePlan } from "@/hooks/usePlan";
+import { capture } from "@/lib/analytics";
 
 export default function DiscoverPage() {
     const {
@@ -17,7 +19,8 @@ export default function DiscoverPage() {
     } = useAppStore();
 
     const hasHydrated = useHasHydrated();
-    
+    const { plan } = usePlan();
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isEvaluating, setIsEvaluating] = useState(false);
@@ -73,6 +76,7 @@ export default function DiscoverPage() {
 
             setProgramData(data.data);
             setIsSaved(false); // Reset saved status on new scan
+            capture("scan_run", { plan: (plan?.planType ?? "FREE").toLowerCase() });
 
             // Update History (Zustand persists this automatically)
             const newHistoryItem = { url, data: data.data };
@@ -212,7 +216,7 @@ export default function DiscoverPage() {
                 <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 backdrop-blur-sm">
                     <h3 className="mb-4 text-lg font-medium text-neutral-200">AI Program Scraper</h3>
                     <p className="mb-6 text-sm text-neutral-400">
-                        Paste a link to any university program page. AssistedApp will scan the page and instantly extract the key admission requirements.
+                        Paste a link to any university program page. Accepta will scan the page and instantly extract the key admission requirements.
                     </p>
 
                     <form onSubmit={handleScan} className="flex flex-col gap-4 sm:flex-row">

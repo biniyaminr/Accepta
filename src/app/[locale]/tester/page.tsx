@@ -14,7 +14,7 @@ export default function TestSandbox() {
                             Extension Sandbox
                         </CardTitle>
                         <CardDescription className="text-neutral-400 text-base mt-2">
-                            This is a dummy university application form. It is completely disconnected from the database. Click your AssistedApp extension and hit "Auto-Fill" to safely test the DOM injection engine.
+                            This is a dummy university application form. It is completely disconnected from the database. Click your Accepta extension and hit "Auto-Fill" to safely test the DOM injection engine.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-8 space-y-6">

@@ -42,6 +42,7 @@ import { UploadButton } from "@/lib/uploadthing";
 import { useRouter } from "next/navigation";
 import { SuggestionInput } from "@/components/ui/SuggestionInput";
 import { Link } from "@/i18n/routing";
+import { capture, getStashedUtmParams } from "@/lib/analytics";
 
 // ─── Schemas ────────────────────────────────────────────────────────────────
 
@@ -1233,6 +1234,7 @@ function OnboardingWizard() {
     const [isPassportUploading, setIsPassportUploading] = useState(false);
     const [isCvUploading, setIsCvUploading] = useState(false);
     const [isTranscriptUploading, setIsTranscriptUploading] = useState(false);
+    const [referralSource, setReferralSource] = useState("");
 
     const form1 = useForm<z.infer<typeof step1Schema>>({
         resolver: zodResolver(step1Schema),
@@ -1329,10 +1331,25 @@ function OnboardingWizard() {
     };
 
     const handleComplete = async () => {
+        if (!referralSource) {
+            toast.error(t("referralRequired"));
+            return;
+        }
         setIsSaving(true);
         try {
-            const res = await fetch("/api/onboarding/complete", { method: "POST" });
+            const utm = getStashedUtmParams();
+            const res = await fetch("/api/onboarding/complete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    referralSource,
+                    utmSource: utm.utm_source ?? null,
+                    utmMedium: utm.utm_medium ?? null,
+                    utmCampaign: utm.utm_campaign ?? null,
+                }),
+            });
             if (res.ok) {
+                capture("signup_completed", { referral_source: referralSource });
                 toast.success("Welcome aboard!", { description: "Onboarding complete. Entering Mission Control..." });
                 router.push("/dashboard");
             } else { throw new Error("Completion failed"); }
@@ -1597,6 +1614,26 @@ function OnboardingWizard() {
                                     )}
                                 </div>
                             </div>
+                            <div className="pt-4 border-t border-neutral-800 space-y-2">
+                                <label htmlFor="referral-source" className="text-xs text-neutral-500 uppercase font-bold">
+                                    {t("referralQuestion")} <span className="text-orange-400">*</span>
+                                </label>
+                                <select
+                                    id="referral-source"
+                                    value={referralSource}
+                                    onChange={(e) => setReferralSource(e.target.value)}
+                                    className="w-full rounded-md border border-neutral-800 bg-neutral-950/50 px-3 py-2.5 text-sm text-neutral-200 focus:border-violet-500 focus:outline-none"
+                                >
+                                    <option value="" disabled>{t("referralPlaceholder")}</option>
+                                    <option value="telegram_group">{t("referralTelegram")}</option>
+                                    <option value="whatsapp_group">{t("referralWhatsapp")}</option>
+                                    <option value="facebook_group">{t("referralFacebook")}</option>
+                                    <option value="reddit">{t("referralReddit")}</option>
+                                    <option value="tiktok_reels">{t("referralTiktok")}</option>
+                                    <option value="friend">{t("referralFriend")}</option>
+                                    <option value="other">{t("referralOther")}</option>
+                                </select>
+                            </div>
                         </div>
                     )}
                 </CardContent>
@@ -1613,7 +1650,7 @@ function OnboardingWizard() {
                             )}
                         </Button>
                     ) : (
-                        <Button onClick={handleComplete} disabled={isSaving} className="bg-gradient-to-r from-violet-600 to-violet-400 text-white px-8 hover:scale-[1.02] transition-all">
+                        <Button onClick={handleComplete} disabled={isSaving || !referralSource} className="bg-gradient-to-r from-violet-600 to-violet-400 text-white px-8 hover:scale-[1.02] transition-all disabled:opacity-40">
                             {isSaving ? <Loader2 className="animate-spin h-4 w-4" /> : t("complete")}
                         </Button>
                     )}

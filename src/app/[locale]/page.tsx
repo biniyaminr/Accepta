@@ -29,15 +29,16 @@ export default function LandingPage() {
   const tJourney = useTranslations("Journey");
   const tDeepDive = useTranslations("DeepDive");
   const tBottomCTA = useTranslations("BottomCTA");
+  const tLanding = useTranslations("Landing");
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-violet-500/30">
 
       {/* Announcement Bar */}
       <div className="h-10 bg-gradient-to-r from-violet-600/20 to-indigo-600/20 border-b border-violet-500/20 flex items-center justify-center gap-3 px-4 text-sm">
-        <span className="text-neutral-300">🎓 Now tracking 10,000+ scholarships across 50+ countries</span>
+        <span className="text-neutral-300">{tLanding("banner")}</span>
         <a href="#" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors flex items-center gap-1">
-          Explore <ArrowRight className="w-3 h-3" />
+          {tLanding("bannerCta")} <ArrowRight className="w-3 h-3" />
         </a>
       </div>
 
@@ -69,7 +70,7 @@ export default function LandingPage() {
             <SignedIn>
               <Link href="/dashboard">
                 <button className="bg-violet-600 hover:bg-violet-500 text-white px-5 py-2 rounded-full transition-all font-medium text-sm shadow-[0_0_20px_-5px_rgba(139,92,246,0.5)]">
-                  {tNav("missionControl")}
+                  {tNav("startFree")}
                 </button>
               </Link>
             </SignedIn>
@@ -114,7 +115,7 @@ export default function LandingPage() {
               <SignedIn>
                 <Link href="/dashboard">
                   <button className="h-14 px-8 text-base font-semibold bg-violet-600 hover:bg-violet-500 text-white rounded-full shadow-[0_0_40px_-10px_rgba(139,92,246,0.6)] transition-all hover:scale-105">
-                    {tNav("missionControl")}
+                    {tNav("findScholarships")}
                   </button>
                 </Link>
               </SignedIn>
@@ -129,9 +130,9 @@ export default function LandingPage() {
             {/* Trust stats pills */}
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               {[
-                "✓ 10,000+ Scholarships",
-                "✓ 50+ Countries",
-                "✓ Free to Start",
+                tLanding("pillLiveFeed"),
+                tLanding("pillUpdatedDaily"),
+                tLanding("pillFree"),
               ].map((label) => (
                 <span
                   key={label}
@@ -161,7 +162,7 @@ export default function LandingPage() {
                 </div>
                 <div className="flex-1 mx-4 h-6 bg-neutral-800 rounded-md flex items-center px-3 gap-2 max-w-sm">
                   <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span className="text-neutral-500 text-xs">app.accepta.io/dashboard</span>
+                  <span className="text-neutral-500 text-xs">accepta.site/dashboard</span>
                 </div>
               </div>
 
@@ -228,10 +229,10 @@ export default function LandingPage() {
           <div className="max-w-5xl mx-auto px-4">
             <div className="flex flex-wrap justify-center divide-x divide-neutral-800">
               {[
-                { number: "10,000+", label: "Scholarships Tracked" },
-                { number: "50+", label: "Countries Covered" },
-                { number: "3 min", label: "Average Setup Time" },
-                { number: "Free", label: "To Get Started" },
+                { number: tLanding("statLiveNumber"), label: tLanding("statLiveLabel") },
+                { number: tLanding("statBetaNumber"), label: tLanding("statBetaLabel") },
+                { number: tLanding("statSetupNumber"), label: tLanding("statSetupLabel") },
+                { number: tLanding("statFreeNumber"), label: tLanding("statFreeLabel") },
               ].map((stat, i) => (
                 <div key={i} className="flex-1 min-w-[140px] flex flex-col items-center justify-center py-4 px-8 text-center">
                   <span className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">{stat.number}</span>
@@ -384,74 +385,34 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── TESTIMONIALS ── */}
+        {/* ── EARLY ACCESS ── */}
         <section className="w-full py-24 border-t border-neutral-800/50 relative overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="max-w-6xl mx-auto px-4 relative z-10">
-            <div className="text-center mb-16">
+            <div className="text-center mb-12">
               <div className="flex justify-center mb-4">
                 <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-semibold uppercase tracking-widest">
                   <Users className="w-3.5 h-3.5" />
-                  Student Stories
+                  {tLanding("earlyAccessLabel")}
                 </span>
               </div>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
-                Trusted by students worldwide
+                {tLanding("earlyAccessTitle")}
               </h2>
               <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-                Join thousands of students who have simplified their application journey.
+                {tLanding("earlyAccessBody")}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  quote: "Accepta completely transformed my application process. I got into my dream program in Germany within 3 months.",
-                  name: "Sara M.",
-                  university: "TU Munich",
-                  initials: "SM",
-                  bg: "bg-violet-600",
-                },
-                {
-                  quote: "The AI fit score saved me from applying to programs I wasn't qualified for. Focused my energy on the right ones.",
-                  name: "Daniel K.",
-                  university: "University of Amsterdam",
-                  initials: "DK",
-                  bg: "bg-blue-600",
-                },
-                {
-                  quote: "Letter Studio generated a motivation letter that my advisor said was the best she'd ever seen. Accepted with scholarship!",
-                  name: "Mia T.",
-                  university: "KU Leuven",
-                  initials: "MT",
-                  bg: "bg-emerald-600",
-                },
-              ].map((t, i) => (
-                <div key={i} className="bg-neutral-900/50 border border-neutral-800 hover:border-neutral-700 rounded-2xl p-8 flex flex-col gap-5 transition-all hover:shadow-[0_0_30px_-10px_rgba(139,92,246,0.2)] hover:-translate-y-1">
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: 5 }).map((_, si) => (
-                      <span key={si} className="text-amber-400 text-lg">★</span>
-                    ))}
-                  </div>
-                  <p className="text-neutral-300 italic leading-relaxed flex-1">"{t.quote}"</p>
-                  <div className="flex items-center gap-3 pt-2 border-t border-neutral-800">
-                    <div className={`w-10 h-10 rounded-full ${t.bg} flex items-center justify-center text-white font-bold text-sm shrink-0`}>
-                      {t.initials}
-                    </div>
-                    <div>
-                      <div className="text-white font-semibold text-sm">{t.name}</div>
-                      <div className="text-neutral-500 text-xs">{t.university}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="max-w-xl mx-auto">
+              <div className="bg-neutral-900/50 border border-neutral-800 hover:border-neutral-700 rounded-2xl p-8 flex flex-col gap-3 text-center transition-all hover:shadow-[0_0_30px_-10px_rgba(139,92,246,0.2)]">
+                <h3 className="text-white font-semibold text-lg">{tLanding("feedbackTitle")}</h3>
+                <p className="text-neutral-400 leading-relaxed">{tLanding("feedbackBody")}</p>
+              </div>
             </div>
           </div>
         </section>
-
-        {/* ── ENGLISH TEST PROMO ── */}
-        <EnglishTestPromo />
 
         {/* ── FEATURES DEEP DIVE ── */}
         <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 w-full border-t border-neutral-800/50">
@@ -562,7 +523,7 @@ export default function LandingPage() {
                   </div>
                   <div className="relative z-10 w-72 h-96 bg-neutral-900 rounded-xl border border-neutral-700 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden ml-auto mr-8 rotate-2 hover:rotate-0 transition-transform duration-500">
                     <div className="h-14 bg-gradient-to-r from-orange-600/80 to-pink-600/80 flex items-center justify-between px-4">
-                      <span className="font-bold text-white tracking-tight text-sm">AssistedApp</span>
+                      <span className="font-bold text-white tracking-tight text-sm">Accepta</span>
                       <div className="w-6 h-6 bg-white/20 rounded-md flex items-center justify-center">
                         <Zap className="w-3 h-3 text-white" />
                       </div>
@@ -661,7 +622,7 @@ export default function LandingPage() {
               {[
                 {
                   q: "Is Accepta really free?",
-                  a: "Yes. The core features — profile setup, scholarship feed, AI fit evaluation, and letter generation — are completely free. Pro features are available for power users.",
+                  a: "Yes. The core features — profile setup, scholarship feed, AI fit evaluation, and letter generation — are completely free. Unlimited access is available as a one-time Sprint (30-day) or Season (90-day) pass.",
                 },
                 {
                   q: "Do I need a Chrome extension?",
@@ -698,7 +659,7 @@ export default function LandingPage() {
             <div className="flex justify-center">
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-semibold uppercase tracking-widest">
                 <Globe2 className="w-3.5 h-3.5" />
-                Join Thousands of Students
+                {tLanding("openBeta")}
               </span>
             </div>
             <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
@@ -715,7 +676,7 @@ export default function LandingPage() {
               <SignedIn>
                 <Link href="/dashboard">
                   <button className="h-16 px-10 text-xl font-bold bg-white hover:bg-neutral-100 text-neutral-950 rounded-full shadow-[0_0_50px_-10px_rgba(255,255,255,0.4)] transition-all hover:scale-105">
-                    {tNav("missionControl")}
+                    {tNav("startFreeNoCard")}
                   </button>
                 </Link>
               </SignedIn>
@@ -723,6 +684,9 @@ export default function LandingPage() {
             <p className="text-neutral-500 text-sm">{tBottomCTA("footer")}</p>
           </div>
         </section>
+
+        {/* ── ENGLISH TEST PROMO ── */}
+        <EnglishTestPromo />
 
       </main>
 

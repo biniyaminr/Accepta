@@ -8,12 +8,14 @@ interface CVMakerState {
     tailoredSummary: string;
     tailoredExperience: any[];
     tailoredSkills: string[];
+    selectedTemplate: string;
     setTargetProgram: (val: string) => void;
     setTargetUniversity: (val: string) => void;
     setUploadedFileName: (val: string) => void;
     setTailoredSummary: (val: string) => void;
     setTailoredExperience: (list: any[]) => void;
     setTailoredSkills: (skills: string[]) => void;
+    setSelectedTemplate: (val: string) => void;
     resetCVMaker: () => void;
 }
 
@@ -41,12 +43,14 @@ export const useAppStore = create<AppState>()(
             tailoredSummary: '',
             tailoredExperience: [],
             tailoredSkills: [],
+            selectedTemplate: 'classic',
             setTargetProgram: (targetProgram) => set({ targetProgram }),
             setTargetUniversity: (targetUniversity) => set({ targetUniversity }),
             setUploadedFileName: (uploadedFileName) => set({ uploadedFileName }),
             setTailoredSummary: (tailoredSummary) => set({ tailoredSummary }),
             setTailoredExperience: (tailoredExperience) => set({ tailoredExperience }),
             setTailoredSkills: (tailoredSkills) => set({ tailoredSkills }),
+            setSelectedTemplate: (selectedTemplate) => set({ selectedTemplate }),
             resetCVMaker: () => set({
                 targetProgram: '',
                 targetUniversity: '',

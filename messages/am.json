@@ -5,7 +5,31 @@
     },
     "Nav": {
         "getStarted": "ጀምር",
-        "missionControl": "ዳሽቦርድ"
+        "missionControl": "ዳሽቦርድ",
+        "startFree": "በነጻ ይጀምሩ",
+        "findScholarships": "ስኮላርሺፖቼን ፈልግ — በነጻ",
+        "startFreeNoCard": "በነጻ ይጀምሩ — ካርድ አያስፈልግም"
+    },
+    "Landing": {
+        "banner": "🎓 የቀጥታ የስኮላርሺፕ መረጃ አሁን በክፍት ቤታ ላይ",
+        "bannerCta": "ያስሱ",
+        "pillLiveFeed": "✓ የቀጥታ የስኮላርሺፕ መረጃ",
+        "pillUpdatedDaily": "✓ በየቀኑ የሚታደስ",
+        "pillFree": "✓ በነጻ ይጀምሩ",
+        "statLiveNumber": "ቀጥታ",
+        "statLiveLabel": "የስኮላርሺፕ መረጃ · በየቀኑ የሚታደስ",
+        "statBetaNumber": "ክፍት ቤታ",
+        "statBetaLabel": "እስክናድግ ድረስ ነጻ",
+        "statSetupNumber": "3 ደቂቃ",
+        "statSetupLabel": "አማካይ የማዋቀሪያ ጊዜ",
+        "statFreeNumber": "ነጻ",
+        "statFreeLabel": "ለመጀመር",
+        "earlyAccessLabel": "ቀዳሚ መዳረሻ",
+        "earlyAccessTitle": "በአንድ ዓለም አቀፍ ተማሪ የተገነባ። በቀዳሚ ተጠቃሚዎች የተቀረጸ።",
+        "earlyAccessBody": "Accepta በክፍት ቤታ ላይ ነው። የሚያዩት ሁሉ የስኮላርሺፕ ፍለጋን ውጣ ውረድ በራሱ ባለፈ ሰው የተገነባ ነው — እና እስክናድግ ድረስ ነጻ ነው። ቀዳሚ ተጠቃሚዎች ቀጥሎ በምንገነባው ላይ ቀጥተኛ ድምጽ አላቸው፣ ከመስራቹም የዕድሜ ልክ አክብሮት።",
+        "feedbackTitle": "ስህተት አገኙ ወይም ሀሳብ አለዎት?",
+        "feedbackBody": "ይንገሩን — በየሳምንቱ ማሻሻያዎችን እናወጣለን።",
+        "openBeta": "ክፍት ቤታ"
     },
     "Features": {
         "feedTitle": "የቀጥታ ዕድሎች መረጃ",
@@ -18,7 +42,7 @@
     "About": {
         "title": "አሮጌው አሰራር አድካሚ ነው።",
         "desc": "ወደ ዩኒቨርሲቲዎች ማመልከት በመቶዎች የሚቆጠሩ ሰዓታትን ይወስዳል። ለእያንዳንዱ ፕሮግራም ሲቪን ከመቀየር ጀምሮ አድራሻዎን 50 ጊዜ በአሮጌ ፖርታሎች ላይ እስከ መተየብ ድረስ፣ አጠቃላይ ሂደቱ አድካሚ እና ለስህተት የተጋለጠ ነው።",
-        "solution": "ይህንን ለማስተካከል AssistedApp ን ገንብተናል።"
+        "solution": "ይህንን ለማስተካከል Accepta ን ገንብተናል።"
     },
     "Sidebar": {
         "mainMenu": "ዋና ምናሌ",
@@ -32,8 +56,9 @@
         "recommendations": "ማጣቀሻ ደብዳቤ",
         "calendar": "ቀን መቁጠሪያ",
         "liveFeed": "የቀጥታ መረጃ",
-        "pricing": "ዋጋ እና ፕሮ",
-        "essayReview": "ድርሰት ገምጋሚ"
+        "pricing": "ዋጋ እና ፓሶች",
+        "essayReview": "ድርሰት ገምጋሚ",
+        "analytics": "ትንታኔ"
     },
     "Journey": {
         "title": "ወደ ዩኒቨርሲቲ መግቢያዎ ጉዞ",
@@ -67,7 +92,7 @@
     "BottomCTA": {
         "title": "የህልምዎን ፕሮግራም ለማግኘት ዝግጁ ነዎት?",
         "button": "በነፃ ማመልከት ይጀምሩ",
-        "footer": "© 2026 AssistedApp. መብቱ በህግ የተጠበቀ ነው።"
+        "footer": "© 2026 Accepta. መብቱ በህግ የተጠበቀ ነው።"
     },
     "OnboardingWizard": {
         "title": "እንኳን ደህና መጡ",
@@ -101,7 +126,17 @@
         "saving": "በማስቀመጥ ላይ...",
         "summary": "የመገለጫ ማጠቃለያ",
         "summaryDesc": "ከማጠናቀቅዎ በፊት መረጃዎን ይገምግሙ።",
-        "step5Desc": "ወደ ዳሽቦርድ ከመግባትዎ በፊት የዋና መገለጫ ዝርዝሮችዎን ይፈትሹ።"
+        "step5Desc": "ወደ ዳሽቦርድ ከመግባትዎ በፊት የዋና መገለጫ ዝርዝሮችዎን ይፈትሹ።",
+        "referralQuestion": "Accepta ን እንዴት አገኙት?",
+        "referralPlaceholder": "አማራጭ ይምረጡ",
+        "referralRequired": "እባክዎ Accepta ን እንዴት እንዳገኙ ይንገሩን።",
+        "referralTelegram": "የቴሌግራም ግሩፕ",
+        "referralWhatsapp": "የዋትሳፕ ግሩፕ",
+        "referralFacebook": "የፌስቡክ ግሩፕ",
+        "referralReddit": "Reddit",
+        "referralTiktok": "TikTok / Reels",
+        "referralFriend": "ጓደኛ ነገረኝ",
+        "referralOther": "ሌላ"
     },
     "Feed": {
         "pageTitle": "የቀጥታ ዕድሎች መረጃ",
@@ -371,6 +406,23 @@
         "today": "ዛሬ!",
         "viewAllApplications": "ሁሉንም ማመልከቻዎች ይመልከቱ →"
     },
+    "Notes": {
+        "addNote": "ማስታወሻ ያክሉ",
+        "editNote": "ማስታወሻ ያርትዑ",
+        "saveNote": "አስቀምጥ",
+        "cancel": "ሰርዝ",
+        "deleteNote": "ሰርዝ",
+        "confirmDelete": "ይህን ማስታወሻ ይሰርዙ?",
+        "notesFor": "ለ{university} ማስታወሻዎች",
+        "noNotes": "ገና ምንም ማስታወሻዎች የሉም። ሂደትዎን ለመከታተል አንድ ያክሉ።",
+        "general": "አጠቃላይ",
+        "todo": "ለመስራት",
+        "feedback": "ግብረ መልስ",
+        "research": "ጥናት",
+        "pinned": "ተሰቅሏል",
+        "placeholder": "ማስታወሻ ይጻፉ...",
+        "category": "ምድብ"
+    },
     "EssayReview": {
         "pageTitle": "የ AI ድርሰት ገምጋሚ",
         "pageSubtitle": "ስለ ሰዋስው፣ ቃና፣ አወቃቀር እና ይዘት ፈጣን የ AI ግብረ መልስ ለማግኘት ድርሰትዎን ይለጥፉ።",
@@ -400,5 +452,88 @@
         "hideRevised": "የተሻሻለውን ደብቅ",
         "noEssay": "ለመገምገም ድርሰት ይለጥፉ።",
         "tooShort": "ድርሰቱ በጣም አጭር ነው። ቢያንስ 50 ቃላት ያስገቡ።"
+    },
+    "Analytics": {
+        "pageTitle": "የማመልከቻ ትንታኔ",
+        "pageSubtitle": "የማመልከቻ ሂደትዎን እና አፈጻጸምዎን በአንድ እይታ ይከታተሉ።",
+        "totalApplications": "ጠቅላላ ማመልከቻዎች",
+        "submitted": "የተላኩ",
+        "avgFitScore": "አማካይ ብቃት ነጥብ",
+        "completionRate": "የማጠናቀቂያ ፐርሰንት",
+        "applicationsByStatus": "በሁኔታ የተመደቡ ማመልከቻዎች",
+        "deadlinesByMonth": "በወር የተመደቡ ማብቂያዎች",
+        "documentsProgress": "የሰነድ ሂደት",
+        "recentActivity": "የቅርብ ጊዜ እንቅስቃሴ",
+        "countriesApplied": "ማመልከቻ የተላኩባቸው ሀገሮች",
+        "notStarted": "አልተጀመረም",
+        "inProgress": "በሂደት ላይ",
+        "ready": "ዝግጁ",
+        "noData": "ገና ምንም የማመልከቻ ውሂብ የለም። ትንታኔን ለማየት ማመልከቻዎችን መከታተል ይጀምሩ።",
+        "daysAgo": "ከ{days} ቀናት በፊት",
+        "today": "ዛሬ"
+    },
+    "Pricing": {
+        "headline": "ለወቅትዎ ይክፈሉ። ለዘላለም አይደለም።",
+        "subheadline": "ምንም ሰብስክሪፕሽን የለም። ራስ-ሰር ክፍያ የለም። በቴሌብር ወይም በCBE ብር አንድ ጊዜ የሚከፈል ክፍያ ሙሉ የማመልከቻ ጥረትዎን ይሸፍናል — እንደ ካርድ ሙሌት፣ እስከሚያበቃበት ቀን ድረስ የእርስዎ ነው።",
+        "etb": "ብር",
+        "oneTimePayment": "አንድ ጊዜ ብቻ የሚከፈል። ራስ-ሰር እድሳት የለም።",
+        "mostPopular": "በጣም ተወዳጅ",
+        "initializing": "በመጀመር ላይ...",
+        "securePayments": "በChapa በኩል ደህንነቱ የተጠበቀ የአገር ውስጥ ክፍያ",
+        "paymentErrorTitle": "የክፍያ ስህተት",
+        "paymentErrorDesc": "የክፍያ ሂደቱን መጀመር አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
+        "freeName": "ጀማሪ",
+        "freeTagline": "ለጉዞዎ መሠረት",
+        "freeF1": "በወር 3 የAI ፕሮግራም ፍተሻዎች",
+        "freeF2": "በወር 1 የAI ተነሳሽነት ደብዳቤ",
+        "freeF3": "መሠረታዊ የካንባን መከታተያ",
+        "freeF4": "መደበኛ ድጋፍ",
+        "currentPlan": "የአሁኑ እቅድ",
+        "startFree": "በነጻ ይጀምሩ",
+        "sprintName": "ስፕሪንት ፓስ",
+        "sprintTagline": "በዚህ ወር አንድ የማብቂያ ቀን",
+        "sprintPriceUnit": "ብር / 30 ቀናት",
+        "sprintF1": "ያልተገደበ የAI ፕሮግራም ፍተሻ",
+        "sprintF2": "ያልተገደቡ የAI ተነሳሽነት ደብዳቤዎች",
+        "sprintF3": "የAI ሲቪ ማስተካከያ",
+        "sprintF4": "ቅድሚያ የሚሰጠው ድጋፍ",
+        "sprintCta": "30 ቀናት ያግኙ — በቴሌብር / CBE ይክፈሉ",
+        "seasonName": "ሲዝን ፓስ",
+        "seasonTagline": "ሙሉ የማመልከቻ ወቅትዎ፣ ተሸፍኗል",
+        "seasonPriceUnit": "ብር / 90 ቀናት",
+        "seasonValueLine": "≈ በቀን 17 ብር — የማመልከቻ ወኪል ከሚያስከፍለው ከ5% በታች",
+        "seasonEverything": "በስፕሪንት ፓስ ውስጥ ያለው ሁሉ፣ በተጨማሪም፦",
+        "seasonF1": "የላቀ የማመልከቻ ትንታኔ",
+        "seasonF2": "ለአዳዲስ ባህሪያት ቀዳሚ መዳረሻ",
+        "seasonCta": "90 ቀናት ያግኙ — በቴሌብር / CBE ይክፈሉ",
+        "compareTitle": "እውነተኛውን ወጪ ያነጻጽሩ",
+        "compareAgent": "በአዲስ አበባ የማመልከቻ ወኪል",
+        "compareAgentValue": "20,000+ ብር",
+        "compareIelts": "የIELTS ፈተና ክፍያ",
+        "compareIeltsValue": "~30,000 ብር",
+        "compareSeason": "የAccepta ሲዝን ፓስ",
+        "compareSeasonValue": "1,500 ብር",
+        "compareLine": "አንድ ሙሉ ስኮላርሺፕ ከሁሉም ተደምሮ የበለጠ ዋጋ አለው።",
+        "faqTitle": "በተደጋጋሚ የሚጠየቁ ጥያቄዎች",
+        "faq1Q": "ይህ ሰብስክሪፕሽን ነው?",
+        "faq1A": "አይደለም። አንድ ጊዜ ይከፍላሉ፣ የ30 ወይም የ90 ቀናት ያልተገደበ መዳረሻ ያገኛሉ፣ እና በቀላሉ ያበቃል። የክፍያ መረጃዎን በጭራሽ አናስቀምጥም፤ ራስ-ሰር ክፍያም አናስከፍልም።",
+        "faq2Q": "ፓሴ ሲያበቃ ምን ይሆናል?",
+        "faq2A": "ወደ ነጻው እቅድ ይመለሳሉ። ሰነዶችዎ፣ ማመልከቻዎችዎ እና መከታተያዎ ለዘላለም የእርስዎ ናቸው።",
+        "faq3Q": "እንዴት እከፍላለሁ?",
+        "faq3A": "በቴሌብር ወይም በCBE ብር በChapa በኩል — ከአንድ ደቂቃ ያነሰ ጊዜ ይወስዳል።",
+        "faq4Q": "በውጭ አገር ያለ ሰው ሊከፍልልኝ ይችላል?",
+        "faq4A": "አዎ — Chapa ዓለም አቀፍ Visa/Mastercard እና PayPal ይቀበላል፣ ስለዚህ ዘመድ ወይም ስፖንሰር ፓስዎን ሊገዛልዎ ይችላል።"
+    },
+    "Plan": {
+        "sprintPass": "ስፕሪንት ፓስ",
+        "seasonPass": "ሲዝን ፓስ",
+        "daysLeft": "{days} ቀናት ቀርተዋል",
+        "expiresBanner": "ፓስዎ በ1 ቀን ውስጥ ያበቃል።",
+        "expiresBannerPlural": "ፓስዎ በ{days} ቀናት ውስጥ ያበቃል።",
+        "extendCta": "ለተጨማሪ 30 ቀናት ያራዝሙ",
+        "paymentSuccessTitle": "ክፍያው ተረጋግጧል",
+        "paymentSuccessDesc": "ፓስዎ ንቁ ነው። ያልተገደበ መዳረሻ ይደሰቱ!",
+        "paymentFailedTitle": "ክፍያው አልተጠናቀቀም",
+        "paymentFailedDesc": "ክፍያዎን ማረጋገጥ አልተቻለም። አልተከፈሉም — እባክዎ እንደገና ይሞክሩ።"
     }
 }
