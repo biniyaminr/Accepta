@@ -1,44 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Loader2, Sparkles, Zap, ShieldCheck } from "lucide-react";
+import { Check, Sparkles, Zap, ShieldCheck } from "lucide-react";
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
 import { PASS_PLANS, type PassPlanId } from "@/lib/plans";
 import { PayByTransferDialog } from "@/components/pricing/PayByTransferDialog";
 
 export default function PricingPage() {
     const t = useTranslations("Pricing");
-    const [loadingPlan, setLoadingPlan] = useState<PassPlanId | null>(null);
     const [transferPlan, setTransferPlan] = useState<PassPlanId | null>(null);
-
-    const handlePurchase = async (plan: PassPlanId) => {
-        setLoadingPlan(plan);
-        try {
-            const response = await fetch("/api/chapa/checkout", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ plan }),
-            });
-
-            const data = await response.json();
-
-            if (data.url) {
-                window.location.href = data.url;
-            } else {
-                throw new Error(data.error || "Failed to initialize payment");
-            }
-        } catch (error) {
-            console.error("Payment Error:", error);
-            toast.error(t("paymentErrorTitle"), {
-                description: t("paymentErrorDesc"),
-            });
-            setLoadingPlan(null);
-        }
-    };
 
     const freeFeatures = [t("freeF1"), t("freeF2"), t("freeF3"), t("freeF4")];
     const sprintFeatures = [t("sprintF1"), t("sprintF2"), t("sprintF3"), t("sprintF4")];
@@ -60,27 +33,9 @@ export default function PricingPage() {
     const payButton = (plan: PassPlanId, label: string, className: string) => (
         <div className="w-full flex flex-col gap-2">
             <SignedIn>
-                <Button
-                    className={className}
-                    onClick={() => handlePurchase(plan)}
-                    disabled={loadingPlan !== null}
-                >
-                    {loadingPlan === plan ? (
-                        <>
-                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            {t("initializing")}
-                        </>
-                    ) : (
-                        label
-                    )}
+                <Button className={className} onClick={() => setTransferPlan(plan)}>
+                    {label}
                 </Button>
-                <button
-                    type="button"
-                    onClick={() => setTransferPlan(plan)}
-                    className="text-xs text-neutral-400 hover:text-neutral-200 underline underline-offset-4 transition-colors"
-                >
-                    {t("payByTransfer")}
-                </button>
             </SignedIn>
             <SignedOut>
                 <SignUpButton mode="modal">
