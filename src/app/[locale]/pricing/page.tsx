@@ -7,11 +7,13 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import type { PassPlanId } from "@/lib/plans";
+import { PASS_PLANS, type PassPlanId } from "@/lib/plans";
+import { PayByTransferDialog } from "@/components/pricing/PayByTransferDialog";
 
 export default function PricingPage() {
     const t = useTranslations("Pricing");
     const [loadingPlan, setLoadingPlan] = useState<PassPlanId | null>(null);
+    const [transferPlan, setTransferPlan] = useState<PassPlanId | null>(null);
 
     const handlePurchase = async (plan: PassPlanId) => {
         setLoadingPlan(plan);
@@ -56,7 +58,7 @@ export default function PricingPage() {
     ];
 
     const payButton = (plan: PassPlanId, label: string, className: string) => (
-        <>
+        <div className="w-full flex flex-col gap-2">
             <SignedIn>
                 <Button
                     className={className}
@@ -72,13 +74,20 @@ export default function PricingPage() {
                         label
                     )}
                 </Button>
+                <button
+                    type="button"
+                    onClick={() => setTransferPlan(plan)}
+                    className="text-xs text-neutral-400 hover:text-neutral-200 underline underline-offset-4 transition-colors"
+                >
+                    {t("payByTransfer")}
+                </button>
             </SignedIn>
             <SignedOut>
                 <SignUpButton mode="modal">
                     <Button className={className}>{label}</Button>
                 </SignUpButton>
             </SignedOut>
-        </>
+        </div>
     );
 
     return (
@@ -249,6 +258,14 @@ export default function PricingPage() {
                     ))}
                 </div>
             </div>
+
+            <PayByTransferDialog
+                plan={transferPlan}
+                planLabel={transferPlan ? PASS_PLANS[transferPlan].name : ""}
+                amount={transferPlan ? PASS_PLANS[transferPlan].amount : 0}
+                open={transferPlan !== null}
+                onOpenChange={(open) => !open && setTransferPlan(null)}
+            />
         </div>
     );
 }

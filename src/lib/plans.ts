@@ -2,8 +2,9 @@
 export const PASS_PLANS = {
     SPRINT: {
         id: "SPRINT",
+        // ⚠️ TEMPORARY TEST PRICE — revert to 500 before going live.
+        amount: 1, // ETB (was 500) — lowered for live transfer-verification testing
         name: "Sprint Pass",
-        amount: 500, // ETB
         days: 30,
     },
     SEASON: {

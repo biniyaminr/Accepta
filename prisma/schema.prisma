@@ -149,11 +149,14 @@ model Recommendation {
 
 model Payment {
   id        String   @id @default(cuid())
-  txRef     String   @unique // Chapa transaction reference
+  txRef     String   @unique // Chapa transaction reference (or an internal ref for transfers)
   planType  String   // SPRINT, SEASON
   amount    Int      // ETB
   days      Int      // access days granted (30 or 90)
   status    String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  method    String   @default("CHAPA") // CHAPA, TRANSFER (direct bank/mobile-money transfer)
+  provider  String?  // detected provider for transfers: CBE, TELEBIRR, DASHEN, ...
+  bankRef   String?  @unique // the payer's verified bank transaction reference (replay guard)
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
