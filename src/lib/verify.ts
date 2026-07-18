@@ -19,8 +19,8 @@ export type NormalizedVerification = {
     success: boolean;
     /** The amount the payer was actually charged (total incl. fees when present). */
     amount: number | null;
-    /** Every string in the response that could identify the receiver, normalized. */
-    receiverIdentifiers: string[];
+    /** Raw receiver identifiers (name and/or account number, possibly masked like "1****3987"). */
+    receiverValues: string[];
     provider: string | null;
     reference: string | null;
     date: Date | null;
@@ -91,11 +91,11 @@ function firstNumber(raw: Record<string, unknown>, fields: string[]): number | n
 }
 
 function normalize(raw: Record<string, unknown>): NormalizedVerification {
-    const receiverIdentifiers: string[] = [];
+    const receiverValues: string[] = [];
     for (const field of RECEIVER_FIELDS) {
         const value = raw[field];
         if (typeof value === "string" && value.trim() !== "") {
-            receiverIdentifiers.push(normalizeReceiver(value));
+            receiverValues.push(value.trim());
         }
     }
 
@@ -129,7 +129,7 @@ function normalize(raw: Record<string, unknown>): NormalizedVerification {
     return {
         success: raw.success === true,
         amount: firstNumber(raw, AMOUNT_FIELDS),
-        receiverIdentifiers,
+        receiverValues,
         provider,
         reference,
         date,
@@ -191,23 +191,51 @@ export async function verifyTransfer(input: VerifyInput): Promise<VerifyResult> 
 }
 
 /**
- * Merchant account identifiers the transfer must have been sent to. Configure
- * via VERIFY_MERCHANT_ACCOUNTS as a comma-separated list of account numbers,
- * phone numbers, and/or the exact account name (e.g. "1000123456789,ACCEPTA PLC,0912345678").
+ * Merchant identifiers the transfer must have been sent to. Configure via
+ * VERIFY_MERCHANT_ACCOUNTS as a comma-separated list of account numbers,
+ * phone numbers, and/or the exact account-holder name
+ * (e.g. "1000310563987,Biniyam Dereje Tadesse,0912345678").
  * If unset, receiver matching is skipped (NOT recommended in production).
  */
 export function merchantIdentifiers(): string[] {
     return (process.env.VERIFY_MERCHANT_ACCOUNTS || "")
         .split(",")
-        .map((s) => normalizeReceiver(s.trim()))
+        .map((s) => s.trim())
         .filter((s) => s.length > 0);
 }
 
-/** True when the verified receiver matches one of our configured merchant accounts. */
+// Providers mask account numbers (CBE shows "1****3987": first digit + last 4).
+// Match a full merchant account against such a mask by comparing the revealed
+// leading and trailing digits.
+function matchesMaskedAccount(merchantAccount: string, masked: string): boolean {
+    if (!/[*x]/i.test(masked)) return false; // not a masked value
+    const merchantDigits = merchantAccount.replace(/\D/g, "");
+    if (!merchantDigits) return false; // merchant identifier isn't an account number
+    const groups = masked.split(/[*x]+/i).map((g) => g.replace(/\D/g, ""));
+    const lead = groups[0] ?? "";
+    const trail = groups[groups.length - 1] ?? "";
+    if (trail.length < 3) return false; // too few revealed digits to trust
+    return (
+        merchantDigits.startsWith(lead) &&
+        merchantDigits.endsWith(trail) &&
+        merchantDigits.length >= lead.length + trail.length
+    );
+}
+
+function matchesIdentifier(merchant: string, receiverValue: string): boolean {
+    if (/[*x]/i.test(receiverValue)) {
+        return matchesMaskedAccount(merchant, receiverValue);
+    }
+    // Full name or unmasked account: normalized substring match, either direction.
+    const m = normalizeReceiver(merchant);
+    const r = normalizeReceiver(receiverValue);
+    if (!m || !r) return false;
+    return r.includes(m) || m.includes(r);
+}
+
+/** True when the verified receiver matches one of our configured merchant identifiers. */
 export function receiverMatchesMerchant(v: NormalizedVerification): boolean {
     const merchants = merchantIdentifiers();
     if (merchants.length === 0) return true; // not configured — skip the check
-    return v.receiverIdentifiers.some((rid) =>
-        merchants.some((m) => rid.includes(m) || m.includes(rid))
-    );
+    return v.receiverValues.some((rv) => merchants.some((m) => matchesIdentifier(m, rv)));
 }

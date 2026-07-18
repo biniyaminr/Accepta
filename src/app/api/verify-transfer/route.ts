@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
         // The money must have actually reached our account.
         if (!receiverMatchesMerchant(v)) {
-            console.warn(`⚠️ Transfer receiver mismatch for ref ${reference}:`, v.receiverIdentifiers);
+            console.warn(`⚠️ Transfer receiver mismatch for ref ${reference}:`, v.receiverValues);
             return NextResponse.json(
                 { error: "This transfer wasn't sent to our payment account. Please pay to the listed account and try again." },
                 { status: 400 }
