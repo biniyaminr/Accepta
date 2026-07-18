@@ -46,6 +46,10 @@
     },
     "Sidebar": {
         "mainMenu": "ዋና ምናሌ",
+        "groupOverview": "አጠቃላይ",
+        "groupAiStudio": "የ AI ስቱዲዮ",
+        "groupApplications": "ማመልከቻዎች",
+        "groupAccount": "መለያ",
         "missionDashboard": "ዳሽቦርድ",
         "masterProfile": "መገለጫ",
         "aiEssays": "ድርሰቶች",

@@ -159,13 +159,13 @@ export default function DocumentsPage() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out max-w-6xl mx-auto pb-12">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="flex flex-col gap-2">
-                    <h2 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-neutral-100 to-neutral-400">Document Vault</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">Document Vault</h2>
                     <p className="text-neutral-400 text-lg">Manage all your transcripts, essays, and IDs safely across applications.</p>
                 </div>
 
                 <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
                     <DialogTrigger asChild>
-                        <Button className="bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-lg shadow-blue-500/20">
+                        <Button className="bg-violet-600 hover:bg-violet-500 text-white font-medium shadow-lg shadow-violet-950/40">
                             <UploadCloudIcon className="w-4 h-4 mr-2" />
                             Upload Document
                         </Button>
@@ -228,7 +228,7 @@ export default function DocumentsPage() {
                             </div>
 
                             <DialogFooter className="pt-4">
-                                <Button type="button" onClick={handleSave} disabled={isSubmitting || isUploading} className="w-full bg-blue-600 hover:bg-blue-500 text-white">
+                                <Button type="button" onClick={handleSave} disabled={isSubmitting || isUploading} className="w-full bg-violet-600 hover:bg-violet-500 text-white">
                                     {(isSubmitting || isUploading) ? "Uploading & Saving..." : "Save Document"}
                                 </Button>
                             </DialogFooter>
@@ -285,7 +285,7 @@ export default function DocumentsPage() {
                             </div>
 
                             <DialogFooter className="pt-4">
-                                <Button type="submit" disabled={isEditing} className="w-full bg-blue-600 hover:bg-blue-500 text-white">
+                                <Button type="submit" disabled={isEditing} className="w-full bg-violet-600 hover:bg-violet-500 text-white">
                                     {isEditing ? "Saving..." : "Save Changes"}
                                 </Button>
                             </DialogFooter>

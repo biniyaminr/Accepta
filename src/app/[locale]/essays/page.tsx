@@ -66,11 +66,11 @@ export default function EssaysPage() {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out max-w-5xl mx-auto">
             <div className="flex flex-col gap-2">
-                <h2 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-200 to-indigo-400">{t("pageTitle")}</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">{t("pageTitle")}</h2>
                 <p className="text-neutral-400 text-lg">{t("pageSubtitle")}</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 {/* Input Column */}
                 <div className="space-y-6">
                     <Card className="bg-neutral-900/40 border-border/50 backdrop-blur-sm shadow-xl relative overflow-hidden h-full">

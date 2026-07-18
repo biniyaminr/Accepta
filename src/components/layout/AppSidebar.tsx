@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 import AcceptaLogo from "@/images/acceptalogo.png";
 import {
@@ -20,155 +19,126 @@ import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditC
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { Link } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/routing";
 import { PassStatus } from "./PassStatus";
 
 export function AppSidebar() {
     const pathname = usePathname();
     const t = useTranslations("Sidebar");
 
-    const items = [
+    const groups = [
         {
-            title: t("missionDashboard"),
-            url: "/dashboard",
-            icon: Home,
+            label: t("groupOverview"),
+            items: [
+                { title: t("missionDashboard"), url: "/dashboard", icon: Home },
+                { title: t("liveFeed"), url: "/feed", icon: Sparkles },
+                { title: t("analytics"), url: "/analytics", icon: BarChart3 },
+            ],
         },
         {
-            title: t("masterProfile"),
-            url: "/profile",
-            icon: User,
+            label: t("groupAiStudio"),
+            items: [
+                { title: t("aiEssays"), url: "/essays", icon: FileText },
+                { title: t("essayReview"), url: "/essay-review", icon: FileSearch },
+                { title: t("letters"), url: "/letters", icon: Mail },
+                { title: t("aiCvMaker"), url: "/resume", icon: Briefcase },
+                { title: t("interviewPrep"), url: "/interview-prep", icon: MessageSquare },
+            ],
         },
         {
-            title: t("aiEssays"),
-            url: "/essays",
-            icon: FileText,
+            label: t("groupApplications"),
+            items: [
+                { title: t("discoverPrograms"), url: "/discover", icon: Compass },
+                { title: t("applicationTracker"), url: "/applications", icon: GraduationCap },
+                { title: t("recommendations"), url: "/recommendations", icon: Users },
+                { title: t("calendar"), url: "/calendar", icon: CalendarDays },
+            ],
         },
         {
-            title: t("essayReview"),
-            url: "/essay-review",
-            icon: FileSearch,
-        },
-        {
-            title: t("letters"),
-            url: "/letters",
-            icon: Mail,
-        },
-        {
-            title: t("aiCvMaker"),
-            url: "/resume",
-            icon: Briefcase,
-        },
-        {
-            title: t("discoverPrograms"),
-            url: "/discover",
-            icon: Compass,
-        },
-        {
-            title: t("applicationTracker"),
-            url: "/applications",
-            icon: GraduationCap,
-        },
-        {
-            title: t("interviewPrep"),
-            url: "/interview-prep",
-            icon: MessageSquare,
-        },
-        {
-            title: t("recommendations"),
-            url: "/recommendations",
-            icon: Users,
-        },
-        {
-            title: t("calendar"),
-            url: "/calendar",
-            icon: CalendarDays,
-        },
-        {
-            title: t("analytics"),
-            url: "/analytics",
-            icon: BarChart3,
-        },
-        {
-            title: t("liveFeed"),
-            url: "/feed",
-            icon: Sparkles,
-        },
-        {
-            title: t("pricing"),
-            url: "/pricing",
-            icon: CreditCard,
+            label: t("groupAccount"),
+            items: [
+                { title: t("masterProfile"), url: "/profile", icon: User },
+                { title: t("pricing"), url: "/pricing", icon: CreditCard },
+            ],
         },
     ];
 
     return (
-        <Sidebar className="border-r border-border/50 bg-background/50 backdrop-blur-xl transition-all duration-300">
-            <SidebarHeader className="h-[72px] flex items-center px-4 border-b border-border/50 bg-transparent">
-                <Link href="/" className="flex items-center gap-3 no-underline hover:opacity-80 transition-opacity">
+        <Sidebar className="border-r border-white/[0.06] bg-neutral-950">
+            <SidebarHeader className="h-16 flex flex-row items-center px-5 border-b border-white/[0.06] bg-transparent">
+                <Link href="/" className="flex items-center gap-2.5 no-underline hover:opacity-80 transition-opacity">
                     <Image
                         src={AcceptaLogo}
                         alt="Accepta logo"
-                        width={64}
-                        height={64}
+                        width={36}
+                        height={36}
                         priority
-                        className="object-contain shrink-0 rounded-xl"
+                        className="object-contain shrink-0 rounded-lg"
                     />
-                    <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-neutral-200 tracking-tight">
+                    <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-300 to-neutral-100 tracking-tight">
                         Accepta
                     </span>
                 </Link>
             </SidebarHeader>
-            <SidebarContent className="bg-transparent pt-4">
-                <SidebarGroup>
-                    <SidebarGroupLabel className="text-muted-foreground font-semibold px-4 tracking-wider text-xs uppercase mb-2">{t("mainMenu")}</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu className="px-2 space-y-1">
-                            {items.map((item) => {
-                                const isActive = pathname === item.url;
-                                return (
-                                    <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton
-                                            asChild
-                                            isActive={isActive}
-                                            className={`
-                        w-full justify-start gap-4 px-4 py-3 rounded-xl transition-all duration-200 group
-                        ${isActive
-                                                    ? 'bg-neutral-800/50 text-white shadow-sm ring-1 ring-white/10'
-                                                    : 'text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800/30'
-                                                }
-                      `}
-                                        >
-                                            <Link href={item.url} className="flex items-center w-full">
-                                                <item.icon className={`h-5 w-5 transition-transform duration-200 ${isActive ? 'scale-110 text-neutral-200' : 'group-hover:scale-110'}`} />
-                                                <span className="font-medium tracking-wide">{item.title}</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                );
-                            })}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+            <SidebarContent className="bg-transparent pt-3 pb-2">
+                {groups.map((group) => (
+                    <SidebarGroup key={group.label} className="py-1.5">
+                        <SidebarGroupLabel className="text-neutral-600 font-semibold px-3 tracking-[0.14em] text-[10px] uppercase mb-1">
+                            {group.label}
+                        </SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu className="px-2 space-y-1">
+                                {group.items.map((item) => {
+                                    const isActive = pathname === item.url;
+                                    return (
+                                        <SidebarMenuItem key={item.url}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                isActive={isActive}
+                                                className={`
+                                                    w-full justify-start gap-3 px-3 h-10 rounded-lg text-sm font-medium transition-colors duration-150 group relative
+                                                    ${isActive
+                                                        ? 'bg-violet-500/[0.12] text-violet-100 ring-1 ring-inset ring-violet-500/25'
+                                                        : 'text-neutral-400 hover:text-neutral-100 hover:bg-white/[0.04]'
+                                                    }
+                                                `}
+                                            >
+                                                <Link href={item.url} className="flex items-center w-full gap-3">
+                                                    {isActive && (
+                                                        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-violet-400" />
+                                                    )}
+                                                    <item.icon className={`h-[18px] w-[18px] shrink-0 transition-colors duration-150 ${isActive ? 'text-violet-400' : 'text-neutral-500 group-hover:text-neutral-300'}`} />
+                                                    <span className="truncate">{item.title}</span>
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                ))}
             </SidebarContent>
 
             {/* Auth Footer */}
-            <SidebarFooter className="border-t border-border/50 p-4">
+            <SidebarFooter className="border-t border-white/[0.06] p-3 gap-2">
                 <SignedIn>
                     <PassStatus />
                 </SignedIn>
                 {/* Language Switcher */}
-                <div className="px-1 mb-3">
+                <div className="px-1">
                     <LanguageSwitcher />
                 </div>
                 <SignedOut>
                     <div className="flex flex-col gap-2">
                         <SignInButton mode="modal">
-                            <button className="flex w-full items-center gap-3 rounded-xl border border-neutral-700 bg-neutral-800/50 px-4 py-2.5 text-sm font-medium text-neutral-300 transition-all hover:bg-neutral-700/60 hover:text-white">
-                                <LogIn className="h-4 w-4" />
+                            <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-[13px] font-medium text-neutral-300 transition-colors hover:bg-white/[0.06] hover:text-white">
+                                <LogIn className="h-3.5 w-3.5" />
                                 Log In
                             </button>
                         </SignInButton>
                         <SignUpButton mode="modal">
-                            <button className="flex w-full items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-neutral-900 transition-all hover:bg-neutral-100">
+                            <button className="flex w-full items-center justify-center rounded-lg bg-violet-600 px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-violet-500 shadow-lg shadow-violet-950/40">
                                 Sign Up Free
                             </button>
                         </SignUpButton>
@@ -176,7 +146,7 @@ export function AppSidebar() {
                 </SignedOut>
 
                 <SignedIn>
-                    <div className="flex items-center gap-3 rounded-xl bg-neutral-800/50 px-4 py-3 ring-1 ring-white/5">
+                    <div className="flex items-center gap-3 rounded-lg bg-white/[0.03] px-3 py-2.5 ring-1 ring-inset ring-white/[0.06]">
                         <UserButton
                             appearance={{
                                 elements: {
@@ -184,9 +154,9 @@ export function AppSidebar() {
                                 },
                             }}
                         />
-                        <div className="flex flex-col">
-                            <span className="text-sm font-medium text-neutral-200">My Account</span>
-                            <span className="text-xs text-neutral-500">Manage profile</span>
+                        <div className="flex flex-col min-w-0">
+                            <span className="text-[13px] font-medium text-neutral-200 truncate">My Account</span>
+                            <span className="text-[11px] text-neutral-500">Manage profile</span>
                         </div>
                     </div>
                 </SignedIn>
@@ -196,4 +166,3 @@ export function AppSidebar() {
         </Sidebar>
     );
 }
-

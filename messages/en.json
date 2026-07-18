@@ -46,6 +46,10 @@
     },
     "Sidebar": {
         "mainMenu": "MAIN MENU",
+        "groupOverview": "Overview",
+        "groupAiStudio": "AI Studio",
+        "groupApplications": "Applications",
+        "groupAccount": "Account",
         "missionDashboard": "Dashboard",
         "masterProfile": "Profile",
         "aiEssays": "Essays",

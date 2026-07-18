@@ -375,7 +375,7 @@ export default function RecommendationsPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">
                         {t("pageTitle")}
                     </h1>
                     <p className="text-neutral-400 mt-1 text-sm sm:text-base">

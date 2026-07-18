@@ -850,9 +850,9 @@ export default function OpportunitiesFeed() {
         <div className="container mx-auto py-8 px-4 pb-28">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-bold tracking-tight">{t("pageTitle")}</h1>
-                    <p className="text-muted-foreground">
+                <div className="flex flex-col gap-1.5">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">{t("pageTitle")}</h1>
+                    <p className="text-neutral-400 text-sm sm:text-base">
                         {t("pageSubtitle")}
                     </p>
                 </div>
@@ -862,7 +862,7 @@ export default function OpportunitiesFeed() {
                         variant="outline"
                         onClick={handleEvaluateAll}
                         disabled={isEvaluatingAll || loading}
-                        className="w-full md:w-auto border-primary/30 text-primary hover:bg-primary/10"
+                        className="w-full md:w-auto border-violet-500/30 text-violet-300 hover:bg-violet-500/10 hover:text-violet-200"
                     >
                         <Zap className={`mr-2 h-4 w-4 ${isEvaluatingAll ? "animate-pulse" : ""}`} />
                         {isEvaluatingAll && evaluateAllProgress
@@ -877,7 +877,7 @@ export default function OpportunitiesFeed() {
             </div>
 
             {/* Feature 1 + 2: Filter bar */}
-            <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-4 mb-6 space-y-3">
+            <div className="bg-neutral-900/40 border border-white/[0.06] rounded-2xl p-4 mb-6 space-y-3 backdrop-blur-sm">
                 <div className="flex flex-col sm:flex-row gap-3">
                     {/* Search */}
                     <div className="relative flex-1">
@@ -886,17 +886,17 @@ export default function OpportunitiesFeed() {
                             placeholder={t("searchPlaceholder")}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 bg-neutral-900 border-neutral-700 text-neutral-200 placeholder:text-neutral-600 focus:border-neutral-500"
+                            className="pl-9 bg-neutral-950/60 border-white/[0.08] text-neutral-200 placeholder:text-neutral-600 focus:border-violet-500/40 rounded-lg"
                         />
                     </div>
 
                     {/* Country dropdown */}
-                    <div className="relative">
+                    <div className="relative w-full sm:w-auto">
                         <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
                         <select
                             value={filterCountry}
                             onChange={(e) => setFilterCountry(e.target.value)}
-                            className="pl-9 pr-4 h-10 rounded-md border border-neutral-700 bg-neutral-900 text-neutral-200 text-sm focus:outline-none focus:border-neutral-500 appearance-none cursor-pointer min-w-[160px]"
+                            className="w-full sm:w-auto pl-9 pr-4 h-10 rounded-lg border border-white/[0.08] bg-neutral-950/60 text-neutral-200 text-sm focus:outline-none focus:border-violet-500/40 appearance-none cursor-pointer sm:min-w-[160px]"
                         >
                             <option value="">{t("allCountries")}</option>
                             {uniqueCountries.map((c) => (
@@ -908,12 +908,12 @@ export default function OpportunitiesFeed() {
                     </div>
 
                     {/* Sort dropdown */}
-                    <div className="relative">
+                    <div className="relative w-full sm:w-auto">
                         <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value as "newest" | "deadline" | "fit")}
-                            className="pl-9 pr-4 h-10 rounded-md border border-neutral-700 bg-neutral-900 text-neutral-200 text-sm focus:outline-none focus:border-neutral-500 appearance-none cursor-pointer"
+                            className="w-full sm:w-auto pl-9 pr-4 h-10 rounded-lg border border-white/[0.08] bg-neutral-950/60 text-neutral-200 text-sm focus:outline-none focus:border-violet-500/40 appearance-none cursor-pointer"
                         >
                             <option value="newest">{t("newestFirst")}</option>
                             <option value="deadline">{t("deadlineSoonest")}</option>
@@ -999,11 +999,11 @@ export default function OpportunitiesFeed() {
                         return (
                             <Card
                                 key={opp.id}
-                                className={`group relative overflow-hidden border-2 transition-all hover:shadow-lg ${
+                                className={`group relative overflow-hidden bg-neutral-900/40 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-violet-950/20 ${
                                     isPinned
-                                        ? "border-violet-500/60 bg-violet-500/5"
-                                        : "hover:border-primary/50 dark:hover:bg-accent/10"
-                                } ${isRead ? "opacity-80" : ""}`}
+                                        ? "border-violet-500/50 bg-violet-500/[0.04]"
+                                        : "border-white/[0.06] hover:border-violet-500/30"
+                                } ${isRead ? "opacity-75" : ""}`}
                             >
                                 {/* Feature 8: Unread green dot */}
                                 {!isRead && (
@@ -1127,7 +1127,7 @@ export default function OpportunitiesFeed() {
                                             {t("details")} <Eye className="ml-2 h-3.5 w-3.5" />
                                         </Button>
                                         <Button
-                                            className="flex-1"
+                                            className="flex-1 bg-violet-600 hover:bg-violet-500 text-white"
                                             onClick={() => handleSaveToTracker(opp)}
                                             disabled={savingIds.has(opp.id) || savedIds.has(opp.id)}
                                         >

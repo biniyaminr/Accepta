@@ -200,11 +200,13 @@ function SectionCard({
     editForm?: React.ReactNode;
 }) {
     return (
-        <Card className="bg-neutral-900/40 border-neutral-800/50 backdrop-blur-xl relative overflow-hidden">
+        <Card className="bg-neutral-900/40 border-white/[0.06] backdrop-blur-xl relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500/3 via-transparent to-orange-500/3 pointer-events-none" />
             <CardHeader className="flex flex-row items-center justify-between pb-3">
-                <CardTitle className="text-base font-semibold text-neutral-200 flex items-center gap-2">
-                    <Icon className="w-4 h-4 text-violet-400" />
+                <CardTitle className="text-base font-semibold text-neutral-200 flex items-center gap-2.5">
+                    <span className="w-7 h-7 rounded-lg bg-violet-500/10 ring-1 ring-inset ring-violet-500/20 flex items-center justify-center shrink-0">
+                        <Icon className="w-3.5 h-3.5 text-violet-400" />
+                    </span>
                     {title}
                 </CardTitle>
                 {!isEditing ? (
@@ -774,7 +776,7 @@ function ProfileView({ profile, onRefresh }: { profile: FullProfile; onRefresh: 
     return (
         <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* ── Profile Header ── */}
-            <div className="relative rounded-2xl border border-neutral-800/50 bg-neutral-900/40 backdrop-blur-xl overflow-hidden p-8">
+            <div className="relative rounded-2xl border border-white/[0.06] bg-neutral-900/40 backdrop-blur-xl overflow-hidden p-6 sm:p-8">
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-transparent to-orange-500/10 pointer-events-none" />
                 <div className="relative flex items-center gap-6">
                     <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-600 to-orange-500 flex items-center justify-center text-white text-2xl font-black shadow-xl shrink-0 overflow-hidden">
@@ -1551,7 +1553,7 @@ function OnboardingWizard() {
                                         <UploadButton endpoint="documentUploader" onUploadBegin={() => setIsCvUploading(true)}
                                             onClientUploadComplete={(res: any[]) => { setIsCvUploading(false); if (res?.[0]?.ufsUrl) { setCvUrl(res[0].ufsUrl); setCvName(res[0].name); toast.success("CV securely vaulted."); } }}
                                             onUploadError={() => { setIsCvUploading(false); toast.error("Upload failed."); }}
-                                            className="ut-button:bg-indigo-600 ut-button:scale-75 ut-label:hidden" />
+                                            className="ut-button:bg-violet-600 ut-button:scale-75 ut-label:hidden" />
                                     )}
                                 </div>
                                 <div className={`space-y-4 p-5 rounded-2xl border-2 border-dashed transition-colors ${transcriptUrl ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-orange-500/30 bg-orange-500/5'} text-center`}>

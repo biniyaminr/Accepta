@@ -174,14 +174,14 @@ export function DashboardContent() {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-neutral-100 to-neutral-400">{t("missionControl")}</h2>
-                    <p className="text-neutral-400 text-lg">{t("overview")}</p>
+                <div className="flex flex-col gap-1.5">
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">{t("missionControl")}</h2>
+                    <p className="text-neutral-400 text-sm sm:text-base">{t("overview")}</p>
                 </div>
 
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-lg shadow-blue-500/20">
+                        <Button className="bg-violet-600 hover:bg-violet-500 text-white font-medium shadow-lg shadow-violet-950/40">
                             <PlusIcon className="w-4 h-4 mr-2" />
                             {t("newApplication")}
                         </Button>
@@ -211,7 +211,7 @@ export function DashboardContent() {
                                 <Input id="portalUrl" type="url" value={portalUrl} onChange={e => setPortalUrl(e.target.value)} placeholder="https://apply.university.edu" className="bg-neutral-950/50 border-neutral-800 text-neutral-200" />
                             </div>
                             <DialogFooter className="pt-4">
-                                <Button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 hover:bg-blue-500 text-white">
+                                <Button type="submit" disabled={isSubmitting} className="w-full bg-violet-600 hover:bg-violet-500 text-white">
                                     {isSubmitting ? t("saving") : t("createApplication")}
                                 </Button>
                             </DialogFooter>
@@ -220,39 +220,43 @@ export function DashboardContent() {
                 </Dialog>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="bg-neutral-900/40 border-border/50 backdrop-blur-sm shadow-xl relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <Card className="bg-neutral-900/40 border-white/[0.06] hover:border-indigo-500/30 backdrop-blur-sm shadow-xl relative overflow-hidden group transition-colors duration-300">
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium text-neutral-300">{t("totalApplications")}</CardTitle>
-                        <AlertCircleIcon className="w-4 h-4 text-indigo-400" />
+                        <CardTitle className="text-[13px] font-medium text-neutral-400">{t("totalApplications")}</CardTitle>
+                        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 ring-1 ring-inset ring-indigo-500/20 flex items-center justify-center shrink-0">
+                            <AlertCircleIcon className="w-4 h-4 text-indigo-400" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-neutral-100">{totalApps}</div>
+                        <div className="text-3xl font-bold text-neutral-100 tracking-tight tabular-nums">{totalApps}</div>
                         <p className="text-xs text-neutral-500 mt-1">{t("activeDeadlines", { count: futureDeads.length })}</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-neutral-900/40 border-border/50 backdrop-blur-sm shadow-xl relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <Card className="bg-neutral-900/40 border-white/[0.06] hover:border-emerald-500/30 backdrop-blur-sm shadow-xl relative overflow-hidden group transition-colors duration-300">
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium text-neutral-300">{t("submitted")}</CardTitle>
-                        <CheckCircle2Icon className="w-4 h-4 text-emerald-400" />
+                        <CardTitle className="text-[13px] font-medium text-neutral-400">{t("submitted")}</CardTitle>
+                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 ring-1 ring-inset ring-emerald-500/20 flex items-center justify-center shrink-0">
+                            <CheckCircle2Icon className="w-4 h-4 text-emerald-400" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-neutral-100">{submittedApps}</div>
+                        <div className="text-3xl font-bold text-neutral-100 tracking-tight tabular-nums">{submittedApps}</div>
                         <p className="text-xs text-neutral-500 mt-1">{t("completionRate", { rate: completionRate })}</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-neutral-900/40 border-border/50 backdrop-blur-sm shadow-xl relative overflow-hidden group border-amber-500/30">
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-100" />
+                <Card className="bg-neutral-900/40 backdrop-blur-sm shadow-xl relative overflow-hidden group border-amber-500/25 transition-colors duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.07] to-transparent" />
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium text-amber-200">{t("nextDeadline")}</CardTitle>
-                        <ClockIcon className="w-4 h-4 text-amber-400 animate-pulse" />
+                        <CardTitle className="text-[13px] font-medium text-amber-200/90">{t("nextDeadline")}</CardTitle>
+                        <div className="w-8 h-8 rounded-lg bg-amber-500/10 ring-1 ring-inset ring-amber-500/20 flex items-center justify-center shrink-0">
+                            <ClockIcon className="w-4 h-4 text-amber-400" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-amber-100">
+                        <div className="text-2xl font-bold text-amber-100 tracking-tight tabular-nums">
                             {nextDeadDays !== null ? t("days", { count: nextDeadDays }) : "-"}
                         </div>
                         <p className="text-xs text-amber-400/80 mt-1 truncate">
@@ -261,15 +265,16 @@ export function DashboardContent() {
                     </CardContent>
                 </Card>
 
-                <Link href="/documents" className="block focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-xl">
-                    <Card className="bg-neutral-900/40 border-border/50 backdrop-blur-sm shadow-xl relative overflow-hidden group hover:scale-105 transition-transform duration-300 cursor-pointer h-full">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <Link href="/documents" className="block focus:outline-none focus:ring-2 focus:ring-violet-500/50 rounded-xl">
+                    <Card className="bg-neutral-900/40 border-white/[0.06] hover:border-blue-500/30 backdrop-blur-sm shadow-xl relative overflow-hidden group cursor-pointer h-full transition-colors duration-300">
                         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                            <CardTitle className="text-sm font-medium text-neutral-300">{t("documents")}</CardTitle>
-                            <FileIcon className="w-4 h-4 text-blue-400" />
+                            <CardTitle className="text-[13px] font-medium text-neutral-400">{t("documents")}</CardTitle>
+                            <div className="w-8 h-8 rounded-lg bg-blue-500/10 ring-1 ring-inset ring-blue-500/20 flex items-center justify-center shrink-0">
+                                <FileIcon className="w-4 h-4 text-blue-400" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold text-neutral-100">{documents.length}</div>
+                            <div className="text-3xl font-bold text-neutral-100 tracking-tight tabular-nums">{documents.length}</div>
                             <p className="text-xs text-neutral-500 mt-1">{t("uploadedToVault")}</p>
                         </CardContent>
                     </Card>

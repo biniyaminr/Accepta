@@ -183,7 +183,7 @@ export default function AnalyticsPage() {
                 <AmbientGlow />
                 <div className="relative max-w-7xl mx-auto">
                     <div className="mb-10">
-                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-50 flex items-center gap-3">
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100 flex items-center gap-3">
                             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-r from-purple-500 to-orange-500 shadow-[0_0_20px_rgba(168,85,247,0.25)]">
                                 <BarChart3 className="h-6 w-6 text-white" />
                             </span>
@@ -259,7 +259,7 @@ export default function AnalyticsPage() {
             <div className="relative max-w-7xl mx-auto space-y-8">
                 {/* ── Header ──────────────────────────────────────────────── */}
                 <div className="sticky top-0 z-20 -mx-6 md:-mx-8 lg:-mx-10 px-6 md:px-8 lg:px-10 py-4 bg-[#09090b]/70 backdrop-blur-md border-b border-white/5">
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-50 flex items-center gap-3">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100 flex items-center gap-3">
                         <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-r from-purple-500 to-orange-500 shadow-[0_0_20px_rgba(168,85,247,0.25)]">
                             <BarChart3 className="h-6 w-6 text-white" />
                         </span>

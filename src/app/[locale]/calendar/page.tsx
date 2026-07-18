@@ -317,7 +317,7 @@ export default function CalendarPage() {
                 <div className="mb-8">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100 flex items-center gap-2">
                                 <CalendarDays className="h-6 w-6 text-violet-400" />
                                 {t("pageTitle")}
                             </h1>
@@ -386,7 +386,7 @@ export default function CalendarPage() {
                         <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-600 border-t-violet-400" />
                     </div>
                 ) : (
-                    <div className="grid grid-cols-7 gap-px rounded-xl border border-neutral-800 bg-neutral-800 overflow-hidden">
+                    <div className="grid grid-cols-7 gap-px rounded-xl border border-white/[0.08] bg-neutral-800 overflow-hidden">
                         {calendarCells.map((cell, idx) => {
                             const cellDate = new Date(cell.year, cell.month, cell.day);
                             const isToday = isSameDay(cellDate, today);
@@ -462,7 +462,7 @@ export default function CalendarPage() {
 
                 {/* Detail panel */}
                 {selectedDate && (
-                    <div className="mt-6 rounded-xl border border-neutral-800 bg-neutral-900/50 p-4 sm:p-6">
+                    <div className="mt-6 rounded-xl border border-white/[0.06] bg-neutral-900/40 p-4 sm:p-6">
                         <h3 className="mb-4 text-sm font-semibold text-neutral-300">
                             {selectedDate.toLocaleDateString("default", {
                                 weekday: "long",

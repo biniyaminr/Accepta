@@ -105,7 +105,7 @@ export default function CoverLetterPage() {
                         {/* Letter Type Selector */}
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-neutral-300">Letter Type</label>
-                            <div className="grid grid-cols-3 gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                 {LETTER_TYPES.map((t) => {
                                     const Icon = t.icon;
                                     const active = letterType === t.value;

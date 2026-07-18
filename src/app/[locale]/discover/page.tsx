@@ -209,7 +209,7 @@ export default function DiscoverPage() {
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col gap-6 w-full">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-3xl font-bold tracking-tight text-neutral-100">Discover Programs</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">Discover Programs</h2>
                 </div>
 
                 {/* Search Bar Section */}
@@ -288,14 +288,14 @@ export default function DiscoverPage() {
                                     </div>
 
                                     {/* Row 2: Actions & Meta */}
-                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-2">
+                                    <div className="flex flex-col sm:flex-row flex-wrap justify-between items-start sm:items-center gap-4 mt-2">
                                         <div className="flex items-center justify-center gap-2 rounded-full border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-300 max-w-full">
                                             <Calendar className="h-4 w-4 shrink-0 text-blue-400" />
                                             <span className="shrink-0">Deadline:</span>
                                             <span className="text-white truncate whitespace-normal text-left">{String(programData.deadline || 'Unknown')}</span>
                                         </div>
 
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex flex-wrap items-center gap-3">
                                             <button
                                                 onClick={handleSaveApplication}
                                                 disabled={isSaving || isSaved}

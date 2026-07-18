@@ -216,7 +216,7 @@ function ManualContextForm({
             <p className="text-xs font-bold text-blue-300 uppercase tracking-widest">
                 Manual Profile Context
             </p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                     <label className="text-[10px] text-neutral-500 uppercase font-bold tracking-widest">Full Name *</label>
                     <Input
@@ -358,7 +358,7 @@ export default function LetterStudioPage() {
                     <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500/20 to-orange-500/20 border border-white/5">
                         <MailIcon className="w-6 h-6 text-violet-400" />
                     </div>
-                    <h2 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-300 to-orange-300">
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">
                         {t("pageTitle")}
                     </h2>
                 </div>
@@ -367,7 +367,7 @@ export default function LetterStudioPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 {/* ── Left: Controls ── */}
                 <div className="space-y-5">
                     {/* Mode toggle */}
@@ -418,7 +418,7 @@ export default function LetterStudioPage() {
                             {/* Letter Type */}
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-neutral-300">{t("letterType")}</label>
-                                <div className="grid grid-cols-3 gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                     {LETTER_TYPES.map(lt => {
                                         const Icon = lt.icon;
                                         const active = letterType === lt.value;

@@ -462,7 +462,7 @@ export default function ApplicationsDashboard() {
                 draggable
                 onDragStart={(e) => handleDragStart(e, app.id)}
                 onDragEnd={handleDragEnd}
-                className={`group relative overflow-hidden rounded-2xl bg-zinc-900/50 border border-white/5 backdrop-blur-sm p-5 transition-all duration-300 ease-in-out cursor-grab active:cursor-grabbing select-none
+                className={`group relative shrink-0 overflow-hidden rounded-2xl bg-zinc-900/50 border border-white/5 backdrop-blur-sm p-5 transition-all duration-300 ease-in-out cursor-grab active:cursor-grabbing select-none
                     ${isDragging
                         ? "opacity-40 scale-[0.98] border-purple-500/30"
                         : "hover:border-purple-500/30 hover:shadow-[0_0_20px_rgba(168,85,247,0.1)]"}
@@ -572,7 +572,7 @@ export default function ApplicationsDashboard() {
         const isOver = dragOverStatus === status;
 
         return (
-            <div className="flex flex-col min-w-[300px] max-w-sm flex-1">
+            <div className="flex flex-col w-full lg:w-auto lg:min-w-[300px] lg:max-w-sm lg:flex-1">
                 {/* Column header */}
                 <div className="mb-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -594,11 +594,11 @@ export default function ApplicationsDashboard() {
                     onDragLeave={(e) => handleDragLeave(e, status)}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, status)}
-                    className={`flex flex-col gap-3 rounded-2xl p-4 border-2 border-t-4 min-h-[500px] backdrop-blur-sm transition-all duration-300 ease-in-out
+                    className={`flex flex-col gap-3 rounded-2xl p-3 border border-t-2 min-h-[140px] lg:min-h-[500px] lg:flex-1 lg:overflow-y-auto backdrop-blur-sm transition-all duration-300 ease-in-out
                         ${meta.topBorder}
                         ${isOver
                             ? `${meta.dropHighlight} border-dashed shadow-lg`
-                            : "bg-zinc-950/50 border-white/5"
+                            : "bg-neutral-950/40 border-white/[0.06]"
                         }
                     `}
                 >
@@ -736,13 +736,13 @@ export default function ApplicationsDashboard() {
     const submittedApps = applications.filter(app => app.status === "SUBMITTED");
 
     return (
-        <div className="relative flex h-[calc(100vh-8rem)] flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
+        <div className="relative flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out lg:h-[calc(100vh-8rem)]">
             <AmbientGlow />
-            <div className="relative flex flex-col gap-2">
-                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-50">
+            <div className="relative flex flex-col gap-1.5">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">
                     {t("pageTitle")}
                 </h1>
-                <p className="text-zinc-400">
+                <p className="text-neutral-400 text-sm sm:text-base">
                     {t("pageSubtitle")}
                 </p>
             </div>
@@ -752,7 +752,7 @@ export default function ApplicationsDashboard() {
                     <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
                 </div>
             ) : (
-                <div className="relative flex flex-1 gap-6 overflow-x-auto pb-4">
+                <div className="relative flex flex-col lg:flex-row flex-1 gap-6 lg:overflow-x-auto pb-4">
                     <Column status="SAVED" apps={savedApps} />
                     <Column status="IN_PROGRESS" apps={inProgressApps} />
                     <Column status="SUBMITTED" apps={submittedApps} />

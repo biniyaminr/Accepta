@@ -194,7 +194,7 @@ export default function InterviewPrepPage() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out max-w-7xl mx-auto">
             {/* Header */}
             <div className="flex flex-col gap-2">
-                <h2 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-200 to-indigo-400">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-100">
                     {t("pageTitle")}
                 </h2>
                 <p className="text-neutral-400 text-lg">{t("pageSubtitle")}</p>
