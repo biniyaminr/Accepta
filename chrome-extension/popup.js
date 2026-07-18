@@ -1,3 +1,12 @@
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const autofillBtn = document.getElementById('autofill-btn');
     const profileDataContainer = document.getElementById('profileData');
@@ -37,10 +46,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     row.className = 'data-row';
                     row.innerHTML = `
                         <div>
-                            <div class="data-label">${field.label}</div>
-                            <div class="data-value">${field.value}</div>
+                            <div class="data-label">${escapeHtml(field.label)}</div>
+                            <div class="data-value">${escapeHtml(field.value)}</div>
                         </div>
-                        <button class="copy-btn" data-value="${field.value}">Copy</button>
+                        <button class="copy-btn" data-value="${escapeHtml(field.value)}">Copy</button>
                     `;
                     profileDataContainer.appendChild(row);
                 }

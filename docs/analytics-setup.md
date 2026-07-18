@@ -3,9 +3,14 @@
 ## One-time setup
 
 1. Create a free account at https://posthog.com (US Cloud).
-2. Create a project "Accepta" → copy the **Project API key** (starts with `phc_`).
+2. Use one project for Accepta. The two saved insights ("Acquisition funnel"
+   and "Weekly returning users") live in project **504317** — the auto-created
+   "Default project". Either rename that project to "Accepta" (Settings →
+   Project), or create a new one and rebuild the insights there. **Copy the
+   Project API key (`phc_...`) from whichever project holds the insights** —
+   they only populate if the key below matches that same project.
 3. Set in `.env.local` (and in your production host's env):
-   - `NEXT_PUBLIC_POSTHOG_KEY=phc_...`
+   - `NEXT_PUBLIC_POSTHOG_KEY=phc_...`  ← key of the project holding the insights
    - `NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com`
 4. Redeploy. Analytics are disabled automatically wherever the key is unset.
 5. In PostHog → **Settings → Session replay**: confirm replay is enabled for the
@@ -57,3 +62,17 @@ landing URL are stored on the user record at signup. Share links like
 - People → filter by `referral_source` / `utm_source` → where they came from.
 - `/en/admin/new-users` in the app → who to interview next
   (access controlled by the `ADMIN_EMAILS` env var).
+
+The dashboard holding both tiles is **"Friday review"** (ID 1821251), in
+project 504317. The funnel is intentionally kept with no standing breakdown —
+add the `referral_source` split ad hoc (one click) when a number looks off.
+
+## Close condition
+
+Analytics is **"built," not "proven,"** until one real event (e.g.
+`signup_completed`) lands in project **504317** via a live test signup. Wire the
+key, sign up as a test user, watch it appear — that smoke-test is the actual
+green light. Everything before it is scaffolding matched to spec against an
+empty project.
+
+**Boundary:** no product work until stranger behavior is visible in the funnel.

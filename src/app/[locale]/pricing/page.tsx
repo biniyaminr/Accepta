@@ -56,7 +56,7 @@ export default function PricingPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 w-full max-w-6xl items-stretch">
                 {/* Free — Starter */}
                 <Card className="bg-neutral-900/40 border-neutral-800 backdrop-blur-sm relative overflow-hidden flex flex-col group transition-all hover:border-neutral-700">
                     <CardHeader>
@@ -125,7 +125,7 @@ export default function PricingPage() {
                         {payButton(
                             "SPRINT",
                             t("sprintCta"),
-                            "w-full bg-neutral-100 hover:bg-white text-neutral-900 font-bold h-12"
+                            "w-full bg-neutral-100 hover:bg-white text-neutral-900 font-bold min-h-12 h-auto py-2 whitespace-normal text-center leading-tight"
                         )}
                     </CardFooter>
                 </Card>
@@ -167,7 +167,7 @@ export default function PricingPage() {
                         {payButton(
                             "SEASON",
                             t("seasonCta"),
-                            "w-full bg-violet-600 hover:bg-violet-500 text-white font-bold h-12 shadow-lg shadow-violet-900/20"
+                            "w-full bg-violet-600 hover:bg-violet-500 text-white font-bold min-h-12 h-auto py-2 whitespace-normal text-center leading-tight shadow-lg shadow-violet-900/20"
                         )}
                         <div className="flex items-center justify-center gap-2 text-xs text-neutral-500">
                             <ShieldCheck className="h-4 w-4" />

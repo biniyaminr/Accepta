@@ -78,19 +78,31 @@ export function PayByTransferDialog({ plan, planLabel, amount, open, onOpenChang
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="bg-neutral-950 border-neutral-800 text-neutral-100 sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-neutral-100">
-                        <Landmark className="h-5 w-5 text-violet-400" />
+                <DialogHeader className="items-center text-center">
+                    <div className="mx-auto mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-violet-500/15">
+                        <Landmark className="h-6 w-6 text-violet-400" />
+                    </div>
+                    <DialogTitle className="text-center text-neutral-100">
                         {t("transferTitle")}
                     </DialogTitle>
-                    <DialogDescription className="text-neutral-400">
+                    <DialogDescription className="text-center text-neutral-400">
                         {t("transferSubtitle", { plan: planLabel, amount })}
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-5 py-2">
+                {/* Prominent amount to pay — anchors the intent to pay. */}
+                <div className="flex flex-col items-center gap-0.5 py-1">
+                    <span className="text-4xl font-extrabold tracking-tight text-white">
+                        {amount.toLocaleString()}
+                    </span>
+                    <span className="text-xs font-medium uppercase tracking-widest text-neutral-500">
+                        {t("etb")}
+                    </span>
+                </div>
+
+                <div className="space-y-5 py-1">
                     {PAY_ACCOUNTS.length > 0 && (
-                        <div className="space-y-2">
+                        <div className="space-y-2 text-center">
                             <p className="text-sm font-medium text-neutral-300">{t("transferStep1")}</p>
                             <div className="rounded-xl border border-neutral-800 bg-neutral-900/60 divide-y divide-neutral-800">
                                 {PAY_ACCOUNTS.map((account) => {
@@ -98,29 +110,29 @@ export function PayByTransferDialog({ plan, planLabel, amount, open, onOpenChang
                                         ? account.split(":").slice(1).join(":").trim()
                                         : account;
                                     return (
-                                        <div key={account} className="flex items-center justify-between gap-3 px-4 py-3">
-                                            <span className="text-sm text-neutral-200">{account}</span>
-                                            <button
-                                                type="button"
-                                                onClick={() => copy(value)}
-                                                className="shrink-0 text-neutral-400 hover:text-neutral-100 transition-colors"
-                                                aria-label="Copy account"
-                                            >
-                                                {copied === value ? (
-                                                    <Check className="h-4 w-4 text-green-400" />
-                                                ) : (
-                                                    <Copy className="h-4 w-4" />
-                                                )}
-                                            </button>
-                                        </div>
+                                        <button
+                                            key={account}
+                                            type="button"
+                                            onClick={() => copy(value)}
+                                            className="group flex w-full items-center justify-center gap-2 px-4 py-3 text-neutral-100 transition-colors hover:bg-neutral-800/40"
+                                            aria-label="Copy account"
+                                        >
+                                            <span className="text-sm font-semibold tracking-wide">{account}</span>
+                                            {copied === value ? (
+                                                <Check className="h-4 w-4 shrink-0 text-green-400" />
+                                            ) : (
+                                                <Copy className="h-4 w-4 shrink-0 text-neutral-400 group-hover:text-neutral-100" />
+                                            )}
+                                        </button>
                                     );
                                 })}
                             </div>
+                            <p className="text-xs text-neutral-500">{t("transferTelebirrHint")}</p>
                         </div>
                     )}
 
-                    <div className="space-y-2">
-                        <Label htmlFor="reference" className="text-neutral-300">
+                    <div className="space-y-2 text-center">
+                        <Label htmlFor="reference" className="block text-neutral-300">
                             {t("transferStep2")}
                         </Label>
                         <Input
@@ -128,7 +140,7 @@ export function PayByTransferDialog({ plan, planLabel, amount, open, onOpenChang
                             value={reference}
                             onChange={(e) => setReference(e.target.value)}
                             placeholder={t("transferRefPlaceholder")}
-                            className="bg-neutral-900 border-neutral-800 text-neutral-100"
+                            className="bg-neutral-900 border-neutral-800 text-center text-neutral-100"
                             autoComplete="off"
                         />
                         <p className="text-xs text-neutral-500">{t("transferRefHint")}</p>

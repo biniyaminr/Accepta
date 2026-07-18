@@ -49,7 +49,7 @@ export function AppSidebar() {
             icon: FileSearch,
         },
         {
-            title: "Letter Studio",
+            title: t("letters"),
             url: "/letters",
             icon: Mail,
         },

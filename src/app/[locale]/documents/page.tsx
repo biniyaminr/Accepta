@@ -316,7 +316,7 @@ export default function DocumentsPage() {
                                     <Badge variant="outline" className="ml-2 bg-neutral-900/50 text-neutral-400 border-neutral-800">{groupedDocs[folderName].length} items</Badge>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                     {groupedDocs[folderName].map((doc: any) => (
                                         <Card key={doc.id} onClick={() => window.open(doc.fileUrl, '_blank')} className="bg-neutral-900/40 border-border/50 backdrop-blur-sm shadow-sm hover:border-blue-500/30 transition-colors group cursor-pointer">
                                             <CardHeader className="p-4 flex flex-row items-start justify-between space-y-0">

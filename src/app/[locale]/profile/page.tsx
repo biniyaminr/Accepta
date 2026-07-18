@@ -589,7 +589,7 @@ function TestScoresSection({
                 {isAdding && (
                     <div className="p-4 rounded-xl border border-violet-500/20 bg-violet-500/5 space-y-3">
                         <p className="text-xs font-semibold text-violet-300 uppercase tracking-widest">New Test Score</p>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             <div className="space-y-1.5">
                                 <label className="text-[10px] text-neutral-500 uppercase font-bold tracking-widest">Test Type</label>
                                 <select
@@ -890,7 +890,7 @@ function ProfileView({ profile, onRefresh }: { profile: FullProfile; onRefresh: 
                     </Form>
                 }
             >
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div>
                         <p className="text-[10px] text-neutral-500 uppercase font-bold mb-1.5 tracking-widest">
                             Full Name
@@ -1523,7 +1523,7 @@ function OnboardingWizard() {
                     )}
                     {currentStep === 4 && (
                         <div className="space-y-8">
-                            <div className="grid md:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 <div className={`space-y-4 p-5 rounded-2xl border-2 border-dashed transition-colors ${passportUrl ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-violet-500/30 bg-violet-500/5'} text-center`}>
                                     {passportUrl ? <CheckCircle2Icon className="w-8 h-8 text-emerald-400 mx-auto" /> : isPassportUploading ? <Loader2 className="w-8 h-8 text-violet-400 mx-auto animate-spin" /> : <CloudIcon className="w-8 h-8 text-violet-400 mx-auto" />}
                                     <div className="text-sm"><h3 className="font-bold text-neutral-200">{t("passport")}</h3></div>

@@ -24,6 +24,7 @@ export function ExtensionSync() {
                     dob: profile.dob,
                     nationality: profile.citizenship,
                     phone: profile.phone,
+                    address: profile.address,
 
                     educations: profile.educations || [],
                     experiences: profile.extracurriculars || [],

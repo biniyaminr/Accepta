@@ -42,6 +42,47 @@ function findInputForKeywords(keywords) {
     return targetInput;
 }
 
+/**
+ * Finds a file <input> whose context (own attributes or associated label /
+ * nearby text) matches the given keyword. Mirrors findInputForKeywords, but
+ * targets input[type=file] specifically (which the text finder excludes).
+ */
+function findFileInputForKeyword(keyword) {
+    const kw = keyword.toLowerCase();
+    const fileInputs = Array.from(document.querySelectorAll('input[type="file"]'));
+
+    for (const input of fileInputs) {
+        if (input.hasAttribute('data-accepta-filled')) continue;
+
+        // 1. The input's own identifying attributes
+        const attrParts = [
+            input.id,
+            input.name,
+            input.getAttribute('aria-label'),
+            input.getAttribute('placeholder'),
+            input.getAttribute('title'),
+            input.className
+        ].filter(Boolean).join(' ');
+
+        // 2. Associated <label> elements (for=id) and any wrapping <label>
+        let labelText = '';
+        if (input.labels && input.labels.length) {
+            labelText = Array.from(input.labels).map(l => l.textContent).join(' ');
+        }
+        const wrappingLabel = input.closest('label');
+        if (wrappingLabel) labelText += ' ' + wrappingLabel.textContent;
+
+        // 3. Immediate container text (capped so we don't grab half the page)
+        const parent = input.parentElement;
+        const parentText = parent && parent.textContent.length < 200 ? parent.textContent : '';
+
+        const context = `${attrParts} ${labelText} ${parentText}`.toLowerCase();
+        if (context.includes(kw)) return input;
+    }
+
+    return null;
+}
+
 function injectTextIntoInput(element, value) {
     if (!element || !value) return false;
 
@@ -169,6 +210,7 @@ function injectFileIntoInput(inputElement, fileDataObj) {
 
         // Visual Feedback
         inputElement.style.border = '2px solid #8b5cf6'; // Violet success
+        inputElement.setAttribute('data-accepta-filled', 'true');
         console.log(`✅ Accepta: Injected ${fileDataObj.name} into ${inputElement.id || 'file input'}`);
     } catch (error) {
         console.error("❌ Accepta: Injection failed:", error);
