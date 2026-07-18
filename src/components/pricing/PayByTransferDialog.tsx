@@ -34,7 +34,6 @@ type Props = {
 export function PayByTransferDialog({ plan, planLabel, amount, open, onOpenChange }: Props) {
     const t = useTranslations("Pricing");
     const [reference, setReference] = useState("");
-    const [suffix, setSuffix] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [copied, setCopied] = useState<string | null>(null);
 
@@ -55,7 +54,6 @@ export function PayByTransferDialog({ plan, planLabel, amount, open, onOpenChang
                 body: JSON.stringify({
                     plan,
                     reference: reference.trim(),
-                    suffix: suffix.trim() || undefined,
                 }),
             });
             const data = await response.json();
@@ -134,22 +132,6 @@ export function PayByTransferDialog({ plan, planLabel, amount, open, onOpenChang
                             autoComplete="off"
                         />
                         <p className="text-xs text-neutral-500">{t("transferRefHint")}</p>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="suffix" className="text-neutral-300">
-                            {t("transferSuffixLabel")}
-                        </Label>
-                        <Input
-                            id="suffix"
-                            value={suffix}
-                            onChange={(e) => setSuffix(e.target.value)}
-                            placeholder={t("transferSuffixPlaceholder")}
-                            className="bg-neutral-900 border-neutral-800 text-neutral-100"
-                            autoComplete="off"
-                            inputMode="numeric"
-                        />
-                        <p className="text-xs text-neutral-500">{t("transferSuffixHint")}</p>
                     </div>
                 </div>
 

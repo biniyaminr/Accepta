@@ -144,8 +144,16 @@ export async function verifyTransfer(input: VerifyInput): Promise<VerifyResult> 
         return { ok: false, error: "Verification service is not configured." };
     }
 
+    // CBE (FT...) references can only be looked up with an 8-digit account suffix.
+    // Since every payment lands in our single merchant account, that suffix is
+    // constant — so we auto-derive it here and never ask the customer for it.
+    let suffix = input.suffix?.trim() || undefined;
+    if (!suffix && /^ft/i.test(input.reference.trim())) {
+        suffix = merchantCbeSuffix() ?? undefined;
+    }
+
     const body: Record<string, string> = { reference: input.reference };
-    if (input.suffix) body.suffix = input.suffix;
+    if (suffix) body.suffix = suffix;
     if (input.phoneNumber) body.phoneNumber = input.phoneNumber;
 
     let response: Response;
@@ -202,6 +210,19 @@ export function merchantIdentifiers(): string[] {
         .split(",")
         .map((s) => s.trim())
         .filter((s) => s.length > 0);
+}
+
+/**
+ * Last 8 digits of the merchant's CBE account — the suffix the Verifier API
+ * needs to look up any CBE (FT...) receipt paid to us. Taken from the first
+ * configured identifier that has at least 8 digits.
+ */
+export function merchantCbeSuffix(): string | null {
+    for (const id of merchantIdentifiers()) {
+        const digits = id.replace(/\D/g, "");
+        if (digits.length >= 8) return digits.slice(-8);
+    }
+    return null;
 }
 
 // Providers mask account numbers (CBE shows "1****3987": first digit + last 4).
