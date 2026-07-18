@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Accepta Auto-Filler",
-    "version": "1.1",
+    "version": "2.0",
     "description": "Auto-fills university application forms using data from your Accepta Vault.",
     "icons": {
         "16": "logo.png",
@@ -29,15 +29,22 @@
         }
     },
     "host_permissions": [
-        "https://university-automation-app.vercel.app/*"
+        "https://www.accepta.site/*",
+        "https://accepta.site/*",
+        "https://university-automation-app.vercel.app/*",
+        "https://utfs.io/*",
+        "https://*.ufs.sh/*"
     ],
     "content_scripts": [
         {
             "matches": [
-                "<all_urls>"
+                "https://www.accepta.site/*",
+                "https://accepta.site/*",
+                "https://university-automation-app.vercel.app/*",
+                "http://localhost:3000/*"
             ],
             "js": [
-                "content.js"
+                "bridge.js"
             ]
         }
     ]
