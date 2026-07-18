@@ -243,7 +243,23 @@ function matchesMaskedAccount(merchantAccount: string, masked: string): boolean 
     );
 }
 
+// Reduce an Ethiopian mobile number to its 9 significant digits (9XXXXXXXX),
+// regardless of "+251", "251", or leading-"0" prefix. Returns null for
+// anything that isn't a mobile number (e.g. a 13-digit CBE account), so phone
+// matching never collides with account matching.
+function phoneKey(value: string): string | null {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length < 9) return null;
+    const last9 = digits.slice(-9);
+    return last9.startsWith("9") ? last9 : null;
+}
+
 function matchesIdentifier(merchant: string, receiverValue: string): boolean {
+    // Telebirr / mobile-money: compare the 9 significant phone digits.
+    const mPhone = phoneKey(merchant);
+    const rPhone = phoneKey(receiverValue);
+    if (mPhone && rPhone) return mPhone === rPhone;
+
     if (/[*x]/i.test(receiverValue)) {
         return matchesMaskedAccount(merchant, receiverValue);
     }
