@@ -165,7 +165,7 @@ model Payment {
 
 model Opportunity {
   id              String   @id @default(cuid())
-  userId          String?  // Clerk User ID if personal
+  userId          String?  // Clerk User ID if personal; null = global admin-published entry
   university      String
   programName     String
   description     String?
@@ -174,6 +174,20 @@ model Opportunity {
   isFreeApp       Boolean  @default(false)
   country         String?
   link            String
+  status          String   @default("PUBLISHED") // DRAFT, NEEDS_REVIEW, PUBLISHED
+  tags            String[] @default([]) // FULLY_FUNDED, PARTIAL_SCHOLARSHIP, NO_IELTS
   createdAt       DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorEmail String   // admin who performed the action
+  action     String   // CREATE, UPDATE, DELETE, PUBLISH
+  entity     String   // e.g. "Opportunity", "User"
+  entityId   String?
+  summary    String   // human-readable one-liner shown in the console
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
 }
 

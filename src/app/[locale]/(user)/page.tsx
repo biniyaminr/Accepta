@@ -1,6 +1,6 @@
 "use client";
 
-import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignUpButton, SignInButton } from "@clerk/nextjs";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import AcceptaLogo from "@/images/acceptalogo.png";
@@ -86,9 +86,18 @@ export default function LandingPage() {
       <div className="relative h-10 bg-gradient-to-r from-violet-600/15 via-indigo-600/20 to-violet-600/15 flex items-center justify-center gap-3 px-4 text-sm">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot shrink-0" />
         <span className="text-neutral-300 truncate">{tLanding("banner")}</span>
-        <a href="#" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors flex items-center gap-1 shrink-0">
-          {tLanding("bannerCta")} <ArrowRight className="w-3 h-3" />
-        </a>
+        <SignedOut>
+          <SignInButton mode="modal">
+            <button className="text-violet-400 hover:text-violet-300 font-semibold transition-colors flex items-center gap-1 shrink-0">
+              {tLanding("bannerCta")} <ArrowRight className="w-3 h-3" />
+            </button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <Link href="/dashboard" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors flex items-center gap-1 shrink-0 no-underline">
+            {tLanding("bannerCta")} <ArrowRight className="w-3 h-3" />
+          </Link>
+        </SignedIn>
         <div className="absolute bottom-0 left-0 right-0 h-px beam-line" />
       </div>
 

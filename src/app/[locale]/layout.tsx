@@ -1,8 +1,12 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import { ClerkProvider } from "@clerk/nextjs";
-import Layout from "@/components/layout/Layout";
 import { notFound } from "next/navigation";
+
+// Clean locale root: global providers ONLY (i18n messages + locale context).
+// No sidebars, no headers, no chrome — the UI shell for each audience lives in
+// its own route group: (user)/layout.tsx and (admin)/layout.tsx.
+// <html>/<body>, ClerkProvider, Toaster, and analytics live in the true root
+// at src/app/layout.tsx.
 
 const locales = ["en", "am"];
 
@@ -22,10 +26,8 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <ClerkProvider>
-      <NextIntlClientProvider locale={locale} messages={messages}>
-        <Layout>{children}</Layout>
-      </NextIntlClientProvider>
-    </ClerkProvider>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      {children}
+    </NextIntlClientProvider>
   );
 }

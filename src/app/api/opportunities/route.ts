@@ -9,9 +9,13 @@ export async function GET() {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
+        // Personal saves + globally published admin entries (userId: null).
         const opportunities = await prisma.opportunity.findMany({
             where: {
-                userId: clerkId,
+                OR: [
+                    { userId: clerkId },
+                    { userId: null, status: "PUBLISHED" },
+                ],
             },
             orderBy: {
                 createdAt: "desc",

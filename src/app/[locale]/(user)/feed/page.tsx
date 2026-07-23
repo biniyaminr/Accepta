@@ -28,6 +28,7 @@ interface Opportunity {
     isFreeApp: boolean;
     country: string | null;
     link: string;
+    tags?: string[]; // FULLY_FUNDED, PARTIAL_SCHOLARSHIP, NO_IELTS (admin entries)
     createdAt: string;
 }
 
@@ -187,7 +188,17 @@ function DetailDrawer({
                     <div className="flex flex-wrap gap-2">
                         {opp.isScholarship && (
                             <Badge className="bg-amber-900/30 text-amber-400 border-amber-800">
-                                <GraduationCap className="mr-1 h-3 w-3" /> 🏆 {t("scholarship")}
+                                <GraduationCap className="mr-1 h-3 w-3" /> 🏆{" "}
+                                {opp.tags?.includes("FULLY_FUNDED")
+                                    ? t("fullyFunded")
+                                    : opp.tags?.includes("PARTIAL_SCHOLARSHIP")
+                                      ? t("partialScholarship")
+                                      : t("scholarship")}
+                            </Badge>
+                        )}
+                        {opp.tags?.includes("NO_IELTS") && (
+                            <Badge className="bg-teal-900/30 text-teal-400 border-teal-800">
+                                🗣️ {t("noIelts")}
                             </Badge>
                         )}
                         {opp.isFreeApp && (
@@ -561,7 +572,6 @@ export default function OpportunitiesFeed() {
     const t = useTranslations("Feed");
     const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isSyncing, setIsSyncing] = useState(false);
     const [savingIds, setSavingIds] = useState<Set<string>>(new Set());
     const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
     const [evaluatingId, setEvaluatingId] = useState<string | null>(null);
@@ -573,6 +583,7 @@ export default function OpportunitiesFeed() {
     const [search, setSearch] = useState("");
     const [filterScholarship, setFilterScholarship] = useState(false);
     const [filterFreeApp, setFilterFreeApp] = useState(false);
+    const [filterTags, setFilterTags] = useState<Set<string>>(new Set());
     const [filterCountry, setFilterCountry] = useState("");
 
     // Feature 2: Sort
@@ -667,6 +678,13 @@ export default function OpportunitiesFeed() {
         // Free app filter
         if (filterFreeApp) result = result.filter((o) => o.isFreeApp);
 
+        // Tag filters (admin-entered: Fully Funded / Partial Scholarship / No IELTS)
+        if (filterTags.size > 0) {
+            result = result.filter((o) =>
+                Array.from(filterTags).every((tg) => o.tags?.includes(tg))
+            );
+        }
+
         // Country filter
         if (filterCountry) result = result.filter((o) => o.country === filterCountry);
 
@@ -695,28 +713,9 @@ export default function OpportunitiesFeed() {
         }
 
         return result;
-    }, [opportunities, search, filterScholarship, filterFreeApp, filterCountry, filterBookmarked, filterUnread, sortBy, bookmarkedIds, readIds, evaluationResults]);
+    }, [opportunities, search, filterScholarship, filterFreeApp, filterTags, filterCountry, filterBookmarked, filterUnread, sortBy, bookmarkedIds, readIds, evaluationResults]);
 
     // ── Handlers ──────────────────────────────────────────────────────────────
-
-    const handleSync = async () => {
-        setIsSyncing(true);
-        const toastId = toast.loading("Querying international scholarship databases...");
-        try {
-            const response = await fetch("/api/admin/sync-telegram");
-            const data = await response.json();
-            if (response.ok) {
-                toast.success(`Sync complete! Added ${data.addedCount} new opportunities.`, { id: toastId });
-                if (data.addedCount > 0) fetchOpportunities();
-            } else {
-                toast.error(data.error || "Failed to sync opportunities.", { id: toastId });
-            }
-        } catch {
-            toast.error("An error occurred during sync.", { id: toastId });
-        } finally {
-            setIsSyncing(false);
-        }
-    };
 
     const handleSaveToTracker = async (opp: Opportunity) => {
         setSavingIds((prev) => new Set(prev).add(opp.id));
@@ -869,10 +868,6 @@ export default function OpportunitiesFeed() {
                             ? t("evaluatingProgress", { current: evaluateAllProgress.current, total: evaluateAllProgress.total })
                             : t("evaluateAll")}
                     </Button>
-                    <Button variant="outline" onClick={handleSync} disabled={isSyncing} className="w-full md:w-auto">
-                        <RefreshCw className={`mr-2 h-4 w-4 ${isSyncing ? "animate-spin" : ""}`} />
-                        {isSyncing ? t("syncing") : t("syncNow")}
-                    </Button>
                 </div>
             </div>
 
@@ -938,6 +933,27 @@ export default function OpportunitiesFeed() {
                     >
                         💸 {t("freeAppOnly")}
                     </FilterChip>
+                    {([
+                        { key: "FULLY_FUNDED", emoji: "🎓", label: t("fullyFunded"), activeClass: "bg-violet-500/15 border-violet-500/40 text-violet-300" },
+                        { key: "PARTIAL_SCHOLARSHIP", emoji: "💰", label: t("partialScholarship"), activeClass: "bg-sky-500/15 border-sky-500/40 text-sky-300" },
+                        { key: "NO_IELTS", emoji: "🗣️", label: t("noIelts"), activeClass: "bg-teal-500/15 border-teal-500/40 text-teal-300" },
+                    ] as const).map((tag) => (
+                        <FilterChip
+                            key={tag.key}
+                            active={filterTags.has(tag.key)}
+                            onClick={() =>
+                                setFilterTags((prev) => {
+                                    const next = new Set(prev);
+                                    if (next.has(tag.key)) next.delete(tag.key);
+                                    else next.add(tag.key);
+                                    return next;
+                                })
+                            }
+                            activeClass={tag.activeClass}
+                        >
+                            {tag.emoji} {tag.label}
+                        </FilterChip>
+                    ))}
                     <FilterChip
                         active={filterBookmarked}
                         onClick={() => setFilterBookmarked((v) => !v)}
@@ -1049,7 +1065,17 @@ export default function OpportunitiesFeed() {
                                         <div className="flex flex-wrap gap-2">
                                             {opp.isScholarship && (
                                                 <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800">
-                                                    <GraduationCap className="mr-1 h-3 w-3" /> 🏆 {t("scholarship")}
+                                                    <GraduationCap className="mr-1 h-3 w-3" /> 🏆{" "}
+                                                    {opp.tags?.includes("FULLY_FUNDED")
+                                                        ? t("fullyFunded")
+                                                        : opp.tags?.includes("PARTIAL_SCHOLARSHIP")
+                                                          ? t("partialScholarship")
+                                                          : t("scholarship")}
+                                                </Badge>
+                                            )}
+                                            {opp.tags?.includes("NO_IELTS") && (
+                                                <Badge className="bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400 border-teal-200 dark:border-teal-800">
+                                                    🗣️ {t("noIelts")}
                                                 </Badge>
                                             )}
                                             {opp.isFreeApp && (
